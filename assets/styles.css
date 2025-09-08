@@ -1,0 +1,17 @@
+.dinosaur-list {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.fav {
+  margin-right: 1rem;
+}
+
+.btn-favorited {
+  background-color: #ff66d6;
+  border-color: #cc009c;
+}
