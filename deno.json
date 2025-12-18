@@ -1,9 +1,0 @@
-{
-  "tasks": {
-    "dev": "cd dist && deno run --allow-net --allow-read https://deno.land/std@0.220.0/http/file_server.ts",
-    "preview": "deno run --allow-net --allow-read server.ts"
-  },
-  "imports": {
-    "std/": "https://deno.land/std@0.220.0/"
-  }
-}
