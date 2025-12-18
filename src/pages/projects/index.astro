@@ -1,0 +1,169 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+
+// 示例数据
+const projects = [
+  {
+    _id: '1',
+    title: '电商管理后台',
+    slug: { current: 'ecommerce-dashboard' },
+    description: '基于 Vue 3 + TypeScript 构建的现代化电商管理系统，支持商品管理、订单处理、数据分析等功能。',
+    thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop',
+    technologies: ['Vue 3', 'TypeScript', 'Tailwind CSS', 'Pinia'],
+    featured: true
+  },
+  {
+    _id: '2',
+    title: '个人知识库',
+    slug: { current: 'knowledge-base' },
+    description: '使用 Notion API 构建的个人知识管理工具，支持 Markdown 编辑、标签分类、全文搜索。',
+    thumbnail: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800&h=450&fit=crop',
+    technologies: ['Next.js', 'Notion API', 'Vercel'],
+    featured: true
+  },
+  {
+    _id: '3',
+    title: 'AI 对话助手',
+    slug: { current: 'ai-chat-assistant' },
+    description: '基于大语言模型的智能对话应用，支持多轮对话、上下文记忆、流式输出。',
+    thumbnail: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop',
+    technologies: ['React', 'OpenAI API', 'Node.js'],
+    featured: true
+  },
+  {
+    _id: '4',
+    title: '任务管理工具',
+    slug: { current: 'task-manager' },
+    description: '一个简洁高效的任务管理应用，支持看板视图、日历集成和团队协作功能。',
+    thumbnail: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=800&h=450&fit=crop',
+    technologies: ['Vue 3', 'Supabase', 'TailwindCSS'],
+    featured: false
+  },
+  {
+    _id: '5',
+    title: '设计系统组件库',
+    slug: { current: 'design-system' },
+    description: '企业级 UI 组件库，包含 50+ 可复用组件，完善的文档和主题定制能力。',
+    thumbnail: 'https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&h=450&fit=crop',
+    technologies: ['React', 'Storybook', 'TypeScript'],
+    featured: false
+  },
+  {
+    _id: '6',
+    title: '实时数据可视化',
+    slug: { current: 'data-visualization' },
+    description: '基于 D3.js 的实时数据可视化平台，支持多种图表类型和数据源接入。',
+    thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop',
+    technologies: ['D3.js', 'WebSocket', 'Node.js'],
+    featured: false
+  }
+];
+
+// 技术筛选
+const technologies = ['全部', 'Vue 3', 'React', 'TypeScript', 'Node.js', 'Next.js'];
+---
+
+<Layout 
+  title="作品 - 个人空间"
+  description="展示我参与或独立完成的项目作品"
+>
+  <!-- 页面标题区 -->
+  <section class="pt-32 pb-16">
+    <div class="container-custom">
+      <div class="text-center mb-4">
+        <span class="text-sm font-medium text-gray-400 uppercase tracking-wider">项目</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 text-center max-w-4xl mx-auto mb-6">
+        精选作品与项目
+      </h1>
+      <p class="text-lg text-gray-500 text-center max-w-2xl mx-auto">
+        展示我参与或独立完成的项目，从创意构思到技术实现的完整历程。每个项目都是学习和成长的见证。
+      </p>
+    </div>
+  </section>
+
+  <!-- 技术筛选 -->
+  <section class="pb-12">
+    <div class="container-custom">
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        {technologies.map((tech, index) => (
+          <button 
+            class={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              index === 0 
+                ? 'bg-dark-100 text-white' 
+                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+            }`}
+          >
+            {tech}
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 项目列表 -->
+  <section class="pb-20">
+    <div class="container-custom">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {projects.map((project) => (
+          <ProjectCard
+            title={project.title}
+            description={project.description}
+            slug={project.slug.current}
+            thumbnail={project.thumbnail}
+            technologies={project.technologies}
+            featured={project.featured}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA 区域 -->
+  <section class="py-20">
+    <div class="container-custom">
+      <div class="bg-white rounded-3xl border border-gray-100 shadow-card p-12 lg:p-16">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+              有项目想法？
+            </h2>
+            <p class="text-gray-500 mb-8">
+              我始终乐于讨论新项目、创意想法，或参与您的愿景。让我们一起创造一些不可思议的事物。
+            </p>
+            <a 
+              href="/about" 
+              class="inline-flex items-center gap-2 bg-dark-100 text-white px-7 py-3.5 rounded-full text-base font-medium hover:bg-dark-300 transition-all"
+            >
+              联系我
+              <svg class="w-5 h-5 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+          </div>
+          <div class="flex justify-center lg:justify-end">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-gray-50 rounded-2xl p-6 text-center">
+                <div class="text-3xl font-bold text-gray-900 mb-1">50+</div>
+                <p class="text-sm text-gray-500">已完成项目</p>
+              </div>
+              <div class="bg-gray-50 rounded-2xl p-6 text-center">
+                <div class="text-3xl font-bold text-gray-900 mb-1">100%</div>
+                <p class="text-sm text-gray-500">客户满意度</p>
+              </div>
+              <div class="bg-gray-50 rounded-2xl p-6 text-center">
+                <div class="text-3xl font-bold text-gray-900 mb-1">5+</div>
+                <p class="text-sm text-gray-500">年经验</p>
+              </div>
+              <div class="bg-primary-500/20 rounded-2xl p-6 text-center">
+                <div class="text-3xl font-bold text-gray-900 mb-1">24/7</div>
+                <p class="text-sm text-gray-700">支持可用</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

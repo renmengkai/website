@@ -1,0 +1,161 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Badge from '../../components/ui/Badge.astro';
+import Button from '../../components/ui/Button.astro';
+import Card from '../../components/ui/Card.astro';
+
+// 动态路由参数
+export async function getStaticPaths() {
+  const projects = [
+    {
+      slug: 'ecommerce-dashboard',
+      title: '电商管理后台',
+      description: '基于 Vue 3 + TypeScript 构建的现代化电商管理系统，支持商品管理、订单处理、数据分析等功能。',
+      thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=600&fit=crop',
+      technologies: ['Vue 3', 'TypeScript', 'Tailwind CSS', 'Pinia', 'Vite', 'ECharts'],
+      liveUrl: 'https://demo.example.com',
+      githubUrl: 'https://github.com/example/project',
+      featured: true,
+      body: `
+## 项目概述
+
+这是一个功能完善的电商管理后台系统，旨在为中小型电商企业提供高效的后台管理解决方案。
+
+## 核心功能
+
+- **商品管理** - 支持商品的增删改查、分类管理、库存预警
+- **订单处理** - 订单状态追踪、批量操作、退款处理
+- **数据分析** - 销售报表、用户分析、趋势预测
+- **用户管理** - 角色权限、操作日志、消息通知
+
+## 技术亮点
+
+1. 采用 Vue 3 Composition API，代码更加模块化
+2. 使用 Pinia 进行状态管理，轻量且类型安全
+3. 响应式设计，完美适配各种屏幕尺寸
+4. 深色模式支持，保护用户视力
+
+## 项目收获
+
+通过这个项目，我深入理解了前端工程化的最佳实践，以及如何构建可维护的大型应用。
+      `
+    },
+    {
+      slug: 'knowledge-base',
+      title: '个人知识库',
+      description: '使用 Notion API 构建的个人知识管理工具。',
+      thumbnail: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1200&h=600&fit=crop',
+      technologies: ['Next.js', 'Notion API', 'Vercel', 'Tailwind CSS'],
+      liveUrl: 'https://demo.example.com',
+      githubUrl: 'https://github.com/example/project',
+      featured: true,
+      body: '## 项目概述\n\n这是一个基于 Notion API 的知识库项目...'
+    },
+    {
+      slug: 'ai-chat-assistant',
+      title: 'AI 对话助手',
+      description: '基于大语言模型的智能对话应用。',
+      thumbnail: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=600&fit=crop',
+      technologies: ['React', 'OpenAI API', 'Node.js', 'WebSocket'],
+      liveUrl: 'https://demo.example.com',
+      githubUrl: 'https://github.com/example/project',
+      featured: true,
+      body: '## 项目概述\n\n这是一个 AI 对话助手项目...'
+    }
+  ];
+
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project }
+  }));
+}
+
+const { project } = Astro.props;
+---
+
+<Layout 
+  title={`${project.title} - 个人空间`}
+  description={project.description}
+  image={project.thumbnail}
+>
+  <article class="section">
+    <div class="container-custom">
+      <!-- 项目头部 -->
+      <header class="max-w-4xl mx-auto mb-12">
+        <!-- 返回按钮 -->
+        <div class="mb-8">
+          <Button href="/projects" variant="ghost" size="sm">
+            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+            </svg>
+            返回作品列表
+          </Button>
+        </div>
+        
+        <!-- 标题 -->
+        <h1 class="text-3xl lg:text-display font-bold tracking-tight text-gray-900 dark:text-white mb-4">
+          {project.title}
+        </h1>
+        
+        <!-- 描述 -->
+        <p class="text-lg text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
+          {project.description}
+        </p>
+        
+        <!-- 技术栈 -->
+        <div class="flex flex-wrap gap-2 mb-8">
+          {project.technologies.map((tech: string) => (
+            <Badge variant="primary">{tech}</Badge>
+          ))}
+        </div>
+        
+        <!-- 操作按钮 -->
+        <div class="flex flex-wrap gap-4">
+          {project.liveUrl && (
+            <Button href={project.liveUrl} variant="primary">
+              <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              在线预览
+            </Button>
+          )}
+          {project.githubUrl && (
+            <Button href={project.githubUrl} variant="secondary">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+              查看源码
+            </Button>
+          )}
+        </div>
+      </header>
+      
+      <!-- 项目封面 -->
+      {project.thumbnail && (
+        <div class="max-w-5xl mx-auto mb-16 rounded-2xl overflow-hidden shadow-card">
+          <img 
+            src={project.thumbnail} 
+            alt={project.title}
+            class="w-full aspect-video object-cover"
+          />
+        </div>
+      )}
+      
+      <!-- 项目内容 -->
+      <div class="max-w-3xl mx-auto">
+        <div class="prose prose-lg dark:prose-invert 
+                    prose-headings:font-bold prose-headings:tracking-tight
+                    prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4
+                    prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
+                    prose-p:text-gray-600 dark:prose-p:text-gray-400 prose-p:leading-relaxed
+                    prose-a:text-primary-600 dark:prose-a:text-primary-400
+                    prose-ul:text-gray-600 dark:prose-ul:text-gray-400
+                    prose-ol:text-gray-600 dark:prose-ol:text-gray-400
+                    prose-li:marker:text-primary-500
+                    max-w-none">
+          <Fragment set:html={project.body.replace(/\n/g, '<br>').replace(/## /g, '<h2>').replace(/### /g, '<h3>')} />
+        </div>
+      </div>
+    </div>
+  </article>
+</Layout>

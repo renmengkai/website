@@ -1,0 +1,162 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PostCard from '../../components/PostCard.astro';
+
+// 示例数据
+const posts = [
+  {
+    _id: '1',
+    title: '使用 Astro 构建现代静态网站',
+    slug: { current: 'building-with-astro' },
+    excerpt: '探索 Astro 框架的核心概念，了解如何利用其岛屿架构构建高性能的静态网站。',
+    publishedAt: '2024-12-15',
+    coverImage: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=450&fit=crop',
+    categories: [{ title: '技术', slug: { current: 'tech' } }]
+  },
+  {
+    _id: '2',
+    title: 'Tailwind CSS 最佳实践指南',
+    slug: { current: 'tailwind-best-practices' },
+    excerpt: '深入理解 Tailwind CSS 的设计哲学，掌握高效的样式编写技巧和组件化策略。',
+    publishedAt: '2024-12-10',
+    coverImage: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=450&fit=crop',
+    categories: [{ title: 'CSS', slug: { current: 'css' } }]
+  },
+  {
+    _id: '3',
+    title: 'Vue 3 组合式 API 完全指南',
+    slug: { current: 'vue3-composition-api' },
+    excerpt: '从响应式原理到自定义 Hooks，全面掌握 Vue 3 Composition API 的使用技巧。',
+    publishedAt: '2024-12-05',
+    coverImage: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=450&fit=crop',
+    categories: [{ title: 'Vue', slug: { current: 'vue' } }]
+  },
+  {
+    _id: '4',
+    title: '深入理解 TypeScript 类型系统',
+    slug: { current: 'typescript-deep-dive' },
+    excerpt: '从基础类型到高级泛型，系统性地理解 TypeScript 的类型推断和类型安全机制。',
+    publishedAt: '2024-12-01',
+    coverImage: 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=800&h=450&fit=crop',
+    categories: [{ title: 'TypeScript', slug: { current: 'typescript' } }]
+  },
+  {
+    _id: '5',
+    title: '现代 CSS 布局技巧',
+    slug: { current: 'modern-css-layout' },
+    excerpt: '掌握 Grid、Flexbox 和容器查询，构建响应式且优雅的页面布局。',
+    publishedAt: '2024-11-25',
+    coverImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=450&fit=crop',
+    categories: [{ title: 'CSS', slug: { current: 'css' } }]
+  },
+  {
+    _id: '6',
+    title: 'Node.js 性能优化实战',
+    slug: { current: 'nodejs-performance' },
+    excerpt: '从内存管理到事件循环，深入分析 Node.js 应用的性能瓶颈与优化策略。',
+    publishedAt: '2024-11-20',
+    coverImage: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=450&fit=crop',
+    categories: [{ title: 'Node.js', slug: { current: 'nodejs' } }]
+  }
+];
+
+// 分类
+const categories = ['全部', '技术', 'CSS', 'Vue', 'TypeScript', 'Node.js'];
+---
+
+<Layout 
+  title="日志 - 个人空间"
+  description="技术博客与学习笔记，分享编程经验和开发心得"
+>
+  <!-- 页面标题区 -->
+  <section class="pt-32 pb-16">
+    <div class="container-custom">
+      <div class="text-center mb-4">
+        <span class="text-sm font-medium text-gray-400 uppercase tracking-wider">博客</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 text-center max-w-4xl mx-auto mb-6">
+        最新洞察与文章
+      </h1>
+      <p class="text-lg text-gray-500 text-center max-w-2xl mx-auto">
+        记录技术探索与思考，分享学习心得与实践经验。在这里，你会找到关于前端开发、全栈技术和设计思考的文章。
+      </p>
+    </div>
+  </section>
+
+  <!-- 分类筛选 -->
+  <section class="pb-12">
+    <div class="container-custom">
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        {categories.map((cat, index) => (
+          <button 
+            class={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              index === 0 
+                ? 'bg-dark-100 text-white' 
+                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 文章列表 -->
+  <section class="pb-20">
+    <div class="container-custom">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {posts.map((post) => (
+          <PostCard
+            title={post.title}
+            excerpt={post.excerpt}
+            slug={post.slug.current}
+            coverImage={post.coverImage}
+            publishedAt={post.publishedAt}
+            categories={post.categories}
+          />
+        ))}
+      </div>
+      
+      <!-- 加载更多按钮 -->
+      <div class="text-center mt-12">
+        <button class="inline-flex items-center gap-2 px-8 py-3 rounded-full text-base font-medium border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all">
+          加载更多文章
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 订阅区域 -->
+  <section class="py-20 bg-gray-50/50">
+    <div class="container-custom">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
+          订阅我们的通讯
+        </h2>
+        <p class="text-gray-500 mb-8">
+          获取最新文章和洞察，直接发送到您的邮箱。
+        </p>
+        <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <input 
+            type="email" 
+            placeholder="输入您的邮箱"
+            class="flex-1 px-5 py-3 rounded-full border border-gray-200 focus:outline-none focus:border-gray-400 transition-colors"
+          />
+          <button 
+            type="submit"
+            class="inline-flex items-center justify-center gap-2 bg-dark-100 text-white px-6 py-3 rounded-full font-medium hover:bg-dark-300 transition-colors"
+          >
+            订阅
+            <svg class="w-4 h-4 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+</Layout>

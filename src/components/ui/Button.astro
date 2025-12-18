@@ -1,0 +1,55 @@
+---
+// 按钮组件
+interface Props {
+  variant?: 'primary' | 'secondary' | 'ghost' | 'outline';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+  class?: string;
+  type?: 'button' | 'submit' | 'reset';
+  showArrow?: boolean;
+}
+
+const { 
+  variant = 'primary', 
+  size = 'md', 
+  href, 
+  class: className = '',
+  type = 'button',
+  showArrow = false
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+
+const variants = {
+  primary: 'bg-dark-100 text-white hover:bg-dark-300 hover:shadow-button-hover',
+  secondary: 'bg-white text-gray-900 border border-gray-200 hover:bg-gray-50 hover:border-gray-300',
+  ghost: 'bg-transparent text-gray-700 hover:bg-gray-100',
+  outline: 'border border-gray-300 text-gray-900 hover:bg-gray-50 hover:border-gray-400'
+};
+
+const sizes = {
+  sm: 'px-4 py-2 text-sm rounded-full',
+  md: 'px-6 py-3 rounded-full',
+  lg: 'px-8 py-4 text-lg rounded-full'
+};
+---
+
+<Tag
+  href={href}
+  type={!href ? type : undefined}
+  class:list={[
+    'inline-flex items-center justify-center gap-2 font-medium',
+    'transition-all duration-200',
+    'focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2',
+    variants[variant],
+    sizes[size],
+    className
+  ]}
+>
+  <slot />
+  {showArrow && (
+    <svg class={`w-4 h-4 ${variant === 'primary' ? 'text-primary-500' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+    </svg>
+  )}
+</Tag>

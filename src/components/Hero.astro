@@ -1,0 +1,108 @@
+---
+// Hero Section - 简洁风格
+interface Props {
+  title: string;
+  subtitle?: string;
+  description?: string;
+  showCTA?: boolean;
+  centered?: boolean;
+}
+
+const { 
+  title, 
+  subtitle,
+  description, 
+  showCTA = true,
+  centered = true 
+} = Astro.props;
+---
+
+<section class="relative pt-20 pb-8 lg:pb-16">
+  <!-- 网格线背景 -->
+  <div class="absolute inset-0 bg-grid-fade pointer-events-none" aria-hidden="true"></div>
+  
+  <div class={`container-custom relative ${centered ? 'text-center' : ''}`}>
+    <div class={`${centered ? 'max-w-4xl mx-auto' : 'max-w-3xl'} py-16 lg:py-24`}>
+      <!-- 主标题 -->
+      <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 text-gray-900
+                 animate-fade-in-up opacity-0" 
+          style="animation-delay: 100ms; animation-fill-mode: forwards;">
+        {title}
+      </h1>
+      
+      <!-- 描述 -->
+      {description && (
+        <p class="text-lg sm:text-xl text-gray-500 leading-relaxed mb-10
+                  max-w-2xl mx-auto animate-fade-in-up opacity-0"
+           style="animation-delay: 200ms; animation-fill-mode: forwards;">
+          {description}
+        </p>
+      )}
+      
+      <!-- CTA 按钮 -->
+      {showCTA && (
+        <div class="flex flex-wrap items-center justify-center gap-4
+                    animate-fade-in-up opacity-0"
+             style="animation-delay: 300ms; animation-fill-mode: forwards;">
+          <a href="/projects" class="inline-flex items-center gap-2 bg-dark-100 text-white px-7 py-3.5 rounded-full text-base font-medium hover:bg-dark-300 hover:shadow-button-hover transition-all">
+            查看作品
+            <svg class="w-5 h-5 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+          <a href="/about" class="inline-flex items-center gap-2 bg-white text-gray-900 px-7 py-3.5 rounded-full text-base font-medium border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all">
+            了解更多
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+        </div>
+      )}
+    </div>
+    
+    <!-- 底部装饰卡片区域 -->
+    <div class="hidden lg:block mt-8">
+      <div class="flex justify-center gap-6">
+        <!-- 装饰卡片 1 -->
+        <div class="bg-white rounded-2xl p-5 shadow-card border border-gray-100 min-w-[200px] animate-fade-in-up opacity-0"
+             style="animation-delay: 400ms; animation-fill-mode: forwards;">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-sm text-gray-500">响应时间</span>
+            <span class="text-xs text-gray-400">⋮⋮</span>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span class="text-2xl font-bold text-gray-900">125.46</span>
+            <span class="text-xs text-green-500 flex items-center">↗ 15.23%</span>
+          </div>
+        </div>
+        
+        <!-- 装饰卡片 2 -->
+        <div class="bg-white rounded-2xl p-5 shadow-card border border-gray-100 min-w-[280px] animate-fade-in-up opacity-0"
+             style="animation-delay: 500ms; animation-fill-mode: forwards;">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-sm font-medium text-gray-900">进度检查</span>
+            <span class="text-xs text-gray-400">⋮⋮</span>
+          </div>
+          <div class="text-xs text-gray-500 mb-2">查看24小时报告</div>
+          <div class="flex items-center gap-3">
+            <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div class="h-full bg-primary-500 rounded-full" style="width: 54%"></div>
+            </div>
+            <span class="text-sm font-medium text-gray-700">54%</span>
+          </div>
+        </div>
+        
+        <!-- 装饰卡片 3 -->
+        <div class="bg-white rounded-2xl p-5 shadow-card border border-gray-100 min-w-[220px] animate-fade-in-up opacity-0"
+             style="animation-delay: 600ms; animation-fill-mode: forwards;">
+          <div class="text-sm font-medium text-gray-900 mb-3">项目影响力</div>
+          <div class="text-xs text-gray-500 mb-3">查看全部统计</div>
+          <div class="flex gap-2">
+            <span class="inline-block px-2.5 py-1 bg-gray-100 rounded-full text-xs text-gray-600">精选</span>
+            <span class="inline-block px-2.5 py-1 bg-primary-500/20 rounded-full text-xs text-gray-700">活跃</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

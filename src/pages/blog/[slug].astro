@@ -1,0 +1,178 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Badge from '../../components/ui/Badge.astro';
+import Button from '../../components/ui/Button.astro';
+
+// 动态路由参数
+export async function getStaticPaths() {
+  // 示例数据 - 实际项目中从 Sanity 获取
+  const posts = [
+    {
+      slug: 'building-with-astro',
+      title: '使用 Astro 构建现代静态网站',
+      excerpt: '探索 Astro 框架的核心概念，了解如何利用其岛屿架构构建高性能的静态网站。',
+      publishedAt: '2024-12-15',
+      coverImage: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=600&fit=crop',
+      categories: [{ title: '技术', slug: 'tech' }],
+      author: { name: 'Author', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop' },
+      body: `
+## 什么是 Astro？
+
+Astro 是一个现代的静态网站生成器，它采用了一种独特的"岛屿架构"来优化性能。与传统的 SPA 框架不同，Astro 默认输出零 JavaScript 的静态 HTML。
+
+## 为什么选择 Astro？
+
+1. **极致性能** - 默认生成纯静态 HTML
+2. **框架无关** - 支持 React、Vue、Svelte 等
+3. **部分水合** - 只在需要时加载 JavaScript
+4. **内容优先** - 专为内容驱动型网站设计
+
+## 开始使用
+
+\`\`\`bash
+npm create astro@latest
+\`\`\`
+
+## 核心概念
+
+### 岛屿架构
+
+岛屿架构是 Astro 的核心创新。页面中的交互组件被视为"岛屿"，周围是静态 HTML 的"海洋"。
+
+### 客户端指令
+
+Astro 提供了多种客户端指令来控制组件的水合时机：
+
+- \`client:load\` - 页面加载时立即水合
+- \`client:idle\` - 浏览器空闲时水合
+- \`client:visible\` - 组件进入视口时水合
+
+## 总结
+
+Astro 非常适合构建博客、文档站点和营销页面等内容优先的网站。它的性能优势和开发体验使其成为现代 Web 开发的优秀选择。
+      `
+    },
+    {
+      slug: 'tailwind-best-practices',
+      title: 'Tailwind CSS 最佳实践指南',
+      excerpt: '深入理解 Tailwind CSS 的设计哲学，掌握高效的样式编写技巧和组件化策略。',
+      publishedAt: '2024-12-10',
+      coverImage: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1200&h=600&fit=crop',
+      categories: [{ title: 'CSS', slug: 'css' }],
+      author: { name: 'Author', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop' },
+      body: '## Tailwind CSS 入门\n\n这是一篇关于 Tailwind CSS 最佳实践的文章...'
+    },
+    {
+      slug: 'vue3-composition-api',
+      title: 'Vue 3 组合式 API 完全指南',
+      excerpt: '从响应式原理到自定义 Hooks，全面掌握 Vue 3 Composition API 的使用技巧。',
+      publishedAt: '2024-12-05',
+      coverImage: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&h=600&fit=crop',
+      categories: [{ title: 'Vue', slug: 'vue' }],
+      author: { name: 'Author', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop' },
+      body: '## Vue 3 Composition API\n\n这是一篇关于 Vue 3 组合式 API 的文章...'
+    }
+  ];
+
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post }
+  }));
+}
+
+const { post } = Astro.props;
+
+const formattedDate = new Date(post.publishedAt).toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+---
+
+<Layout 
+  title={`${post.title} - 个人空间`}
+  description={post.excerpt}
+  image={post.coverImage}
+>
+  <article class="section">
+    <div class="container-custom">
+      <!-- 文章头部 -->
+      <header class="max-w-3xl mx-auto text-center mb-12">
+        <!-- 分类 -->
+        <div class="flex flex-wrap justify-center gap-2 mb-6">
+          {post.categories?.map((cat: any) => (
+            <Badge variant="primary">{cat.title}</Badge>
+          ))}
+        </div>
+        
+        <!-- 标题 -->
+        <h1 class="text-3xl lg:text-display font-bold tracking-tight text-gray-900 dark:text-white mb-6 text-balance">
+          {post.title}
+        </h1>
+        
+        <!-- 元信息 -->
+        <div class="flex items-center justify-center gap-4 text-gray-600 dark:text-gray-400">
+          {post.author && (
+            <div class="flex items-center gap-2">
+              <img 
+                src={post.author.avatar} 
+                alt={post.author.name}
+                class="w-8 h-8 rounded-full object-cover"
+              />
+              <span class="text-sm font-medium">{post.author.name}</span>
+            </div>
+          )}
+          <span class="text-gray-300 dark:text-gray-600">·</span>
+          <time datetime={post.publishedAt} class="text-sm">{formattedDate}</time>
+        </div>
+      </header>
+      
+      <!-- 封面图 -->
+      {post.coverImage && (
+        <div class="max-w-4xl mx-auto mb-12 rounded-2xl overflow-hidden">
+          <img 
+            src={post.coverImage} 
+            alt={post.title}
+            class="w-full aspect-video object-cover"
+          />
+        </div>
+      )}
+      
+      <!-- 文章内容 -->
+      <div class="max-w-3xl mx-auto">
+        <div class="prose prose-lg dark:prose-invert 
+                    prose-headings:font-bold prose-headings:tracking-tight
+                    prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4
+                    prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
+                    prose-p:text-gray-600 dark:prose-p:text-gray-400 prose-p:leading-relaxed
+                    prose-a:text-primary-600 dark:prose-a:text-primary-400 prose-a:no-underline hover:prose-a:underline
+                    prose-code:bg-gray-100 dark:prose-code:bg-dark-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+                    prose-pre:bg-gray-900 dark:prose-pre:bg-dark-100 prose-pre:rounded-xl
+                    prose-img:rounded-xl
+                    prose-ul:text-gray-600 dark:prose-ul:text-gray-400
+                    prose-ol:text-gray-600 dark:prose-ol:text-gray-400
+                    prose-li:marker:text-primary-500
+                    max-w-none">
+          <Fragment set:html={post.body.replace(/\n/g, '<br>').replace(/## /g, '<h2>').replace(/### /g, '<h3>')} />
+        </div>
+        
+        <!-- 返回按钮 -->
+        <div class="mt-16 pt-8 border-t border-gray-200 dark:border-dark-200">
+          <Button href="/blog" variant="ghost">
+            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+            </svg>
+            返回日志列表
+          </Button>
+        </div>
+      </div>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  /* 为 prose 添加额外样式 */
+  .prose :where(h2):not(:where([class~="not-prose"] *)) {
+    @apply border-b border-gray-200 dark:border-dark-200 pb-2;
+  }
+</style>

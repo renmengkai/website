@@ -1,0 +1,320 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/ui/Card.astro';
+import Button from '../components/ui/Button.astro';
+
+// 关于页面数据
+const about = {
+  name: '张涛',
+  title: '创始人 & CEO',
+  avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
+  quote: '欢迎来到我的个人空间！我们团队致力于使用最先进的开发实践创建卓越的数字体验。在当今的数字时代，质量和创新不仅是必需品，更是我们的核心价值观。',
+};
+
+// 核心价值观
+const values = [
+  {
+    icon: 'innovation',
+    title: '创新',
+    description: '不断改进和创新我们的解决方案，保持行业领先地位。'
+  },
+  {
+    icon: 'integrity',
+    title: '诚信',
+    description: '在所有业务中始终坚持最高标准的诚实和透明。'
+  },
+  {
+    icon: 'customer',
+    title: '以客户为中心',
+    description: '在所有交互中保持对客户需求的最高关注度。'
+  }
+];
+
+// 统计数据
+const stats = [
+  { value: '1000+', label: '帮助超过1000家企业' },
+  { value: '99.9%', label: '客户满意度' },
+  { value: '24/7', label: '全天候支持' }
+];
+
+// 团队成员
+const team = [
+  {
+    name: '王婷',
+    role: '首席开发者',
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop'
+  },
+  {
+    name: '李静',
+    role: 'UI/UX 设计师',
+    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop'
+  },
+  {
+    name: '陈强',
+    role: '全栈开发者',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop'
+  },
+  {
+    name: '刘海',
+    role: '产品经理',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop'
+  }
+];
+
+// FAQ 数据
+const faqs = [
+  {
+    question: '你们擅长哪些技术？',
+    answer: '我们擅长现代Web技术，包括React、Vue.js、Astro、Node.js和TypeScript。我们在云服务和DevOps实践方面也有丰富的专业知识。'
+  },
+  {
+    question: '你们如何处理新项目？',
+    answer: '我们从充分的需求调研阶段开始，了解您的需求，然后进行详细规划、带有定期检查的迭代开发，以及在发布前进行全面测试。'
+  },
+  {
+    question: '典型项目时间线是什么？',
+    answer: '项目时间线因范围和复杂性而异。典型网站需要4-8周，而较大的应用可能需要3-6个月。我们始终在提案阶段提供详细的时间线。'
+  },
+  {
+    question: '你们提供持续的支持和维护吗？',
+    answer: '是的，我们提供灵活的支持和维护套餐，确保您的应用在发布后保持最新、安全并以最佳状态运行。'
+  }
+];
+---
+
+<Layout 
+  title="关于 - 个人空间"
+  description="了解更多关于我们的背景、价值观和团队"
+>
+  <!-- Hero 区域 -->
+  <section class="pt-32 pb-16">
+    <div class="container-custom">
+      <div class="text-center mb-4">
+        <span class="text-sm font-medium text-gray-400 uppercase tracking-wider">关于我们</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 text-center max-w-4xl mx-auto mb-6">
+        关于我们，对卓越的承诺
+      </h1>
+      <p class="text-lg text-gray-500 text-center max-w-2xl mx-auto">
+        你在数字创新领域的可信赖合作伙伴，为全面的Web开发提供尖端解决方案。
+      </p>
+    </div>
+  </section>
+
+  <!-- CEO 引言区域 -->
+  <section class="py-16">
+    <div class="container-custom">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <!-- 左侧图片 -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="rounded-2xl overflow-hidden">
+            <img 
+              src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&fit=crop" 
+              alt="团队协作"
+              class="w-full h-64 object-cover"
+            />
+          </div>
+          <div class="rounded-2xl overflow-hidden mt-8">
+            <img 
+              src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&h=400&fit=crop" 
+              alt="办公工作"
+              class="w-full h-64 object-cover"
+            />
+          </div>
+        </div>
+        
+        <!-- 右侧引言 -->
+        <div class="relative">
+          <!-- 引号装饰 -->
+          <div class="absolute -top-4 -left-4 text-8xl text-gray-100 font-serif leading-none">"</div>
+          
+          <div class="relative z-10">
+            <!-- CEO 信息 -->
+            <div class="flex items-center gap-4 mb-6">
+              <img 
+                src={about.avatar} 
+                alt={about.name}
+                class="w-16 h-16 rounded-full object-cover"
+              />
+              <div>
+                <h3 class="font-semibold text-gray-900">{about.name}</h3>
+                <p class="text-sm text-gray-500">{about.title}</p>
+              </div>
+            </div>
+            
+            <!-- 引言内容 -->
+            <p class="text-lg text-gray-600 leading-relaxed">
+              {about.quote}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 客户 Logo -->
+  <section class="py-12 border-y border-gray-100">
+    <div class="container-custom">
+      <p class="text-sm text-gray-400 text-center mb-8">受到全球数千家企业的信赖</p>
+      <div class="flex flex-wrap items-center justify-center gap-12 opacity-50">
+        {[1, 2, 3, 4, 5, 6].map(() => (
+          <div class="w-24 h-8 bg-gray-200 rounded"></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 核心价值观 -->
+  <section class="py-20">
+    <div class="container-custom">
+      <div class="text-center mb-12">
+        <span class="text-sm font-medium text-gray-400 uppercase tracking-wider">核心价值观</span>
+        <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mt-3">我们的价值观</h2>
+        <p class="text-lg text-gray-500 mt-4 max-w-2xl mx-auto">
+          你在数字创新领域的可信赖合作伙伴，为全面的Web开发提供尖端解决方案。
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {values.map((value) => (
+          <div class="text-center">
+            <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gray-100 flex items-center justify-center">
+              {value.icon === 'innovation' && (
+                <svg class="w-8 h-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              )}
+              {value.icon === 'integrity' && (
+                <svg class="w-8 h-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              )}
+              {value.icon === 'customer' && (
+                <svg class="w-8 h-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              )}
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">{value.title}</h3>
+            <p class="text-gray-500">{value.description}</p>
+          </div>
+        ))}
+      </div>
+      
+      <!-- 统计数字 -->
+      <div class="grid grid-cols-3 gap-8 mt-16 pt-16 border-t border-gray-100">
+        {stats.map((stat) => (
+          <div class="text-center">
+            <div class="text-4xl lg:text-5xl font-bold text-gray-900 mb-2">{stat.value}</div>
+            <p class="text-gray-500">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 团队展示 -->
+  <section class="py-20 bg-gray-50/50">
+    <div class="container-custom">
+      <div class="text-center mb-12">
+        <span class="text-sm font-medium text-gray-400 uppercase tracking-wider">我们的团队</span>
+        <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mt-3">认识我们的团队</h2>
+        <p class="text-lg text-gray-500 mt-4 max-w-2xl mx-auto">
+          你在数字创新领域的可信赖合作伙伴，为全面的Web开发提供尖端解决方案。
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {team.map((member) => (
+          <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center shadow-card hover:shadow-card-hover transition-shadow">
+            <img 
+              src={member.avatar} 
+              alt={member.name}
+              class="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
+            />
+            <h3 class="font-semibold text-gray-900">{member.name}</h3>
+            <p class="text-sm text-gray-500">{member.role}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ 区域 -->
+  <section class="py-20">
+    <div class="container-custom">
+      <div class="text-center mb-12">
+        <span class="text-sm font-medium text-gray-400 uppercase tracking-wider">常见问题</span>
+        <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mt-3">常见问答</h2>
+        <p class="text-lg text-gray-500 mt-4 max-w-2xl mx-auto">
+          你在数字创新领域的可信赖合作伙伴，为全面的Web开发提供尖端解决方案。
+        </p>
+      </div>
+      
+      <div class="max-w-3xl mx-auto space-y-4">
+        {faqs.map((faq, index) => (
+          <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden faq-item">
+            <button 
+              class="w-full px-6 py-5 text-left flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors faq-trigger"
+              data-index={index}
+            >
+              <span class="font-medium text-gray-900">{index + 1}. {faq.question}</span>
+              <svg class="w-5 h-5 text-gray-400 flex-shrink-0 faq-icon transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class="faq-content hidden px-6 pb-5">
+              <p class="text-gray-500">{faq.answer}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA 区域 -->
+  <section class="py-20">
+    <div class="container-custom">
+      <div class="bg-dark-100 rounded-3xl p-12 lg:p-16 text-center relative overflow-hidden">
+        <!-- 背景装饰 -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-48 h-48 bg-primary-500/10 rounded-full blur-3xl"></div>
+        
+        <div class="relative z-10">
+          <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4">
+            使用我们的解决方案保护您的项目
+          </h2>
+          <p class="text-gray-400 max-w-xl mx-auto mb-8">
+            允许您设置质量参数阈值，并在达到里程碑时接收实时更新。
+          </p>
+          <Button href="/contact" variant="primary" showArrow class="bg-primary-500 text-dark-100 hover:bg-primary-400">
+            开始使用
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // FAQ 手风琴交互
+  document.querySelectorAll('.faq-trigger').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      const item = trigger.closest('.faq-item');
+      const content = item?.querySelector('.faq-content');
+      const icon = item?.querySelector('.faq-icon');
+      
+      // 关闭其他打开的项
+      document.querySelectorAll('.faq-item').forEach(otherItem => {
+        if (otherItem !== item) {
+          otherItem.querySelector('.faq-content')?.classList.add('hidden');
+          otherItem.querySelector('.faq-icon')?.classList.remove('rotate-180');
+        }
+      });
+      
+      // 切换当前项
+      content?.classList.toggle('hidden');
+      icon?.classList.toggle('rotate-180');
+    });
+  });
+</script>

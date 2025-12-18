@@ -1,0 +1,241 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import SectionTitle from '../components/ui/SectionTitle.astro';
+import PostCard from '../components/PostCard.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Card from '../components/ui/Card.astro';
+import Button from '../components/ui/Button.astro';
+
+// 示例博客文章
+const posts = [
+  {
+    _id: '1',
+    title: '使用 Astro 构建现代静态网站',
+    slug: { current: 'building-with-astro' },
+    excerpt: '探索 Astro 框架的核心概念，了解如何利用其岛屿架构构建高性能的静态网站。',
+    publishedAt: '2024-12-15',
+    coverImage: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=450&fit=crop',
+    categories: [{ title: '技术', slug: { current: 'tech' } }]
+  },
+  {
+    _id: '2',
+    title: 'Tailwind CSS 最佳实践指南',
+    slug: { current: 'tailwind-best-practices' },
+    excerpt: '深入理解 Tailwind CSS 的设计哲学，掌握高效的样式编写技巧和组件化策略。',
+    publishedAt: '2024-12-10',
+    coverImage: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=450&fit=crop',
+    categories: [{ title: 'CSS', slug: { current: 'css' } }]
+  },
+  {
+    _id: '3',
+    title: 'Vue 3 组合式 API 完全指南',
+    slug: { current: 'vue3-composition-api' },
+    excerpt: '从响应式原理到自定义 Hooks，全面掌握 Vue 3 Composition API 的使用技巧。',
+    publishedAt: '2024-12-05',
+    coverImage: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=450&fit=crop',
+    categories: [{ title: 'Vue', slug: { current: 'vue' } }]
+  }
+];
+
+// 示例项目
+const projects = [
+  {
+    _id: '1',
+    title: '电商管理后台',
+    slug: { current: 'ecommerce-dashboard' },
+    description: '基于 Vue 3 + TypeScript 构建的现代化电商管理系统，支持商品管理、订单处理、数据分析等功能。',
+    thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop',
+    technologies: ['Vue 3', 'TypeScript', 'Tailwind CSS', 'Pinia'],
+    featured: true
+  },
+  {
+    _id: '2',
+    title: '个人知识库',
+    slug: { current: 'knowledge-base' },
+    description: '使用 Notion API 构建的个人知识管理工具，支持 Markdown 编辑、标签分类、全文搜索。',
+    thumbnail: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800&h=450&fit=crop',
+    technologies: ['Next.js', 'Notion API', 'Vercel'],
+    featured: true
+  },
+  {
+    _id: '3',
+    title: 'AI 对话助手',
+    slug: { current: 'ai-chat-assistant' },
+    description: '基于大语言模型的智能对话应用，支持多轮对话、上下文记忆、流式输出。',
+    thumbnail: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop',
+    technologies: ['React', 'OpenAI API', 'Node.js'],
+    featured: true
+  }
+];
+
+// 快速统计
+const stats = [
+  { label: '检测项目', value: '5.43k', trend: '↗' },
+  { label: '响应时间', value: '125s', trend: '↗' },
+  { label: '活跃项目', value: '432', trend: '↗' },
+];
+---
+
+<Layout title="个人空间 - 博客与作品集">
+  <!-- Hero Section -->
+  <Hero 
+    title="创意与代码的交汇点"
+    description="一名热爱技术与设计的全栈开发者，在这里分享我的思考、项目和探索之旅。"
+  />
+
+  <!-- 数据统计展示 -->
+  <section class="py-16 border-t border-gray-100">
+    <div class="container-custom">
+      <!-- 仪表板展示 -->
+      <div class="bg-white rounded-3xl border border-gray-100 shadow-card overflow-hidden">
+        <!-- 顶部导航栏 -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <div class="flex items-center gap-2">
+            <svg class="w-6 h-6" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="32" height="32" rx="8" fill="#1a1a1a"/>
+              <path d="M10 22V10h8l4 4v8H10z" stroke="#c8ff00" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+            <span class="font-semibold text-gray-900">个人空间</span>
+          </div>
+          <nav class="hidden md:flex items-center gap-6">
+            <span class="text-sm text-gray-900 font-medium">概览</span>
+            <span class="text-sm text-gray-400">技术监控</span>
+            <span class="text-sm text-gray-400">项目报告</span>
+            <span class="text-sm text-gray-400">用户活动</span>
+          </nav>
+          <div class="flex items-center gap-3">
+            <button class="p-2 rounded-lg hover:bg-gray-100">
+              <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+            <div class="w-8 h-8 rounded-full bg-gray-200"></div>
+          </div>
+        </div>
+        
+        <!-- 主内容区 -->
+        <div class="p-6">
+          <div class="flex flex-col lg:flex-row gap-8">
+            <!-- 左侧信息 -->
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
+                  <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+              </div>
+              <h3 class="text-xl font-semibold text-gray-900 mb-1">数据分析概览</h3>
+              <p class="text-sm text-gray-500 mb-6">近24小时、一周和一个月的数据统计。</p>
+              
+              <!-- 时间选择 -->
+              <div class="flex gap-2">
+                <button class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-full">24小时</button>
+                <button class="px-3 py-1.5 text-xs font-medium text-gray-400 hover:bg-gray-50 rounded-full">7天</button>
+                <button class="px-3 py-1.5 text-xs font-medium text-gray-400 hover:bg-gray-50 rounded-full">30天</button>
+              </div>
+            </div>
+            
+            <!-- 右侧统计 -->
+            <div class="flex gap-8">
+              {stats.map((stat) => (
+                <div class="text-center">
+                  <div class="flex items-center justify-center gap-1 mb-1">
+                    <span class="text-2xl font-bold text-gray-900">{stat.value}</span>
+                    <span class="text-green-500 text-sm">{stat.trend}</span>
+                  </div>
+                  <p class="text-sm text-gray-400">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 最新日志 -->
+  <section class="section">
+    <div class="container-custom">
+      <SectionTitle 
+        title="最新日志" 
+        subtitle="博客"
+      >
+        记录技术探索与思考，分享学习心得与实践经验
+      </SectionTitle>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {posts.map((post) => (
+          <PostCard
+            title={post.title}
+            excerpt={post.excerpt}
+            slug={post.slug.current}
+            coverImage={post.coverImage}
+            publishedAt={post.publishedAt}
+            categories={post.categories}
+          />
+        ))}
+      </div>
+      
+      <div class="text-center mt-12">
+        <Button href="/blog" variant="secondary" showArrow>
+          查看全部日志
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 精选作品 -->
+  <section class="section bg-gray-50/50">
+    <div class="container-custom">
+      <SectionTitle 
+        title="精选作品" 
+        subtitle="项目"
+      >
+        展示我参与或独立完成的项目，从创意到落地的完整历程
+      </SectionTitle>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {projects.map((project) => (
+          <ProjectCard
+            title={project.title}
+            description={project.description}
+            slug={project.slug.current}
+            thumbnail={project.thumbnail}
+            technologies={project.technologies}
+            featured={project.featured}
+          />
+        ))}
+      </div>
+      
+      <div class="text-center mt-12">
+        <Button href="/projects" variant="secondary" showArrow>
+          查看全部作品
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="section">
+    <div class="container-custom">
+      <div class="bg-white rounded-3xl border border-gray-100 shadow-card text-center py-16 lg:py-20 px-6">
+        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          有项目想法？让我们聊聊
+        </h2>
+        <p class="text-lg text-gray-500 max-w-xl mx-auto mb-8">
+          无论是技术咨询、项目合作还是单纯的交流，我都很乐意听取你的想法
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-4">
+          <Button href="/about" variant="primary" showArrow>
+            了解更多
+          </Button>
+          <Button href="mailto:hello@example.com" variant="secondary">
+            发送邮件
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

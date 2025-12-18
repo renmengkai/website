@@ -1,0 +1,153 @@
+---
+// Header 组件 - 简洁风格导航
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = '/' } = Astro.props;
+
+const navLinks = [
+  { href: '/', label: '首页' },
+  { href: '/blog', label: '日志' },
+  { href: '/projects', label: '作品' },
+  { href: '/about', label: '关于' },
+];
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100" id="main-header">
+  <div class="container-custom">
+    <nav class="flex items-center justify-between h-16 lg:h-20">
+      <!-- Logo -->
+      <a 
+        href="/" 
+        class="flex items-center gap-2 text-xl font-bold text-gray-900 hover:opacity-80 transition-opacity"
+      >
+        <svg class="w-8 h-8" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="8" fill="#1a1a1a"/>
+          <path d="M10 22V10h8l4 4v8H10z" stroke="#c8ff00" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M18 10v4h4" stroke="#c8ff00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>个人空间</span>
+      </a>
+
+      <!-- 桌面端导航 - 居中 -->
+      <div class="hidden md:flex items-center gap-8">
+        {navLinks.map((link) => (
+          <a
+            href={link.href}
+            class={`text-sm font-medium transition-colors duration-200
+              ${currentPath === link.href 
+                ? 'text-gray-900' 
+                : 'text-gray-500 hover:text-gray-900'
+              }`}
+          >
+            {link.label}
+          </a>
+        ))}
+      </div>
+
+      <!-- 右侧操作区 -->
+      <div class="flex items-center gap-4">
+        <!-- CTA 按钮 -->
+        <a
+          href="/about"
+          class="hidden sm:inline-flex items-center gap-2 bg-dark-100 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-dark-300 transition-colors"
+        >
+          开始探索
+          <svg class="w-4 h-4 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+
+        <!-- 移动端菜单按钮 -->
+        <button
+          class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          id="mobile-menu-btn"
+          aria-label="打开菜单"
+        >
+          <svg class="w-6 h-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- 移动端菜单 -->
+  <div 
+    class="md:hidden fixed inset-0 z-50 hidden" 
+    id="mobile-menu"
+  >
+    <div class="absolute inset-0 bg-black/20 backdrop-blur-sm" id="mobile-menu-overlay"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-72 bg-white shadow-xl transform transition-transform duration-300 translate-x-full" id="mobile-menu-panel">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-8">
+          <span class="text-lg font-bold text-gray-900">菜单</span>
+          <button
+            class="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            id="mobile-menu-close"
+            aria-label="关闭菜单"
+          >
+            <svg class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <nav class="space-y-1">
+          {navLinks.map((link) => (
+            <a
+              href={link.href}
+              class={`block px-4 py-3 rounded-xl text-base font-medium transition-colors
+                ${currentPath === link.href 
+                  ? 'text-gray-900 bg-gray-100' 
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                }`}
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+        
+        <!-- 移动端 CTA -->
+        <div class="mt-8 pt-8 border-t border-gray-100">
+          <a
+            href="/about"
+            class="flex items-center justify-center gap-2 w-full bg-dark-100 text-white px-5 py-3 rounded-full text-sm font-medium hover:bg-dark-300 transition-colors"
+          >
+            开始探索
+            <svg class="w-4 h-4 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  // 移动端菜单
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  const menuPanel = document.getElementById('mobile-menu-panel');
+  const menuClose = document.getElementById('mobile-menu-close');
+  const menuOverlay = document.getElementById('mobile-menu-overlay');
+
+  const openMenu = () => {
+    menu?.classList.remove('hidden');
+    setTimeout(() => {
+      menuPanel?.classList.remove('translate-x-full');
+    }, 10);
+  };
+
+  const closeMenu = () => {
+    menuPanel?.classList.add('translate-x-full');
+    setTimeout(() => {
+      menu?.classList.add('hidden');
+    }, 300);
+  };
+
+  menuBtn?.addEventListener('click', openMenu);
+  menuClose?.addEventListener('click', closeMenu);
+  menuOverlay?.addEventListener('click', closeMenu);
+</script>

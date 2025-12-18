@@ -1,0 +1,67 @@
+---
+// 博客文章卡片
+import Card from './ui/Card.astro';
+
+interface Props {
+  title: string;
+  excerpt: string;
+  slug: string;
+  coverImage?: string;
+  publishedAt: string;
+  categories?: Array<{ title: string; slug: { current: string } }>;
+}
+
+const { title, excerpt, slug, coverImage, publishedAt, categories = [] } = Astro.props;
+
+const formattedDate = new Date(publishedAt).toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+---
+
+<Card href={`/blog/${slug}`} class="group overflow-hidden">
+  <!-- 封面图 -->
+  {coverImage && (
+    <div class="relative -mx-6 -mt-6 mb-5 overflow-hidden">
+      <div class="aspect-video bg-gray-50">
+        <img 
+          src={coverImage} 
+          alt={title}
+          class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
+        />
+      </div>
+    </div>
+  )}
+  
+  <!-- 分类标签 -->
+  {categories.length > 0 && (
+    <div class="flex flex-wrap gap-2 mb-3">
+      {categories.slice(0, 2).map((category) => (
+        <span class="inline-block px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">
+          {category.title}
+        </span>
+      ))}
+    </div>
+  )}
+  
+  <!-- 标题 -->
+  <h3 class="text-lg font-semibold text-gray-900 mb-2
+             group-hover:text-gray-600 transition-colors">
+    {title}
+  </h3>
+  
+  <!-- 摘要 -->
+  <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">
+    {excerpt}
+  </p>
+  
+  <!-- 日期 -->
+  <div class="flex items-center text-sm text-gray-400">
+    <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    </svg>
+    <time datetime={publishedAt}>{formattedDate}</time>
+  </div>
+</Card>
