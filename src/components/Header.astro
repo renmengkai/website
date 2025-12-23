@@ -8,7 +8,7 @@ const { currentPath = '/' } = Astro.props;
 
 const navLinks = [
   { href: '/', label: '首页' },
-  { href: '/blog', label: '日志' },
+  { href: '/blog', label: '博客' },
   { href: '/projects', label: '作品' },
   { href: '/about', label: '关于' },
 ];
@@ -23,11 +23,21 @@ const navLinks = [
         class="flex items-center gap-2 text-xl font-bold text-gray-900 hover:opacity-80 transition-opacity"
       >
         <svg class="w-8 h-8" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="32" height="32" rx="8" fill="#1a1a1a"/>
-          <path d="M10 22V10h8l4 4v8H10z" stroke="#c8ff00" stroke-width="2" stroke-linejoin="round"/>
-          <path d="M18 10v4h4" stroke="#c8ff00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect width="32" height="32" rx="8" fill="#c8ff00"/>
+          <!-- R letter -->
+          <path d="M9 22V10H13.5C14.8807 10 16 11.1193 16 12.5V12.5C16 13.8807 14.8807 15 13.5 15H11" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M11 15H15C16.6569 15 18 16.3431 18 18V18C18 19.6569 16.6569 21 15 21H11" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M15 15L18 10" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- M letter -->
+          <path d="M20 22V10" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+          <path d="M20 10L23 16L26 10" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M26 10V22" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+          <!-- K letter -->
+          <path d="M18 10V22" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+          <path d="M18 16L22 10" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+          <path d="M18 16L22 22" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
         </svg>
-        <span>个人空间</span>
+        <span>RMK</span>
       </a>
 
       <!-- 桌面端导航 - 居中 -->

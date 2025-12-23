@@ -9,7 +9,7 @@ export default defineConfig({
     tailwind()
   ],
   output: 'static',
-  site: 'https://your-site.deno.dev',
+  site: 'https://www.mengkai.ren',
   vite: {
     ssr: {
       noExternal: ['@sanity/client']
