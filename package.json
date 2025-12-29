@@ -8,9 +8,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "sanity-install": "cd sanity && npm install",
     "sanity-dev": "cd sanity && npm run dev",
     "sanity-build": "cd sanity && npm run build",
-    "build-cms": "cd sanity && npm run build && rm -rf ../public/cms && mv dist ../public/cms"
+    "build-cms": "scripts\\install-sanity.bat && scripts\\build-cms.bat"
   },
   "dependencies": {
     "@astrojs/vue": "^5.1.3",

@@ -1,12 +1,30 @@
 ---
-// 这个页面将重定向到CMS
-import { redirect } from 'astro:middleware';
-
-// 重定向到CMS静态文件
-// 由于CMS是静态文件，我们需要在服务器级别处理，而不是通过Astro页面
-// 这个页面实际上不会被使用，因为静态文件优先级更高
+// CMS 路由页面 - 重定向到实际的静态文件
+// 设置 basePath 后，Sanity 会生成正确路径的文件
+// 直接访问 public/cms/index.html 即可
 ---
 
-<!-- 这个页面应该永远不会被访问，因为CMS静态文件在/public/cms下 -->
-<h1>Content Management System</h1>
-<p>如果看到此页面，请确保CMS已正确构建到/public/cms目录</p>
+<meta http-equiv="refresh" content="0;url=/cms/index.html" />
+<script>
+  // 立即跳转到 CMS 实际位置
+  window.location.href = '/cms/index.html';
+</script>
+<style>
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  .loading {
+    text-align: center;
+  }
+</style>
+<body>
+  <div class="loading">
+    <p>正在加载 Sanity Studio...</p>
+    <p><a href="/cms/index.html">如果没有自动跳转，请点击这里</a></p>
+  </div>
+</body>

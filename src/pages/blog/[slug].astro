@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import Badge from '../../components/ui/Badge.astro';
 import Button from '../../components/ui/Button.astro';
+import PortableText from '../../components/PortableText.astro';
 import { fetchSanity, postBySlugQuery } from '../../lib/sanity';
 
 // 动态路由参数
@@ -26,6 +27,9 @@ if (!post) {
   return Astro.redirect('/404');
 }
 
+// 确保 categories 是一个数组，过滤掉 null 值
+const safeCategories = Array.isArray(post.categories) ? post.categories.filter((cat: any) => cat != null) : [];
+
 const formattedDate = new Date(post.publishedAt).toLocaleDateString('zh-CN', {
   year: 'numeric',
   month: 'long',
@@ -44,7 +48,7 @@ const formattedDate = new Date(post.publishedAt).toLocaleDateString('zh-CN', {
       <header class="max-w-3xl mx-auto text-center mb-12">
         <!-- 分类 -->
         <div class="flex flex-wrap justify-center gap-2 mb-6">
-          {post.categories?.map((cat: any) => (
+          {safeCategories.map((cat: any) => (
             <Badge variant="primary">{cat.title}</Badge>
           ))}
         </div>
@@ -84,33 +88,20 @@ const formattedDate = new Date(post.publishedAt).toLocaleDateString('zh-CN', {
       
       <!-- 文章内容 -->
       <div class="max-w-3xl mx-auto">
-        <div class="prose prose-lg dark:prose-invert 
+        <div class="prose prose-lg dark:prose-invert
                     prose-headings:font-bold prose-headings:tracking-tight
-                    prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4
-                    prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-                    prose-p:text-gray-600 dark:prose-p:text-gray-400 prose-p:leading-relaxed
+                    prose-headings:text-gray-900 dark:prose-headings:text-white
+                    prose-p:text-gray-600 dark:prose-p:text-gray-400 prose-p:leading-relaxed prose-p:mb-4
                     prose-a:text-primary-600 dark:prose-a:text-primary-400 prose-a:no-underline hover:prose-a:underline
-                    prose-code:bg-gray-100 dark:prose-code:bg-dark-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+                    prose-strong:text-gray-900 dark:prose-strong:text-white
+                    prose-code:bg-gray-100 dark:prose-code:bg-dark-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
                     prose-pre:bg-gray-900 dark:prose-pre:bg-dark-100 prose-pre:rounded-xl
-                    prose-img:rounded-xl
-                    prose-ul:text-gray-600 dark:prose-ul:text-gray-400
-                    prose-ol:text-gray-600 dark:prose-ol:text-gray-400
+                    prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4
+                    prose-ul:text-gray-600 dark:prose-ul:text-gray-400 prose-ul:list-disc prose-ul:pl-6
+                    prose-ol:text-gray-600 dark:prose-ol:text-gray-400 prose-ol:list-decimal prose-ol:pl-6
                     prose-li:marker:text-primary-500
                     max-w-none">
-          {post.body?.map((block: any) => {
-            if (block._type === 'block') {
-              return <Fragment set:html={JSON.stringify(block).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")} />;
-            } else if (block._type === 'image' && block.asset) {
-              return <img src={block.asset.url} alt={block.alt || ''} class="rounded-xl my-4" />;
-            } else if (block._type === 'code') {
-              return (
-                <pre class="bg-gray-900 dark:bg-dark-100 rounded-xl p-4 my-4 overflow-x-auto">
-                  <code>{block.code}</code>
-                </pre>
-              );
-            }
-            return null;
-          })}
+          <PortableText blocks={post.body} />
         </div>
         
         <!-- 返回按钮 -->

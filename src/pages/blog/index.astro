@@ -1,13 +1,42 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import PostCard from '../../components/PostCard.astro';
-import { fetchSanity, postsQuery } from '../../lib/sanity';
+import { fetchSanity, postsQuery, categoriesQuery } from '../../lib/sanity';
 
-// 从Sanity CMS获取博客文章
+// 从 Sanity CMS 获取博客文章和分类
 const posts = await fetchSanity<any[]>(postsQuery);
+const allCategories = await fetchSanity<any[]>(categoriesQuery);
 
-// 分类
-const categories = ['全部', '技术', 'CSS', 'Vue', 'TypeScript', 'Node.js'];
+// 从文章中提取所有使用的分类（作为备选方案）
+const categoriesFromPosts = new Map();
+posts.forEach(post => {
+  if (post.categories && Array.isArray(post.categories)) {
+    post.categories.forEach((cat: any) => {
+      if (cat && cat.title) {
+        const catSlug = cat.slug?.current || cat.slug;
+        if (catSlug) {
+          categoriesFromPosts.set(catSlug, cat.title);
+        }
+      }
+    });
+  }
+});
+
+// 使用从 Sanity 查询的分类，如果没有 slug 则使用从文章中提取的
+const validCategories = allCategories.filter(cat => cat.slug);
+
+// 如果 Sanity 查询的分类为空，使用从文章中提取的分类
+const finalCategories = validCategories.length > 0
+  ? validCategories
+  : Array.from(categoriesFromPosts.entries()).map(([slug, title]) => ({
+      _id: slug,
+      title,
+      slug
+    }));
+
+// 将数据传递给客户端
+const postsData = JSON.stringify(posts);
+const categoriesData = JSON.stringify(finalCategories);
 ---
 
 <Layout 
@@ -27,24 +56,22 @@ const categories = ['全部', '技术', 'CSS', 'Vue', 'TypeScript', 'Node.js'];
         记录技术探索与思考，分享学习心得与实践经验。<br>
         在这里，你会找到关于AI开发、Web全栈技术和系统设计思考的文章。
       </p>
+
+      <!--&lt;!&ndash; 当前分类提示 &ndash;&gt;-->
+      <!--<div id="current-category" class="text-center mt-4 hidden">-->
+      <!--  <span class="text-sm text-gray-500">-->
+      <!--    正在查看分类：-->
+      <!--    <span id="category-name" class="font-medium text-gray-700"></span>-->
+      <!--  </span>-->
+      <!--</div>-->
     </div>
   </section>
 
   <!-- 分类筛选 -->
   <section class="pb-12">
     <div class="container-custom">
-      <div class="flex flex-wrap items-center justify-center gap-3">
-        {categories.map((cat, index) => (
-          <button 
-            class={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              index === 0 
-                ? 'bg-dark-100 text-white' 
-                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
+      <div id="category-filters" class="flex flex-wrap items-center justify-center gap-3">
+        <!-- 分类按钮将通过 JavaScript 动态生成 -->
       </div>
     </div>
   </section>
@@ -52,23 +79,9 @@ const categories = ['全部', '技术', 'CSS', 'Vue', 'TypeScript', 'Node.js'];
   <!-- 文章列表 -->
   <section class="pb-20">
     <div class="container-custom">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-        {posts && posts.length > 0 ? (
-          posts.map((post) => (
-            <PostCard
-              title={post.title}
-              excerpt={post.excerpt}
-              slug={post.slug.current}
-              coverImage={post.coverImage}
-              publishedAt={post.publishedAt}
-              categories={post.categories}
-            />
-          ))
-        ) : (
-          <div class="col-span-full text-center py-12">
-            <p class="text-gray-500">暂无博客文章</p>
-          </div>
-        )}
+      <div id="posts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        <!-- 文章卡片将通过 JavaScript 动态生成 -->
+      </div>
       </div>
       
       <!-- 加载更多按钮 -->
@@ -113,3 +126,195 @@ const categories = ['全部', '技术', 'CSS', 'Vue', 'TypeScript', 'Node.js'];
     </div>
   </section>
 </Layout>
+
+<script define:vars={{ postsData, categoriesData }}>
+  const posts = JSON.parse(postsData);
+  const categories = JSON.parse(categoriesData);
+
+  // 调试：查看分类和文章数据
+  console.log('=== 调试信息 ===');
+  console.log('Categories data:', categories);
+  console.log('Posts data:', posts);
+
+  // 打印每篇文章的分类信息
+  posts.forEach(post => {
+    console.log(`文章: ${post.title}`);
+    console.log('  分类:', post.categories);
+    if (post.categories) {
+      post.categories.forEach(cat => {
+        console.log('    - cat.slug:', cat.slug, 'cat.slug?.current:', cat.slug?.current);
+      });
+    }
+  });
+
+  // 获取 DOM 元素
+  const categoryFilters = document.getElementById('category-filters');
+  const postsGrid = document.getElementById('posts-grid');
+  const currentCategoryDiv = document.getElementById('current-category');
+  const categoryNameSpan = document.getElementById('category-name');
+
+  // 从 URL 获取当前选中的分类
+  const urlParams = new URLSearchParams(window.location.search);
+  let selectedCategory = urlParams.get('category') || '';
+
+  // 渲染分类按钮
+  function renderCategories() {
+    const allCategories = [
+      { title: '全部', slug: '' },
+      ...categories
+        .filter(cat => cat.slug) // 过滤掉没有 slug 的分类
+        .map(cat => ({ title: cat.title, slug: cat.slug }))
+    ];
+
+    categoryFilters.innerHTML = allCategories.map(cat => {
+      const isActive = cat.slug === selectedCategory;
+      const activeClass = isActive
+        ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
+        : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 dark:bg-dark-100 dark:text-gray-300 dark:border-dark-200 dark:hover:bg-dark-200';
+
+      return `
+        <button
+          data-category="${cat.slug}"
+          class="px-4 py-2 rounded-full text-sm font-medium transition-colors ${activeClass}"
+          onclick="filterByCategory('${cat.slug}')"
+        >
+          ${cat.title}
+        </button>
+      `;
+    }).join('');
+  }
+
+  // 渲染文章卡片
+  function renderPosts(filteredPosts) {
+    if (!filteredPosts || filteredPosts.length === 0) {
+      postsGrid.innerHTML = `
+        <div class="col-span-full text-center py-12">
+          <p class="text-gray-500">该分类下暂无博客文章</p>
+        </div>
+      `;
+      return;
+    }
+
+    postsGrid.innerHTML = filteredPosts.map(post => {
+      const formattedDate = new Date(post.publishedAt).toLocaleDateString('zh-CN', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+
+      const categoriesHtml = (post.categories || [])
+        .filter(cat => cat != null)
+        .slice(0, 2)
+        .map(cat => `
+          <span class="inline-block px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">
+            ${cat.title}
+          </span>
+        `).join('');
+
+      return `
+        <a href="/blog/${post.slug.current}" class="group overflow-hidden block">
+          <div class="bg-white rounded-2xl p-6 border border-gray-100 hover:border-gray-200 hover:shadow-card transition-all">
+            ${post.coverImage ? `
+              <div class="relative -mx-6 -mt-6 mb-5 overflow-hidden">
+                <div class="aspect-video bg-gray-50">
+                  <img
+                    src="${post.coverImage}"
+                    alt="${post.title}"
+                    class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+            ` : ''}
+
+            ${categoriesHtml ? `
+              <div class="flex flex-wrap gap-2 mb-3">
+                ${categoriesHtml}
+              </div>
+            ` : ''}
+
+            <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-gray-600 transition-colors">
+              ${post.title}
+            </h3>
+
+            <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">
+              ${post.excerpt}
+            </p>
+
+            <div class="flex items-center text-sm text-gray-400">
+              <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <time datetime="${post.publishedAt}">${formattedDate}</time>
+            </div>
+          </div>
+        </a>
+      `;
+    }).join('');
+  }
+
+  // 筛选文章
+  function filterByCategory(categorySlug) {
+    selectedCategory = categorySlug;
+
+    // 更新 URL（不刷新页面）
+    const newUrl = categorySlug
+      ? `/blog?category=${categorySlug}`
+      : '/blog';
+    window.history.pushState({ category: categorySlug }, '', newUrl);
+
+    // 筛选文章 - 处理 categories 数组中每个 category 的 slug 可能是字符串或对象
+    const filteredPosts = categorySlug
+      ? posts.filter(post => {
+          if (!post.categories || !Array.isArray(post.categories)) return false;
+          return post.categories.some(cat => {
+            // cat 可能是 { slug: { current: 'xxx' } } 或 { slug: 'xxx' }
+            const catSlug = cat.slug?.current || cat.slug;
+            return catSlug === categorySlug;
+          });
+        })
+      : posts;
+
+    // 更新 UI
+    renderCategories();
+    renderPosts(filteredPosts);
+    updateCategoryLabel(categorySlug);
+  }
+
+  // 更新分类标签
+  function updateCategoryLabel(categorySlug) {
+    if (!categorySlug) {
+      currentCategoryDiv.classList.add('hidden');
+      return;
+    }
+
+    const category = categories.find(cat => cat.slug && cat.slug === categorySlug);
+    if (category) {
+      categoryNameSpan.textContent = category.title;
+      currentCategoryDiv.classList.remove('hidden');
+    } else {
+      currentCategoryDiv.classList.add('hidden');
+    }
+  }
+
+  // 将函数暴露到全局作用域
+  window.filterByCategory = filterByCategory;
+
+  // 初始化
+  renderCategories();
+
+  // 初始筛选 - 处理 categories 数组中每个 category 的 slug 可能是字符串或对象
+  const filteredPosts = selectedCategory
+    ? posts.filter(post => {
+        if (!post.categories || !Array.isArray(post.categories)) return false;
+        return post.categories.some(cat => {
+          // cat 可能是 { slug: { current: 'xxx' } } 或 { slug: 'xxx' }
+          const catSlug = cat.slug?.current || cat.slug;
+          return catSlug === selectedCategory;
+        });
+      })
+    : posts;
+
+  renderPosts(filteredPosts);
+  updateCategoryLabel(selectedCategory);
+</script>

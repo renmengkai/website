@@ -19,6 +19,13 @@ export const postsQuery = `*[_type == "post"] | order(publishedAt desc) {
   categories[]->{title, slug}
 }`;
 
+// GROQ 查询：获取所有分类
+export const categoriesQuery = `*[_type == "category"] | order(title asc) {
+  _id,
+  title,
+  "slug": slug.current
+}`;
+
 // GROQ 查询：获取单篇博客文章
 export const postBySlugQuery = `*[_type == "post" && slug.current == $slug][0] {
   _id,

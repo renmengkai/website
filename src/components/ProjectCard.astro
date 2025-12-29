@@ -5,7 +5,7 @@ import Card from './ui/Card.astro';
 interface Props {
   title: string;
   description: string;
-  slug: string;
+  slug: { current: string };
   thumbnail?: string;
   technologies?: string[];
   featured?: boolean;
@@ -14,7 +14,7 @@ interface Props {
 const { title, description, slug, thumbnail, technologies = [], featured = false } = Astro.props;
 ---
 
-<Card href={`/projects/${slug}`} class="group overflow-hidden relative">
+<Card href={`/projects/${slug.current}`} class="group overflow-hidden relative">
   <!-- 精选标记 -->
   {featured && (
     <div class="absolute top-4 right-4 z-10">
