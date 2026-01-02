@@ -14,5 +14,7 @@ export default defineConfig({
     ssr: {
       noExternal: ['@sanity/client']
     }
-  }
+  },
+  // 配置 public 目录，确保 /cms 路径可以正确访问
+  publicDir: 'public'
 });

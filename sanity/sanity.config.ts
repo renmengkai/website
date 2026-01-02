@@ -12,13 +12,17 @@ export default defineConfig({
 
   // 设置基础路径为 /cms，这样构建的静态文件会使用正确的资源路径
   // 这个配置会在构建时被使用
+  basePath: '/cms',
   studio: {
     components: {
       logo: () => null,
     }
   },
 
-  plugins: [structureTool(), visionTool()],
+  plugins: [
+    structureTool(),
+    visionTool()
+  ],
 
   schema: {
     types: schemaTypes,
