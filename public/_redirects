@@ -1,0 +1,2 @@
+# Redirect all CMS paths to index.html for client-side routing
+/cms/* /cms/index.html 200
