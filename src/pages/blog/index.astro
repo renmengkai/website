@@ -84,9 +84,10 @@ const categoriesData = JSON.stringify(finalCategories);
       </div>
       </div>
       
+      
       <!-- 加载更多按钮 -->
-      <div class="text-center mt-12">
-        <button class="inline-flex items-center gap-2 px-8 py-3 rounded-full text-base font-medium border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all">
+      <div id="load-more-container" class="text-center mt-12" style="display: none;">
+        <button id="load-more-btn" class="inline-flex items-center gap-2 px-8 py-3 rounded-full text-base font-medium border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all">
           加载更多文章
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -152,6 +153,13 @@ const categoriesData = JSON.stringify(finalCategories);
   const postsGrid = document.getElementById('posts-grid');
   const currentCategoryDiv = document.getElementById('current-category');
   const categoryNameSpan = document.getElementById('category-name');
+  const loadMoreContainer = document.getElementById('load-more-container');
+  const loadMoreBtn = document.getElementById('load-more-btn');
+
+  // 分页配置
+  const POSTS_PER_PAGE = 6;
+  let currentPage = 1;
+  let currentFilteredPosts = [];
 
   // 从 URL 获取当前选中的分类
   const urlParams = new URLSearchParams(window.location.search);
@@ -185,17 +193,28 @@ const categoriesData = JSON.stringify(finalCategories);
   }
 
   // 渲染文章卡片
-  function renderPosts(filteredPosts) {
+  function renderPosts(filteredPosts, append = false) {
     if (!filteredPosts || filteredPosts.length === 0) {
       postsGrid.innerHTML = `
         <div class="col-span-full text-center py-12">
           <p class="text-gray-500">该分类下暂无博客文章</p>
         </div>
       `;
+      updateLoadMoreButton(0, 0);
       return;
     }
 
-    postsGrid.innerHTML = filteredPosts.map(post => {
+    // 保存当前筛选的文章
+    if (!append) {
+      currentFilteredPosts = filteredPosts;
+      currentPage = 1;
+    }
+
+    // 计算要显示的文章
+    const postsToShow = currentFilteredPosts.slice(0, currentPage * POSTS_PER_PAGE);
+    const totalPosts = currentFilteredPosts.length;
+
+    const postsHtml = postsToShow.map(post => {
       const formattedDate = new Date(post.publishedAt).toLocaleDateString('zh-CN', {
         year: 'numeric',
         month: 'long',
@@ -251,11 +270,100 @@ const categoriesData = JSON.stringify(finalCategories);
         </a>
       `;
     }).join('');
+
+    if (append) {
+      postsGrid.innerHTML += postsHtml;
+    } else {
+      postsGrid.innerHTML = postsHtml;
+    }
+
+    // 更新"加载更多"按钮的显示状态
+    updateLoadMoreButton(postsToShow.length, totalPosts);
+  }
+
+  // 更新"加载更多"按钮的显示状态
+  function updateLoadMoreButton(displayedCount, totalCount) {
+    if (displayedCount < totalCount) {
+      loadMoreContainer.style.display = 'block';
+    } else {
+      loadMoreContainer.style.display = 'none';
+    }
+  }
+
+  // 加载更多文章
+  function loadMorePosts() {
+    currentPage++;
+    const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+    const endIndex = currentPage * POSTS_PER_PAGE;
+    const newPosts = currentFilteredPosts.slice(startIndex, endIndex);
+    
+    if (newPosts.length > 0) {
+      const postsHtml = newPosts.map(post => {
+        const formattedDate = new Date(post.publishedAt).toLocaleDateString('zh-CN', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+
+        const categoriesHtml = (post.categories || [])
+          .filter(cat => cat != null)
+          .slice(0, 2)
+          .map(cat => `
+            <span class="inline-block px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">
+              ${cat.title}
+            </span>
+          `).join('');
+
+        return `
+          <a href="/blog/${post.slug.current}" class="group overflow-hidden block">
+            <div class="bg-white rounded-2xl p-6 border border-gray-100 hover:border-gray-200 hover:shadow-card transition-all">
+              ${post.coverImage ? `
+                <div class="relative -mx-6 -mt-6 mb-5 overflow-hidden">
+                  <div class="aspect-video bg-gray-50">
+                    <img
+                      src="${post.coverImage}"
+                      alt="${post.title}"
+                      class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              ` : ''}
+
+              ${categoriesHtml ? `
+                <div class="flex flex-wrap gap-2 mb-3">
+                  ${categoriesHtml}
+                </div>
+              ` : ''}
+
+              <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-gray-600 transition-colors">
+                ${post.title}
+              </h3>
+
+              <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">
+                ${post.excerpt}
+              </p>
+
+              <div class="flex items-center text-sm text-gray-400">
+                <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <time datetime="${post.publishedAt}">${formattedDate}</time>
+              </div>
+            </div>
+          </a>
+        `;
+      }).join('');
+      
+      postsGrid.innerHTML += postsHtml;
+      updateLoadMoreButton((currentPage * POSTS_PER_PAGE), currentFilteredPosts.length);
+    }
   }
 
   // 筛选文章
   function filterByCategory(categorySlug) {
     selectedCategory = categorySlug;
+    currentPage = 1; // 重置页码
 
     // 更新 URL（不刷新页面）
     const newUrl = categorySlug
@@ -277,28 +385,31 @@ const categoriesData = JSON.stringify(finalCategories);
 
     // 更新 UI
     renderCategories();
-    renderPosts(filteredPosts);
+    renderPosts(filteredPosts, false);
     updateCategoryLabel(categorySlug);
   }
 
   // 更新分类标签
   function updateCategoryLabel(categorySlug) {
-    if (!categorySlug) {
-      currentCategoryDiv.classList.add('hidden');
-      return;
-    }
-
-    const category = categories.find(cat => cat.slug && cat.slug === categorySlug);
-    if (category) {
-      categoryNameSpan.textContent = category.title;
-      currentCategoryDiv.classList.remove('hidden');
-    } else {
-      currentCategoryDiv.classList.add('hidden');
-    }
+    // 分类标签功能已被注释，跳过处理
+    // if (!categorySlug) {
+    //   currentCategoryDiv.classList.add('hidden');
+    //   return;
+    // }
+    // const category = categories.find(cat => cat.slug && cat.slug === categorySlug);
+    // if (category) {
+    //   categoryNameSpan.textContent = category.title;
+    //   currentCategoryDiv.classList.remove('hidden');
+    // } else {
+    //   currentCategoryDiv.classList.add('hidden');
+    // }
   }
 
   // 将函数暴露到全局作用域
   window.filterByCategory = filterByCategory;
+
+  // "加载更多"按钮事件
+  loadMoreBtn.addEventListener('click', loadMorePosts);
 
   // 初始化
   renderCategories();
