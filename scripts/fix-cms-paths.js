@@ -9,39 +9,36 @@ const distDir = join(rootDir, 'sanity', 'dist');
 
 /**
  * 修复 Sanity 构建后的静态资源路径
- * 将 /static/ 和 /vendor/ 替换为 /cms/static/ 和 /cms/vendor/
+ * 注意:现在 Sanity 构建时使用 --base-path /cms,所以大部分路径已经正确
+ * 这个脚本主要用于修复可能的边缘情况
  */
 function fixCmsPaths() {
   try {
-    // 修复 index.html
+    // 修复 index.html - 添加额外的路径检查
     const indexPath = join(distDir, 'index.html');
     let content = readFileSync(indexPath, 'utf-8');
 
-    // 替换所有静态资源路径 - 更全面的替换
-    // HTML 属性中的路径
-    content = content.replace(/href="\/static\//g, 'href="/cms/static/');
-    content = content.replace(/src="\/static\//g, 'src="/cms/static/');
-    content = content.replace(/href="\/vendor\//g, 'href="/cms/vendor/');
-    content = content.replace(/src="\/vendor\//g, 'src="/cms/vendor/');
+    // Sanity v5 使用 --base-path 后应该已经生成了正确的路径
+    // 但为了确保万无一失,检查并修复可能遗漏的路径
+    const needsFix = content.includes('/static/') && !content.includes('/cms/static/');
 
-    // JSON 字符串中的路径（如 import map）
-    content = content.replace(/"\/static\//g, '"/cms/static/');
-    content = content.replace(/"\/vendor\//g, '"/cms/vendor/');
+    if (needsFix) {
+      console.log('⚠ Found unpatched paths, fixing...');
+      // HTML 属性中的路径
+      content = content.replace(/href="\/static\//g, 'href="/cms/static/');
+      content = content.replace(/src="\/static\//g, 'src="/cms/static/');
+      content = content.replace(/href="\/vendor\//g, 'href="/cms/vendor/');
+      content = content.replace(/src="\/vendor\//g, 'src="/cms/vendor/');
 
-    // 单引号字符串中的路径
-    content = content.replace(/'\/static\//g, "'/cms/static/");
-    content = content.replace(/'\/vendor\//g, "'/cms/vendor/");
+      // JSON 字符串中的路径
+      content = content.replace(/"\/static\//g, '"/cms/static/');
+      content = content.replace(/"\/vendor\//g, '"/cms/vendor/');
 
-    writeFileSync(indexPath, content, 'utf-8');
-    console.log('✓ Fixed static resource paths in index.html');
-
-    // 递归修复 static 目录中的文件
-    const staticDir = join(distDir, 'static');
-    fixDirectory(staticDir);
-
-    // 也修复 vendor 目录
-    const vendorDir = join(distDir, 'vendor');
-    fixDirectory(vendorDir);
+      writeFileSync(indexPath, content, 'utf-8');
+      console.log('✓ Fixed static resource paths in index.html');
+    } else {
+      console.log('✓ CMS paths are already correct (base-path is working)');
+    }
 
     console.log('✓ CMS path fixing completed!');
   } catch (error) {
