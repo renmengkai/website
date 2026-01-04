@@ -14,6 +14,7 @@
     "build-cms": "scripts\\install-sanity.bat && scripts\\build-cms.bat"
   },
   "dependencies": {
+    "@astrojs/node": "^9.5.1",
     "@astrojs/vue": "^5.1.3",
     "@sanity/client": "^7.13.2",
     "astro": "^5.16.6",
