@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 import vue from '@astrojs/vue';
 import tailwind from '@astrojs/tailwind';
-import node from '@astrojs/node';
+import deno from '@deno/astro-adapter';
 
 // https://astro.build/config
 export default defineConfig({
@@ -9,8 +9,8 @@ export default defineConfig({
     vue(),
     tailwind()
   ],
-  output: 'static',
-  adapter: node({ mode: 'standalone' }),
+  output: 'server',
+  adapter: deno(),
   site: 'https://www.mengkai.ren',
   prefetch: {
     prefetchAll: false,
