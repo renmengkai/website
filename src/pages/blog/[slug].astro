@@ -1,22 +1,15 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Badge from '../../components/ui/Badge.astro';
-import Button from '../../components/ui/Button.astro';
 import MarkdownContent from '../../components/MarkdownContent.astro';
+import PortableText from '../../components/PortableText.astro';
 import { fetchSanity, postBySlugQuery } from '../../lib/sanity';
 
 // 动态路由参数
 export async function getStaticPaths() {
-  // 从 Sanity 获取所有博客文章的 slug
-  const postsQuery = `*[_type == "post"] {
-    "slug": slug.current
-  }`;
-  
+  const postsQuery = `*[_type == "post"] { "slug": slug.current }`;
   const posts = await fetchSanity<any[]>(postsQuery);
-
-  return posts.map((post) => ({
-    params: { slug: post.slug }
-  }));
+  return posts.map((post) => ({ params: { slug: post.slug } }));
 }
 
 // 获取当前文章数据
@@ -42,7 +35,7 @@ const formattedDate = new Date(post.publishedAt).toLocaleDateString('zh-CN', {
   description={post.excerpt}
   image={post.coverImage}
 >
-  <article class="section">
+  <article class="section" transition:animate="fade">
     <div class="container-custom">
       <!-- 文章头部 -->
       <header class="max-w-3xl mx-auto text-center mb-12">
@@ -84,22 +77,27 @@ const formattedDate = new Date(post.publishedAt).toLocaleDateString('zh-CN', {
             src={post.coverImage} 
             alt={post.title}
             class="w-full aspect-video object-cover"
+            loading="eager"
           />
         </div>
       )}
       
       <!-- 文章内容 -->
-      <div class="max-w-3xl mx-auto">
-        <MarkdownContent content={post.body} />
+      <div class="max-w-3xl mx-auto prose prose-lg dark:prose-invert max-w-none">
+        {Array.isArray(post.body) ? (
+          <PortableText blocks={post.body} />
+        ) : (
+          <MarkdownContent content={post.body} />
+        )}
         
         <!-- 返回按钮 -->
         <div class="mt-16 pt-8 border-t border-gray-200 dark:border-dark-200">
-          <Button href="/blog" variant="ghost">
-            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <a href="/blog" data-astro-prefetch="hover" class="inline-flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
             </svg>
             返回日志列表
-          </Button>
+          </a>
         </div>
       </div>
     </div>

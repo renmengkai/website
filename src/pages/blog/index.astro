@@ -124,121 +124,129 @@ import Layout from '../../layouts/Layout.astro';
 </Layout>
 
 <script is:inline>
-  const POSTS_PER_PAGE = 6;
-  const SANITY_PROJECT_ID = 'k2j30muc';
-  const SANITY_DATASET = 'production';
-  
-  let posts = [];
-  let categories = [];
-  let currentPage = 1;
-  let currentFilteredPosts = [];
-  let selectedCategory = new URLSearchParams(window.location.search).get('category') || '';
-  let searchKeyword = '';
-
-  const categoryFilters = document.getElementById('category-filters');
-  const postsGrid = document.getElementById('posts-grid');
-  const loadMoreContainer = document.getElementById('load-more-container');
-  const loadMoreBtn = document.getElementById('load-more-btn');
-  const searchInput = document.getElementById('search-input');
-
-  // Sanity API 查询
-  async function fetchSanity(query) {
-    const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2024-01-01/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    return data.result;
-  }
-
-  // 生成文章卡片 HTML
-  function createPostHtml(post) {
-    const date = new Date(post.publishedAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
-    const cats = (post.categories || []).filter(c => c).slice(0, 2).map(c => 
-      `<span class="inline-block px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">${c.title}</span>`
-    ).join('');
+  // 使用 astro:page-load 事件确保 View Transitions 导航后也能执行
+  document.addEventListener('astro:page-load', () => {
+    // 只在 blog 页面执行
+    if (!window.location.pathname.startsWith('/blog') || window.location.pathname.match(/\/blog\/.+/)) return;
     
-    return `<a href="/blog/${post.slug.current}" class="group overflow-hidden block">
-      <div class="bg-white rounded-2xl p-6 border border-gray-100 hover:border-gray-200 hover:shadow-card transition-all">
-        ${post.coverImage ? `<div class="relative -mx-6 -mt-6 mb-5 overflow-hidden"><div class="aspect-video bg-gray-50"><img src="${post.coverImage}" alt="${post.title}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy"/></div></div>` : ''}
-        ${cats ? `<div class="flex flex-wrap gap-2 mb-3">${cats}</div>` : ''}
-        <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-gray-600 transition-colors">${post.title}</h3>
-        <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">${post.excerpt || ''}</p>
-        <div class="flex items-center text-sm text-gray-400"><svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><time datetime="${post.publishedAt}">${date}</time></div>
-      </div>
-    </a>`;
-  }
-
-  // 渲染分类按钮
-  function renderCategories() {
-    const allCats = [{ title: '全部', slug: '' }, ...categories.filter(c => c.slug).map(c => ({ title: c.title, slug: c.slug }))];
-    categoryFilters.innerHTML = allCats.map(cat => {
-      const isActive = cat.slug === selectedCategory;
-      return `<button data-category="${cat.slug}" class="px-4 py-2 rounded-full text-sm font-medium transition-colors ${isActive ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}">${cat.title}</button>`;
-    }).join('');
-  }
-
-  // 筛选文章（分类 + 搜索）
-  function filterPosts() {
-    currentPage = 1;
+    const POSTS_PER_PAGE = 6;
+    const SANITY_PROJECT_ID = 'k2j30muc';
+    const SANITY_DATASET = 'production';
     
-    currentFilteredPosts = posts.filter(p => {
-      const matchCategory = !selectedCategory || p.categories?.some(c => (c.slug?.current || c.slug) === selectedCategory);
-      const matchSearch = !searchKeyword || p.title.toLowerCase().includes(searchKeyword.toLowerCase());
-      return matchCategory && matchSearch;
-    });
+    let posts = [];
+    let categories = [];
+    let currentPage = 1;
+    let currentFilteredPosts = [];
+    let selectedCategory = new URLSearchParams(window.location.search).get('category') || '';
+    let searchKeyword = '';
+
+    const categoryFilters = document.getElementById('category-filters');
+    const postsGrid = document.getElementById('posts-grid');
+    const loadMoreContainer = document.getElementById('load-more-container');
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    const searchInput = document.getElementById('search-input');
     
-    const toShow = currentFilteredPosts.slice(0, POSTS_PER_PAGE);
-    postsGrid.innerHTML = toShow.length ? toShow.map(createPostHtml).join('') : '<div class="col-span-full text-center py-12"><p class="text-gray-500">没有找到匹配的文章</p></div>';
-    loadMoreContainer.style.display = toShow.length < currentFilteredPosts.length ? 'block' : 'none';
-  }
+    if (!categoryFilters || !postsGrid) return;
 
-  // 筛选分类
-  function filterByCategory(categorySlug) {
-    selectedCategory = categorySlug;
-    window.history.pushState({}, '', categorySlug ? `/blog?category=${categorySlug}` : '/blog');
-    filterPosts();
-    renderCategories();
-  }
+    // Sanity API 查询
+    async function fetchSanity(query) {
+      const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2024-01-01/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      return data.result;
+    }
 
-  // 加载更多
-  function loadMore() {
-    currentPage++;
-    const newPosts = currentFilteredPosts.slice((currentPage - 1) * POSTS_PER_PAGE, currentPage * POSTS_PER_PAGE);
-    postsGrid.insertAdjacentHTML('beforeend', newPosts.map(createPostHtml).join(''));
-    if (currentPage * POSTS_PER_PAGE >= currentFilteredPosts.length) loadMoreContainer.style.display = 'none';
-  }
+    // 生成文章卡片 HTML
+    function createPostHtml(post) {
+      const date = new Date(post.publishedAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+      const cats = (post.categories || []).filter(c => c).slice(0, 2).map(c => 
+        `<span class="inline-block px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">${c.title}</span>`
+      ).join('');
+      
+      return `<a href="/blog/${post.slug.current}" data-astro-prefetch="hover" class="group overflow-hidden block">
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 hover:border-gray-200 hover:shadow-card transition-all">
+          ${post.coverImage ? `<div class="relative -mx-6 -mt-6 mb-5 overflow-hidden"><div class="aspect-video bg-gray-50"><img src="${post.coverImage}" alt="${post.title}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy"/></div></div>` : ''}
+          ${cats ? `<div class="flex flex-wrap gap-2 mb-3">${cats}</div>` : ''}
+          <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-gray-600 transition-colors">${post.title}</h3>
+          <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">${post.excerpt || ''}</p>
+          <div class="flex items-center text-sm text-gray-400"><svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><time datetime="${post.publishedAt}">${date}</time></div>
+        </div>
+      </a>`;
+    }
 
-  // 绑定事件
-  categoryFilters.addEventListener('click', e => {
-    const btn = e.target.closest('button');
-    if (btn) filterByCategory(btn.dataset.category);
-  });
-  loadMoreBtn?.addEventListener('click', loadMore);
-  
-  // 搜索功能（防抖）
-  let searchTimeout;
-  searchInput?.addEventListener('input', e => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      searchKeyword = e.target.value.trim();
+    // 渲染分类按钮
+    function renderCategories() {
+      const allCats = [{ title: '全部', slug: '' }, ...categories.filter(c => c.slug).map(c => ({ title: c.title, slug: c.slug }))];
+      categoryFilters.innerHTML = allCats.map(cat => {
+        const isActive = cat.slug === selectedCategory;
+        return `<button data-category="${cat.slug}" class="px-4 py-2 rounded-full text-sm font-medium transition-colors ${isActive ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}">${cat.title}</button>`;
+      }).join('');
+    }
+
+    // 筛选文章（分类 + 搜索）
+    function filterPosts() {
+      currentPage = 1;
+      
+      currentFilteredPosts = posts.filter(p => {
+        const matchCategory = !selectedCategory || p.categories?.some(c => (c.slug?.current || c.slug) === selectedCategory);
+        const matchSearch = !searchKeyword || p.title.toLowerCase().includes(searchKeyword.toLowerCase());
+        return matchCategory && matchSearch;
+      });
+      
+      const toShow = currentFilteredPosts.slice(0, POSTS_PER_PAGE);
+      postsGrid.innerHTML = toShow.length ? toShow.map(createPostHtml).join('') : '<div class="col-span-full text-center py-12"><p class="text-gray-500">没有找到匹配的文章</p></div>';
+      loadMoreContainer.style.display = toShow.length < currentFilteredPosts.length ? 'block' : 'none';
+    }
+
+    // 筛选分类
+    function filterByCategory(categorySlug) {
+      selectedCategory = categorySlug;
+      window.history.pushState({}, '', categorySlug ? `/blog?category=${categorySlug}` : '/blog');
       filterPosts();
-    }, 300);
+      renderCategories();
+    }
+
+    // 加载更多
+    function loadMore() {
+      currentPage++;
+      const newPosts = currentFilteredPosts.slice((currentPage - 1) * POSTS_PER_PAGE, currentPage * POSTS_PER_PAGE);
+      postsGrid.insertAdjacentHTML('beforeend', newPosts.map(createPostHtml).join(''));
+      if (currentPage * POSTS_PER_PAGE >= currentFilteredPosts.length) loadMoreContainer.style.display = 'none';
+    }
+
+    // 绑定事件
+    categoryFilters.addEventListener('click', e => {
+      const btn = e.target.closest('button');
+      if (btn) filterByCategory(btn.dataset.category);
+    });
+    loadMoreBtn?.addEventListener('click', loadMore);
+    
+    // 搜索功能（防抖）
+    let searchTimeout;
+    searchInput?.addEventListener('input', e => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        searchKeyword = e.target.value.trim();
+        filterPosts();
+      }, 300);
+    });
+
+    // 异步加载数据
+    async function loadData() {
+      const postsQuery = `*[_type == "post"] | order(publishedAt desc) {
+        _id, title, slug, excerpt, publishedAt,
+        "coverImage": coverImage.asset->url,
+        categories[]->{title, slug}
+      }`;
+      const categoriesQuery = `*[_type == "category"] | order(title asc) { _id, title, "slug": slug.current }`;
+      
+      [posts, categories] = await Promise.all([fetchSanity(postsQuery), fetchSanity(categoriesQuery)]);
+      currentFilteredPosts = posts;
+      
+      renderCategories();
+      filterPosts();
+    }
+
+    loadData();
   });
-
-  // 异步加载数据
-  async function loadData() {
-    const postsQuery = `*[_type == "post"] | order(publishedAt desc) {
-      _id, title, slug, excerpt, publishedAt,
-      "coverImage": coverImage.asset->url,
-      categories[]->{title, slug}
-    }`;
-    const categoriesQuery = `*[_type == "category"] | order(title asc) { _id, title, "slug": slug.current }`;
-    
-    [posts, categories] = await Promise.all([fetchSanity(postsQuery), fetchSanity(categoriesQuery)]);
-    currentFilteredPosts = posts;
-    
-    renderCategories();
-    filterPosts();
-  }
-
-  loadData();
 </script>

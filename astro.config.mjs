@@ -10,6 +10,10 @@ export default defineConfig({
   ],
   output: 'static',
   site: 'https://www.mengkai.ren',
+  prefetch: {
+    prefetchAll: false,
+    defaultStrategy: 'hover'
+  },
   vite: {
     ssr: {
       noExternal: ['@sanity/client']
