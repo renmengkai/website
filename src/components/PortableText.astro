@@ -1,5 +1,7 @@
 ---
 // Portable Text 渲染组件
+import { codeToHtml } from 'shiki';
+
 interface Block {
   _type: string;
   _key?: string;
@@ -17,6 +19,9 @@ interface Block {
   }>;
   level?: number;
   listItem?: string;
+  // 代码块字段
+  language?: string;
+  code?: string;
 }
 
 interface Props {
@@ -90,12 +95,134 @@ function renderBlock(block: Block): string {
   }
 }
 
+// 渲染代码块
+async function renderCodeBlock(block: Block): Promise<string> {
+  if (!block || block._type !== 'code') {
+    return '';
+  }
+  
+  const code = block.code || '';
+  const language = block.language || 'text';
+  
+  // 语言标签的显示名称映射
+  const languageLabels: Record<string, string> = {
+    'javascript': 'JavaScript',
+    'typescript': 'TypeScript',
+    'python': 'Python',
+    'java': 'Java',
+    'csharp': 'C#',
+    'cpp': 'C++',
+    'html': 'HTML',
+    'css': 'CSS',
+    'json': 'JSON',
+    'bash': 'Bash',
+    'shell': 'Shell',
+    'sql': 'SQL',
+    'go': 'Go',
+    'rust': 'Rust',
+    'php': 'PHP',
+    'ruby': 'Ruby',
+    'swift': 'Swift',
+    'kotlin': 'Kotlin',
+    'yaml': 'YAML',
+    'markdown': 'Markdown',
+    'docker': 'Docker',
+    'dockerfile': 'Dockerfile',
+    'nginx': 'Nginx',
+    'text': 'Plain Text'
+  };
+  
+  const displayLanguage = languageLabels[language.toLowerCase()] || language.toUpperCase();
+  
+  // Shiki 语言映射
+  const shikiLangMap: Record<string, string> = {
+    'javascript': 'javascript',
+    'typescript': 'typescript',
+    'python': 'python',
+    'java': 'java',
+    'csharp': 'csharp',
+    'cpp': 'cpp',
+    'html': 'html',
+    'css': 'css',
+    'json': 'json',
+    'bash': 'bash',
+    'shell': 'bash',
+    'sh': 'bash',
+    'sql': 'sql',
+    'go': 'go',
+    'rust': 'rust',
+    'php': 'php',
+    'ruby': 'ruby',
+    'swift': 'swift',
+    'kotlin': 'kotlin',
+    'yaml': 'yaml',
+    'yml': 'yaml',
+    'markdown': 'markdown',
+    'md': 'markdown',
+    'docker': 'dockerfile',
+    'dockerfile': 'dockerfile',
+    'nginx': 'nginx',
+    'text': 'text',
+    'plaintext': 'text'
+  };
+  
+  const shikiLang = shikiLangMap[language.toLowerCase()] || 'text';
+  
+  // 使用 Shiki 生成高亮代码
+  let highlightedCode = '';
+  try {
+    const html = await codeToHtml(code, {
+      lang: shikiLang,
+      theme: 'material-theme-ocean'  // 使用 Material Ocean 主题（海洋蓝绿色调）
+    });
+    // 提取 <pre> 内部的内容（去掉 Shiki 的 <pre> 外壳）
+    const match = html.match(/<pre[^>]*>([\s\S]*?)<\/pre>/);
+    if (match) {
+      highlightedCode = match[1];
+    } else {
+      highlightedCode = html;
+    }
+  } catch (error) {
+    console.error('Shiki highlighting failed:', error);
+    // 备用方案：转义 HTML
+    highlightedCode = `<code>${code
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')}</code>`;
+  }
+  
+  // 用于复制的纯文本
+  const escapedForCopy = code
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+  
+  return `<div class="code-block-wrapper my-6 group">
+    <div class="code-block-container rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200">
+      <div class="code-block-header flex items-center justify-between bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-850 px-4 py-2.5 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">${displayLanguage}</span>
+        </div>
+        <button class="copy-code-btn opacity-0 group-hover:opacity-100 transition-opacity duration-200 px-3 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1" data-code="${escapedForCopy.replace(/"/g, '&quot;')}" title="复制代码">
+          <span class="copy-text">复制</span>
+          <span class="copied-text hidden">已复制!</span>
+        </button>
+      </div>
+      <pre class="code-block-pre !mt-0 !mb-0 !rounded-none p-4 overflow-x-auto shiki-wrapper" style="background-color: #333333;">${highlightedCode}</pre>
+    </div>
+  </div>`;
+}
+
 // 渲染所有 blocks
 let html = '';
 if (blocks && blocks.length > 0) {
   for (const block of blocks) {
     if (block._type === 'block') {
       html += renderBlock(block);
+    } else if (block._type === 'code') {
+      html += await renderCodeBlock(block);
     }
   }
 } else {
@@ -104,3 +231,118 @@ if (blocks && blocks.length > 0) {
 ---
 
 <Fragment set:html={html} />
+
+<script>
+  // 代码块复制功能
+  document.addEventListener('DOMContentLoaded', () => {
+    const copyButtons = document.querySelectorAll('.copy-code-btn');
+    
+    copyButtons.forEach(button => {
+      button.addEventListener('click', async () => {
+        const codeText = button.getAttribute('data-code') || '';
+        const copyText = button.querySelector('.copy-text');
+        const copiedText = button.querySelector('.copied-text');
+        
+        try {
+          // 解码 HTML 实体
+          const textarea = document.createElement('textarea');
+          textarea.innerHTML = codeText;
+          const decodedCode = textarea.value;
+          
+          // 复制到剪贴板
+          await navigator.clipboard.writeText(decodedCode);
+          
+          // 显示复制成功提示
+          if (copyText && copiedText) {
+            copyText.classList.add('hidden');
+            copiedText.classList.remove('hidden');
+            
+            // 2秒后恢复
+            setTimeout(() => {
+              copyText.classList.remove('hidden');
+              copiedText.classList.add('hidden');
+            }, 2000);
+          }
+        } catch (err) {
+          console.error('复制失败:', err);
+        }
+      });
+    });
+  });
+</script>
+
+<style is:global>
+  /* 代码块样式 */
+  .code-block-wrapper {
+    position: relative;
+  }
+
+  .code-block-pre {
+    font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace !important;
+  }
+
+  /* Shiki 生成的代码块样式 */
+  .shiki-wrapper code {
+    display: block;
+    font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace !important;
+    font-variant-ligatures: normal;
+    font-feature-settings: "calt" 1, "liga" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 0.875rem;
+    line-height: 1.7;
+  }
+
+  /* 覆盖 Shiki 注释的内联样式（使用属性选择器 + !important）*/
+  .shiki-wrapper code span[style*="color:#464B5D"] {
+    color: #89DDFF !important; /* 亮青色注释，高对比度 */
+    font-style: italic !important;
+  }
+
+  .shiki-wrapper code .token.function,
+  .shiki-wrapper .line .token.function {
+    color: #9dbcff !important; /* 更亮的函数名 */
+  }
+
+  .shiki-wrapper code .token.number,
+  .shiki-wrapper .line .token.number {
+    color: #ffa07a !important; /* 更亮的数字 */
+  }
+
+  .shiki-wrapper code .token.operator,
+  .shiki-wrapper .line .token.operator {
+    color: #a0e4ff !important; /* 更亮的操作符 */
+  }
+
+  .shiki-wrapper code .token.class-name,
+  .shiki-wrapper .line .token.class-name {
+    color: #ffd78c !important; /* 更亮的类名 */
+  }
+
+  /* 滚动条美化 - 深色主题 */
+  .code-block-pre::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .code-block-pre::-webkit-scrollbar-track {
+    background-color: #2a2a2a;
+  }
+
+  .code-block-pre::-webkit-scrollbar-thumb {
+    background-color: #555555;
+    border-radius: 4px;
+  }
+
+  .code-block-pre::-webkit-scrollbar-thumb:hover {
+    background-color: #777777;
+  }
+
+  /* 复制按钮动画 */
+  .copy-code-btn {
+    transition: all 0.2s;
+  }
+
+  .copy-code-btn:active {
+    transform: scale(0.95);
+  }
+</style>
