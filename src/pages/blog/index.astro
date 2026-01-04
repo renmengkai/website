@@ -238,7 +238,7 @@ import Layout from '../../layouts/Layout.astro';
         "coverImage": coverImage.asset->url,
         categories[]->{title, slug}
       }`;
-      const categoriesQuery = `*[_type == "category"] | order(title asc) { _id, title, "slug": slug.current }`;
+      const categoriesQuery = `*[_type == "category" && (usedFor == "blog" || usedFor == "both")] | order(title asc) { _id, title, "slug": slug.current }`;
       
       [posts, categories] = await Promise.all([fetchSanity(postsQuery), fetchSanity(categoriesQuery)]);
       currentFilteredPosts = posts;

@@ -1,70 +1,5 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import ProjectCard from '../../components/ProjectCard.astro';
-
-// 示例数据
-const projects = [
-  {
-    _id: '1',
-    title: '电商管理后台',
-    slug: { current: 'ecommerce-dashboard' },
-    description: '基于 Vue 3 + TypeScript 构建的现代化电商管理系统，支持商品管理、订单处理、数据分析等功能。',
-    thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop',
-    technologies: ['Vue 3', 'TypeScript', 'Tailwind CSS', 'Pinia'],
-    featured: true
-  },
-  {
-    _id: '2',
-    title: '个人知识库',
-    slug: { current: 'knowledge-base' },
-    description: '使用 Notion API 构建的个人知识管理工具，支持 Markdown 编辑、标签分类、全文搜索。',
-    thumbnail: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800&h=450&fit=crop',
-    technologies: ['Next.js', 'Notion API', 'Vercel'],
-    featured: true
-  },
-  {
-    _id: '3',
-    title: 'AI 对话助手',
-    slug: { current: 'ai-chat-assistant' },
-    description: '基于大语言模型的智能对话应用，支持多轮对话、上下文记忆、流式输出。',
-    thumbnail: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop',
-    technologies: ['React', 'OpenAI API', 'Node.js'],
-    featured: true
-  },
-  {
-    _id: '4',
-    title: '任务管理工具',
-    slug: { current: 'task-manager' },
-    description: '一个简洁高效的任务管理应用，支持看板视图、日历集成和团队协作功能。',
-    thumbnail: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=800&h=450&fit=crop',
-    technologies: ['Vue 3', 'Supabase', 'TailwindCSS'],
-    featured: false
-  },
-  {
-    _id: '5',
-    title: '设计系统组件库',
-    slug: { current: 'design-system' },
-    description: '企业级 UI 组件库，包含 50+ 可复用组件，完善的文档和主题定制能力。',
-    thumbnail: 'https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&h=450&fit=crop',
-    technologies: ['React', 'Storybook', 'TypeScript'],
-    featured: false
-  },
-  {
-    _id: '6',
-    title: '实时数据可视化',
-    slug: { current: 'data-visualization' },
-    description: '基于 D3.js 的实时数据可视化平台，支持多种图表类型和数据源接入。',
-    thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop',
-    technologies: ['D3.js', 'WebSocket', 'Node.js'],
-    featured: false
-  }
-];
-
-// 技术筛选
-const technologies = ['全部', 'Vue 3', 'React', 'TypeScript', 'Node.js', 'Next.js'];
-
-// 传递给客户端
-const projectsData = JSON.stringify(projects);
 ---
 
 <Layout 
@@ -106,22 +41,14 @@ const projectsData = JSON.stringify(projects);
     </div>
   </section>
 
-  <!-- 技术筛选 -->
+  <!-- 分类筛选 -->
   <section class="pb-8">
     <div class="container-custom">
-      <div class="flex flex-wrap items-center justify-center gap-3">
-        {technologies.map((tech, index) => (
-          <button 
-            data-tech={tech}
-            class={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              index === 0 
-                ? 'bg-dark-100 text-white' 
-                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
-            }`}
-          >
-            {tech}
-          </button>
-        ))}
+      <div id="category-filters" class="flex flex-wrap items-center justify-center gap-3">
+        <!-- 分类按钮将通过 JS 动态加载 -->
+        <div class="h-10 w-16 bg-gray-200 rounded-full animate-pulse"></div>
+        <div class="h-10 w-20 bg-gray-100 rounded-full animate-pulse"></div>
+        <div class="h-10 w-24 bg-gray-100 rounded-full animate-pulse"></div>
       </div>
     </div>
   </section>
@@ -130,15 +57,20 @@ const projectsData = JSON.stringify(projects);
   <section class="pb-20">
     <div class="container-custom">
       <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-        {projects.map((project) => (
-          <ProjectCard
-            title={project.title}
-            description={project.description}
-            slug={project.slug}
-            thumbnail={project.thumbnail}
-            technologies={project.technologies}
-            featured={project.featured}
-          />
+        <!-- 骨架屏加载状态 -->
+        {[1,2,3,4,5,6].map(() => (
+          <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 animate-pulse">
+            <div class="aspect-video bg-gray-100"></div>
+            <div class="p-6">
+              <div class="h-6 bg-gray-100 rounded w-3/4 mb-2"></div>
+              <div class="h-4 bg-gray-100 rounded w-full mb-1"></div>
+              <div class="h-4 bg-gray-100 rounded w-2/3 mb-4"></div>
+              <div class="flex gap-2">
+                <div class="h-6 w-16 bg-gray-100 rounded-full"></div>
+                <div class="h-6 w-20 bg-gray-100 rounded-full"></div>
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     </div>
@@ -192,67 +124,85 @@ const projectsData = JSON.stringify(projects);
   </section>
 </Layout>
 
-<script define:vars={{ projectsData }}>
+<script is:inline>
   // 使用 astro:page-load 事件确保 View Transitions 导航后也能执行
   document.addEventListener('astro:page-load', () => {
-    // 只在 projects 页面执行
-    if (!window.location.pathname.startsWith('/projects') || window.location.pathname.match(/\/projects\/.+/)) return;
+    // 只在 projects 列表页执行
+    if (window.location.pathname !== '/projects' && window.location.pathname !== '/projects/') return;
     
-    const projects = JSON.parse(projectsData);
-    let filteredProjects = projects;
-    let selectedTech = '全部';
+    const SANITY_PROJECT_ID = 'k2j30muc';
+    const SANITY_DATASET = 'production';
+    
+    let projects = [];
+    let categories = [];
+    let selectedCategory = '';
     let searchKeyword = '';
 
     const projectsGrid = document.getElementById('projects-grid');
+    const categoryFilters = document.getElementById('category-filters');
     const searchInput = document.getElementById('search-input');
-    const techButtons = document.querySelectorAll('[data-tech]');
     
-    if (!projectsGrid) return;
+    if (!projectsGrid || !categoryFilters) return;
+
+    // Sanity API 查询
+    async function fetchSanity(query) {
+      const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2024-01-01/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      return data.result;
+    }
 
     // 生成项目卡片 HTML
     function createProjectHtml(project) {
-      const techs = (project.technologies || []).slice(0, 3).map(t => 
-        `<span class="inline-block px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">${t}</span>`
+      const cats = (project.categories || []).filter(c => c).slice(0, 2).map(c => 
+        `<span class="inline-block px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">${c.title}</span>`
       ).join('');
+      const slugValue = project.slug?.current || project.slug;
       
-      return `<a href="/projects/${project.slug.current}" data-astro-prefetch="hover" class="group block">
+      return `<a href="/projects/${slugValue}" data-astro-prefetch="hover" class="group block">
         <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-200 hover:shadow-card transition-all">
           <div class="aspect-video bg-gray-50 overflow-hidden">
-            <img src="${project.thumbnail}" alt="${project.title}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy"/>
+            ${project.thumbnail ? `<img src="${project.thumbnail}" alt="${project.title}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy"/>` : ''}
           </div>
           <div class="p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-gray-600 transition-colors">${project.title}</h3>
-            <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">${project.description}</p>
-            <div class="flex flex-wrap gap-2">${techs}</div>
+            <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">${project.description || ''}</p>
+            <div class="flex flex-wrap gap-2">${cats}</div>
           </div>
         </div>
       </a>`;
     }
 
+    // 渲染分类筛选按钮
+    function renderCategories() {
+      const allCats = [{ title: '全部', slug: '' }, ...categories.filter(c => c.slug).map(c => ({ title: c.title, slug: c.slug }))];
+      categoryFilters.innerHTML = allCats.map(cat => {
+        const isActive = cat.slug === selectedCategory;
+        return `<button data-category="${cat.slug}" class="px-4 py-2 rounded-full text-sm font-medium transition-colors ${isActive ? 'bg-dark-100 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}">${cat.title}</button>`;
+      }).join('');
+    }
+
     // 筛选项目
     function filterProjects() {
-      filteredProjects = projects.filter(p => {
-        const matchTech = selectedTech === '全部' || p.technologies?.includes(selectedTech);
+      const filtered = projects.filter(p => {
+        const matchCategory = !selectedCategory || p.categories?.some(c => (c.slug?.current || c.slug) === selectedCategory);
         const matchSearch = !searchKeyword || p.title.toLowerCase().includes(searchKeyword.toLowerCase());
-        return matchTech && matchSearch;
+        return matchCategory && matchSearch;
       });
       
-      projectsGrid.innerHTML = filteredProjects.length 
-        ? filteredProjects.map(createProjectHtml).join('') 
+      projectsGrid.innerHTML = filtered.length 
+        ? filtered.map(createProjectHtml).join('') 
         : '<div class="col-span-full text-center py-12"><p class="text-gray-500">没有找到匹配的项目</p></div>';
     }
 
-    // 技术筛选按钮事件
-    techButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        selectedTech = btn.dataset.tech;
-        techButtons.forEach(b => {
-          b.className = b.dataset.tech === selectedTech 
-            ? 'px-4 py-2 rounded-full text-sm font-medium transition-colors bg-dark-100 text-white'
-            : 'px-4 py-2 rounded-full text-sm font-medium transition-colors bg-white text-gray-600 border border-gray-200 hover:bg-gray-50';
-        });
+    // 分类筛选按钮事件
+    categoryFilters.addEventListener('click', e => {
+      const btn = e.target.closest('button');
+      if (btn && btn.dataset.category !== undefined) {
+        selectedCategory = btn.dataset.category;
+        renderCategories();
         filterProjects();
-      });
+      }
     });
 
     // 搜索功能（防抖）
@@ -264,5 +214,23 @@ const projectsData = JSON.stringify(projects);
         filterProjects();
       }, 300);
     });
+
+    // 异步加载数据
+    async function loadData() {
+      const projectsQuery = `*[_type == "project"] | order(order asc) {
+        _id, title, slug, description,
+        "thumbnail": thumbnail.asset->url,
+        categories[]->{title, "slug": slug.current},
+        technologies, featured
+      }`;
+      const categoriesQuery = `*[_type == "category" && (usedFor == "projects" || usedFor == "both")] | order(title asc) { _id, title, "slug": slug.current }`;
+      
+      [projects, categories] = await Promise.all([fetchSanity(projectsQuery), fetchSanity(categoriesQuery)]);
+      
+      renderCategories();
+      filterProjects();
+    }
+
+    loadData();
   });
 </script>

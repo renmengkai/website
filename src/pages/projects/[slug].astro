@@ -2,75 +2,27 @@
 import Layout from '../../layouts/Layout.astro';
 import Badge from '../../components/ui/Badge.astro';
 import Button from '../../components/ui/Button.astro';
-import Card from '../../components/ui/Card.astro';
+import MarkdownContent from '../../components/MarkdownContent.astro';
+import PortableText from '../../components/PortableText.astro';
+import { fetchSanity, projectBySlugQuery } from '../../lib/sanity';
 
 // 动态路由参数
 export async function getStaticPaths() {
-  const projects = [
-    {
-      slug: 'ecommerce-dashboard',
-      title: '电商管理后台',
-      description: '基于 Vue 3 + TypeScript 构建的现代化电商管理系统，支持商品管理、订单处理、数据分析等功能。',
-      thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=600&fit=crop',
-      technologies: ['Vue 3', 'TypeScript', 'Tailwind CSS', 'Pinia', 'Vite', 'ECharts'],
-      liveUrl: 'https://demo.example.com',
-      githubUrl: 'https://github.com/example/project',
-      featured: true,
-      body: `
-## 项目概述
-
-这是一个功能完善的电商管理后台系统，旨在为中小型电商企业提供高效的后台管理解决方案。
-
-## 核心功能
-
-- **商品管理** - 支持商品的增删改查、分类管理、库存预警
-- **订单处理** - 订单状态追踪、批量操作、退款处理
-- **数据分析** - 销售报表、用户分析、趋势预测
-- **用户管理** - 角色权限、操作日志、消息通知
-
-## 技术亮点
-
-1. 采用 Vue 3 Composition API，代码更加模块化
-2. 使用 Pinia 进行状态管理，轻量且类型安全
-3. 响应式设计，完美适配各种屏幕尺寸
-4. 深色模式支持，保护用户视力
-
-## 项目收获
-
-通过这个项目，我深入理解了前端工程化的最佳实践，以及如何构建可维护的大型应用。
-      `
-    },
-    {
-      slug: 'knowledge-base',
-      title: '个人知识库',
-      description: '使用 Notion API 构建的个人知识管理工具。',
-      thumbnail: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1200&h=600&fit=crop',
-      technologies: ['Next.js', 'Notion API', 'Vercel', 'Tailwind CSS'],
-      liveUrl: 'https://demo.example.com',
-      githubUrl: 'https://github.com/example/project',
-      featured: true,
-      body: '## 项目概述\n\n这是一个基于 Notion API 的知识库项目...'
-    },
-    {
-      slug: 'ai-chat-assistant',
-      title: 'AI 对话助手',
-      description: '基于大语言模型的智能对话应用。',
-      thumbnail: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=600&fit=crop',
-      technologies: ['React', 'OpenAI API', 'Node.js', 'WebSocket'],
-      liveUrl: 'https://demo.example.com',
-      githubUrl: 'https://github.com/example/project',
-      featured: true,
-      body: '## 项目概述\n\n这是一个 AI 对话助手项目...'
-    }
-  ];
-
-  return projects.map((project) => ({
-    params: { slug: project.slug },
-    props: { project }
-  }));
+  const projectsQuery = `*[_type == "project"] { "slug": slug.current }`;
+  const projects = await fetchSanity<any[]>(projectsQuery);
+  return projects.map((project) => ({ params: { slug: project.slug } }));
 }
 
-const { project } = Astro.props;
+// 获取当前项目数据
+const { slug } = Astro.params;
+const project = await fetchSanity<any>(projectBySlugQuery, { slug });
+
+if (!project) {
+  return Astro.redirect('/404');
+}
+
+// 确保 technologies 是一个数组
+const safeTechnologies = Array.isArray(project.technologies) ? project.technologies : [];
 ---
 
 <Layout 
@@ -78,18 +30,18 @@ const { project } = Astro.props;
   description={project.description}
   image={project.thumbnail}
 >
-  <article class="section">
+  <article class="section" transition:animate="fade">
     <div class="container-custom">
       <!-- 项目头部 -->
       <header class="max-w-4xl mx-auto mb-12">
         <!-- 返回按钮 -->
         <div class="mb-8">
-          <Button href="/projects" variant="ghost" size="sm">
-            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <a href="/projects" data-astro-prefetch="hover" class="inline-flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
             </svg>
             返回作品列表
-          </Button>
+          </a>
         </div>
         
         <!-- 标题 -->
@@ -103,11 +55,13 @@ const { project } = Astro.props;
         </p>
         
         <!-- 技术栈 -->
-        <div class="flex flex-wrap gap-2 mb-8">
-          {project.technologies.map((tech: string) => (
-            <Badge variant="primary">{tech}</Badge>
-          ))}
-        </div>
+        {safeTechnologies.length > 0 && (
+          <div class="flex flex-wrap gap-2 mb-8">
+            {safeTechnologies.map((tech: string) => (
+              <Badge variant="primary">{tech}</Badge>
+            ))}
+          </div>
+        )}
         
         <!-- 操作按钮 -->
         <div class="flex flex-wrap gap-4">
@@ -137,25 +91,43 @@ const { project } = Astro.props;
             src={project.thumbnail} 
             alt={project.title}
             class="w-full aspect-video object-cover"
+            loading="eager"
           />
         </div>
       )}
       
-      <!-- 项目内容 -->
-      <div class="max-w-3xl mx-auto">
-        <div class="prose prose-lg dark:prose-invert 
-                    prose-headings:font-bold prose-headings:tracking-tight
-                    prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4
-                    prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-                    prose-p:text-gray-600 dark:prose-p:text-gray-400 prose-p:leading-relaxed
-                    prose-a:text-primary-600 dark:prose-a:text-primary-400
-                    prose-ul:text-gray-600 dark:prose-ul:text-gray-400
-                    prose-ol:text-gray-600 dark:prose-ol:text-gray-400
-                    prose-li:marker:text-primary-500
-                    max-w-none">
-          <Fragment set:html={project.body.replace(/\n/g, '<br>').replace(/## /g, '<h2>').replace(/### /g, '<h3>')} />
+      <!-- 项目图库 -->
+      {project.gallery && project.gallery.length > 0 && (
+        <div class="max-w-5xl mx-auto mb-16">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {project.gallery.map((img: string) => (
+              <div class="rounded-xl overflow-hidden">
+                <img src={img} alt={project.title} class="w-full h-full object-cover" loading="lazy" />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+      
+      <!-- 项目内容 -->
+      {project.body && (
+        <div class="max-w-3xl mx-auto">
+          <div class="prose prose-lg dark:prose-invert max-w-none">
+            {Array.isArray(project.body) ? (
+              <PortableText blocks={project.body} />
+            ) : (
+              <MarkdownContent content={project.body} />
+            )}
+          </div>
+        </div>
+      )}
     </div>
   </article>
 </Layout>
+
+<style>
+  /* 为 prose 添加额外样式 */
+  .prose :where(h2):not(:where([class~="not-prose"] *)) {
+    @apply border-b border-gray-200 dark:border-dark-200 pb-2;
+  }
+</style>
