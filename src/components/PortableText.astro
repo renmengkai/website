@@ -210,6 +210,10 @@ async function renderCodeBlock(block: Block): Promise<string> {
     ? `<span class="text-xs font-mono text-gray-600 dark:text-gray-400">${filename}</span>` 
     : `<span class="text-xs font-semibold text-gray-700 dark:text-gray-300">${displayLanguage}</span>`;
   
+  // 判断是否为 Plain Text
+  const isPlainText = shikiLang === 'text';
+  const preClasses = `code-block-pre !mt-0 !mb-0 !rounded-none p-4 overflow-x-auto shiki-wrapper${isPlainText ? ' plaintext-code' : ''}`;
+  
   return `<div class="code-block-wrapper my-6 group">
     <div class="code-block-container rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200">
       <div class="code-block-header flex items-center justify-between bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-850 px-4 py-2.5 border-b border-gray-200 dark:border-gray-700">
@@ -221,7 +225,7 @@ async function renderCodeBlock(block: Block): Promise<string> {
           <span class="copied-text hidden">已复制!</span>
         </button>
       </div>
-      <pre class="code-block-pre !mt-0 !mb-0 !rounded-none p-4 overflow-x-auto shiki-wrapper" style="background-color: #333333;">${highlightedCode}</pre>
+      <pre class="${preClasses}" style="background-color: #333333;">${highlightedCode}</pre>
     </div>
   </div>`;
 }
@@ -308,6 +312,15 @@ if (blocks && blocks.length > 0) {
   .shiki-wrapper code span[style*="color:#464B5D"] {
     color: #89DDFF !important; /* 亮青色注释，高对比度 */
     font-style: italic !important;
+  }
+
+  /* Plain Text 代码块样式 - 确保文字清晰可读 */
+  .shiki-wrapper.plaintext-code code {
+    color: #e0e0e0 !important;
+  }
+
+  .shiki-wrapper.plaintext-code code span {
+    color: #e0e0e0 !important;
   }
 
   .shiki-wrapper code .token.function,
