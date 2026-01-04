@@ -4,7 +4,7 @@ export const sanityClient = createClient({
   projectId: 'k2j30muc',
   dataset: 'production',
   apiVersion: '2024-01-01',
-  useCdn: true,
+  useCdn: import.meta.env.PROD, // 生产环境启用 CDN 加速，开发环境禁用获取最新数据
 });
 
 // GROQ 查询：获取所有博客文章

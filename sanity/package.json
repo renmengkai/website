@@ -15,10 +15,14 @@
     "sanity"
   ],
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.1.0",
+    "@sanity/code-input": "^7.0.3",
     "@sanity/vision": "^5.1.0",
+    "easymde": "^2.20.0",
     "react": "^19.1",
     "react-dom": "^19.1",
     "sanity": "^5.1.0",
+    "sanity-plugin-markdown": "^8.0.2",
     "styled-components": "^6.1.18"
   },
   "devDependencies": {

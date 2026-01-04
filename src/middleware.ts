@@ -1,4 +1,6 @@
 import { defineMiddleware } from 'astro:middleware';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   // 仅在开发环境处理 /cms 路由
@@ -18,8 +20,25 @@ export const onRequest = defineMiddleware(async (context, next) => {
         return next();
       }
       
-      // 对于其他 /cms 路径，重定向到 /cms/index.html
-      return context.redirect('/cms/index.html', 302);
+      // 如果是 /cms 或 /cms/，重定向到 /cms/structure
+      if (pathname === '/cms' || pathname === '/cms/') {
+        return context.redirect('/cms/structure', 302);
+      }
+      
+      // 对于其他 /cms/* 路径（如 /cms/structure），返回 index.html 内容
+      try {
+        const indexPath = join(process.cwd(), 'public', 'cms', 'index.html');
+        const html = readFileSync(indexPath, 'utf-8');
+        return new Response(html, {
+          status: 200,
+          headers: {
+            'Content-Type': 'text/html; charset=utf-8',
+          },
+        });
+      } catch (e) {
+        // 如果读取失败，继续正常处理
+        return next();
+      }
     }
   }
   

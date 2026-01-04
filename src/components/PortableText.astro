@@ -19,9 +19,10 @@ interface Block {
   }>;
   level?: number;
   listItem?: string;
-  // 代码块字段
+  // 代码块字段 (新格式)
   language?: string;
   code?: string;
+  filename?: string;
 }
 
 interface Props {
@@ -103,6 +104,7 @@ async function renderCodeBlock(block: Block): Promise<string> {
   
   const code = block.code || '';
   const language = block.language || 'text';
+  const filename = block.filename || '';  // 获取文件名
   
   // 语言标签的显示名称映射
   const languageLabels: Record<string, string> = {
@@ -199,11 +201,16 @@ async function renderCodeBlock(block: Block): Promise<string> {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
   
+  // 如果有文件名，显示文件名；否则显示语言标签
+  const headerLabel = filename 
+    ? `<span class="text-xs font-mono text-gray-600 dark:text-gray-400">${filename}</span>` 
+    : `<span class="text-xs font-semibold text-gray-700 dark:text-gray-300">${displayLanguage}</span>`;
+  
   return `<div class="code-block-wrapper my-6 group">
     <div class="code-block-container rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200">
       <div class="code-block-header flex items-center justify-between bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-850 px-4 py-2.5 border-b border-gray-200 dark:border-gray-700">
         <div class="flex items-center gap-2">
-          <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">${displayLanguage}</span>
+          ${headerLabel}
         </div>
         <button class="copy-code-btn opacity-0 group-hover:opacity-100 transition-opacity duration-200 px-3 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-700 rounded-md border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1" data-code="${escapedForCopy.replace(/"/g, '&quot;')}" title="复制代码">
           <span class="copy-text">复制</span>

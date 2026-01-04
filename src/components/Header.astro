@@ -1,10 +1,7 @@
 ---
 // Header 组件 - 简洁风格导航
-interface Props {
-  currentPath?: string;
-}
 
-const { currentPath = '/' } = Astro.props;
+const currentPath = Astro.url.pathname;
 
 const navLinks = [
   { href: '/', label: '首页' },
@@ -12,6 +9,14 @@ const navLinks = [
   { href: '/projects', label: '作品' },
   { href: '/about', label: '关于' },
 ];
+
+// 判断当前路径是否匹配导航项
+function isActive(href: string): boolean {
+  if (href === '/') {
+    return currentPath === '/';
+  }
+  return currentPath.startsWith(href);
+}
 ---
 
 <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100" id="main-header">
@@ -46,8 +51,8 @@ const navLinks = [
           <a
             href={link.href}
             class={`text-sm font-medium transition-colors duration-200
-              ${currentPath === link.href 
-                ? 'text-gray-900' 
+              ${isActive(link.href)
+                ? 'text-gray-900 font-semibold' 
                 : 'text-gray-500 hover:text-gray-900'
               }`}
           >
@@ -108,8 +113,8 @@ const navLinks = [
             <a
               href={link.href}
               class={`block px-4 py-3 rounded-xl text-base font-medium transition-colors
-                ${currentPath === link.href 
-                  ? 'text-gray-900 bg-gray-100' 
+                ${isActive(link.href)
+                  ? 'text-gray-900 bg-gray-100 font-semibold' 
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
             >

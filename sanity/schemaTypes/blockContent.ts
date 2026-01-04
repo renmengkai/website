@@ -70,21 +70,33 @@ export default defineType({
       options: {hotspot: true},
     }),
     defineArrayMember({
-      type: 'object',
-      name: 'code',
+      type: 'code',
       title: 'Code Block',
-      fields: [
-        {
-          name: 'language',
-          type: 'string',
-          title: 'Language'
-        },
-        {
-          name: 'code',
-          type: 'text',
-          title: 'Code'
-        }
-      ]
+      options: {
+        language: 'javascript',
+        languageAlternatives: [
+          {title: 'JavaScript', value: 'javascript'},
+          {title: 'TypeScript', value: 'typescript'},
+          {title: 'Python', value: 'python'},
+          {title: 'Java', value: 'java'},
+          {title: 'C++', value: 'cpp'},
+          {title: 'C#', value: 'csharp'},
+          {title: 'Go', value: 'go'},
+          {title: 'Rust', value: 'rust'},
+          {title: 'PHP', value: 'php'},
+          {title: 'Ruby', value: 'ruby'},
+          {title: 'Shell', value: 'sh'},
+          {title: 'Bash', value: 'bash'},
+          {title: 'SQL', value: 'sql'},
+          {title: 'HTML', value: 'html'},
+          {title: 'CSS', value: 'css'},
+          {title: 'JSON', value: 'json'},
+          {title: 'YAML', value: 'yaml'},
+          {title: 'Markdown', value: 'markdown'},
+          {title: 'Docker', value: 'dockerfile'},
+        ],
+        withFilename: true,
+      },
     }),
   ],
 })

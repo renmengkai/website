@@ -1,42 +1,5 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import PostCard from '../../components/PostCard.astro';
-import { fetchSanity, postsQuery, categoriesQuery } from '../../lib/sanity';
-
-// 从 Sanity CMS 获取博客文章和分类
-const posts = await fetchSanity<any[]>(postsQuery);
-const allCategories = await fetchSanity<any[]>(categoriesQuery);
-
-// 从文章中提取所有使用的分类（作为备选方案）
-const categoriesFromPosts = new Map();
-posts.forEach(post => {
-  if (post.categories && Array.isArray(post.categories)) {
-    post.categories.forEach((cat: any) => {
-      if (cat && cat.title) {
-        const catSlug = cat.slug?.current || cat.slug;
-        if (catSlug) {
-          categoriesFromPosts.set(catSlug, cat.title);
-        }
-      }
-    });
-  }
-});
-
-// 使用从 Sanity 查询的分类，如果没有 slug 则使用从文章中提取的
-const validCategories = allCategories.filter(cat => cat.slug);
-
-// 如果 Sanity 查询的分类为空，使用从文章中提取的分类
-const finalCategories = validCategories.length > 0
-  ? validCategories
-  : Array.from(categoriesFromPosts.entries()).map(([slug, title]) => ({
-      _id: slug,
-      title,
-      slug
-    }));
-
-// 将数据传递给客户端
-const postsData = JSON.stringify(posts);
-const categoriesData = JSON.stringify(finalCategories);
 ---
 
 <Layout 
@@ -71,7 +34,10 @@ const categoriesData = JSON.stringify(finalCategories);
   <section class="pb-12">
     <div class="container-custom">
       <div id="category-filters" class="flex flex-wrap items-center justify-center gap-3">
-        <!-- 分类按钮将通过 JavaScript 动态生成 -->
+        <!-- 分类按钮将通过 JS 动态加载 -->
+        <div class="h-10 w-16 bg-gray-200 rounded-full animate-pulse"></div>
+        <div class="h-10 w-20 bg-gray-100 rounded-full animate-pulse"></div>
+        <div class="h-10 w-24 bg-gray-100 rounded-full animate-pulse"></div>
       </div>
     </div>
   </section>
@@ -80,10 +46,20 @@ const categoriesData = JSON.stringify(finalCategories);
   <section class="pb-20">
     <div class="container-custom">
       <div id="posts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-        <!-- 文章卡片将通过 JavaScript 动态生成 -->
+        <!-- 骨架屏加载状态 -->
+        {[1,2,3,4,5,6].map(() => (
+          <div class="bg-white rounded-2xl p-6 border border-gray-100 animate-pulse">
+            <div class="aspect-video bg-gray-100 rounded-lg -mx-6 -mt-6 mb-5"></div>
+            <div class="flex gap-2 mb-3">
+              <div class="h-6 w-16 bg-gray-100 rounded-full"></div>
+            </div>
+            <div class="h-6 bg-gray-100 rounded w-3/4 mb-2"></div>
+            <div class="h-4 bg-gray-100 rounded w-full mb-1"></div>
+            <div class="h-4 bg-gray-100 rounded w-2/3 mb-4"></div>
+            <div class="h-4 bg-gray-100 rounded w-24"></div>
+          </div>
+        ))}
       </div>
-      </div>
-      
       
       <!-- 加载更多按钮 -->
       <div id="load-more-container" class="text-center mt-12" style="display: none;">
@@ -128,304 +104,103 @@ const categoriesData = JSON.stringify(finalCategories);
   </section>
 </Layout>
 
-<script define:vars={{ postsData, categoriesData }}>
-  const posts = JSON.parse(postsData);
-  const categories = JSON.parse(categoriesData);
+<script is:inline>
+  const POSTS_PER_PAGE = 6;
+  const SANITY_PROJECT_ID = 'k2j30muc';
+  const SANITY_DATASET = 'production';
+  
+  let posts = [];
+  let categories = [];
+  let currentPage = 1;
+  let currentFilteredPosts = [];
+  let selectedCategory = new URLSearchParams(window.location.search).get('category') || '';
 
-  // 调试：查看分类和文章数据
-  console.log('=== 调试信息 ===');
-  console.log('Categories data:', categories);
-  console.log('Posts data:', posts);
-
-  // 打印每篇文章的分类信息
-  posts.forEach(post => {
-    console.log(`文章: ${post.title}`);
-    console.log('  分类:', post.categories);
-    if (post.categories) {
-      post.categories.forEach(cat => {
-        console.log('    - cat.slug:', cat.slug, 'cat.slug?.current:', cat.slug?.current);
-      });
-    }
-  });
-
-  // 获取 DOM 元素
   const categoryFilters = document.getElementById('category-filters');
   const postsGrid = document.getElementById('posts-grid');
-  const currentCategoryDiv = document.getElementById('current-category');
-  const categoryNameSpan = document.getElementById('category-name');
   const loadMoreContainer = document.getElementById('load-more-container');
   const loadMoreBtn = document.getElementById('load-more-btn');
 
-  // 分页配置
-  const POSTS_PER_PAGE = 6;
-  let currentPage = 1;
-  let currentFilteredPosts = [];
+  // Sanity API 查询
+  async function fetchSanity(query) {
+    const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2024-01-01/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    return data.result;
+  }
 
-  // 从 URL 获取当前选中的分类
-  const urlParams = new URLSearchParams(window.location.search);
-  let selectedCategory = urlParams.get('category') || '';
+  // 生成文章卡片 HTML
+  function createPostHtml(post) {
+    const date = new Date(post.publishedAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+    const cats = (post.categories || []).filter(c => c).slice(0, 2).map(c => 
+      `<span class="inline-block px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">${c.title}</span>`
+    ).join('');
+    
+    return `<a href="/blog/${post.slug.current}" class="group overflow-hidden block">
+      <div class="bg-white rounded-2xl p-6 border border-gray-100 hover:border-gray-200 hover:shadow-card transition-all">
+        ${post.coverImage ? `<div class="relative -mx-6 -mt-6 mb-5 overflow-hidden"><div class="aspect-video bg-gray-50"><img src="${post.coverImage}" alt="${post.title}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy"/></div></div>` : ''}
+        ${cats ? `<div class="flex flex-wrap gap-2 mb-3">${cats}</div>` : ''}
+        <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-gray-600 transition-colors">${post.title}</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">${post.excerpt || ''}</p>
+        <div class="flex items-center text-sm text-gray-400"><svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><time datetime="${post.publishedAt}">${date}</time></div>
+      </div>
+    </a>`;
+  }
 
   // 渲染分类按钮
   function renderCategories() {
-    const allCategories = [
-      { title: '全部', slug: '' },
-      ...categories
-        .filter(cat => cat.slug) // 过滤掉没有 slug 的分类
-        .map(cat => ({ title: cat.title, slug: cat.slug }))
-    ];
-
-    categoryFilters.innerHTML = allCategories.map(cat => {
+    const allCats = [{ title: '全部', slug: '' }, ...categories.filter(c => c.slug).map(c => ({ title: c.title, slug: c.slug }))];
+    categoryFilters.innerHTML = allCats.map(cat => {
       const isActive = cat.slug === selectedCategory;
-      const activeClass = isActive
-        ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
-        : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 dark:bg-dark-100 dark:text-gray-300 dark:border-dark-200 dark:hover:bg-dark-200';
-
-      return `
-        <button
-          data-category="${cat.slug}"
-          class="px-4 py-2 rounded-full text-sm font-medium transition-colors ${activeClass}"
-          onclick="filterByCategory('${cat.slug}')"
-        >
-          ${cat.title}
-        </button>
-      `;
+      return `<button data-category="${cat.slug}" class="px-4 py-2 rounded-full text-sm font-medium transition-colors ${isActive ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}">${cat.title}</button>`;
     }).join('');
-  }
-
-  // 渲染文章卡片
-  function renderPosts(filteredPosts, append = false) {
-    if (!filteredPosts || filteredPosts.length === 0) {
-      postsGrid.innerHTML = `
-        <div class="col-span-full text-center py-12">
-          <p class="text-gray-500">该分类下暂无博客文章</p>
-        </div>
-      `;
-      updateLoadMoreButton(0, 0);
-      return;
-    }
-
-    // 保存当前筛选的文章
-    if (!append) {
-      currentFilteredPosts = filteredPosts;
-      currentPage = 1;
-    }
-
-    // 计算要显示的文章
-    const postsToShow = currentFilteredPosts.slice(0, currentPage * POSTS_PER_PAGE);
-    const totalPosts = currentFilteredPosts.length;
-
-    const postsHtml = postsToShow.map(post => {
-      const formattedDate = new Date(post.publishedAt).toLocaleDateString('zh-CN', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-
-      const categoriesHtml = (post.categories || [])
-        .filter(cat => cat != null)
-        .slice(0, 2)
-        .map(cat => `
-          <span class="inline-block px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">
-            ${cat.title}
-          </span>
-        `).join('');
-
-      return `
-        <a href="/blog/${post.slug.current}" class="group overflow-hidden block">
-          <div class="bg-white rounded-2xl p-6 border border-gray-100 hover:border-gray-200 hover:shadow-card transition-all">
-            ${post.coverImage ? `
-              <div class="relative -mx-6 -mt-6 mb-5 overflow-hidden">
-                <div class="aspect-video bg-gray-50">
-                  <img
-                    src="${post.coverImage}"
-                    alt="${post.title}"
-                    class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                </div>
-              </div>
-            ` : ''}
-
-            ${categoriesHtml ? `
-              <div class="flex flex-wrap gap-2 mb-3">
-                ${categoriesHtml}
-              </div>
-            ` : ''}
-
-            <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-gray-600 transition-colors">
-              ${post.title}
-            </h3>
-
-            <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">
-              ${post.excerpt}
-            </p>
-
-            <div class="flex items-center text-sm text-gray-400">
-              <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <time datetime="${post.publishedAt}">${formattedDate}</time>
-            </div>
-          </div>
-        </a>
-      `;
-    }).join('');
-
-    if (append) {
-      postsGrid.innerHTML += postsHtml;
-    } else {
-      postsGrid.innerHTML = postsHtml;
-    }
-
-    // 更新"加载更多"按钮的显示状态
-    updateLoadMoreButton(postsToShow.length, totalPosts);
-  }
-
-  // 更新"加载更多"按钮的显示状态
-  function updateLoadMoreButton(displayedCount, totalCount) {
-    if (displayedCount < totalCount) {
-      loadMoreContainer.style.display = 'block';
-    } else {
-      loadMoreContainer.style.display = 'none';
-    }
-  }
-
-  // 加载更多文章
-  function loadMorePosts() {
-    currentPage++;
-    const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
-    const endIndex = currentPage * POSTS_PER_PAGE;
-    const newPosts = currentFilteredPosts.slice(startIndex, endIndex);
-    
-    if (newPosts.length > 0) {
-      const postsHtml = newPosts.map(post => {
-        const formattedDate = new Date(post.publishedAt).toLocaleDateString('zh-CN', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        });
-
-        const categoriesHtml = (post.categories || [])
-          .filter(cat => cat != null)
-          .slice(0, 2)
-          .map(cat => `
-            <span class="inline-block px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">
-              ${cat.title}
-            </span>
-          `).join('');
-
-        return `
-          <a href="/blog/${post.slug.current}" class="group overflow-hidden block">
-            <div class="bg-white rounded-2xl p-6 border border-gray-100 hover:border-gray-200 hover:shadow-card transition-all">
-              ${post.coverImage ? `
-                <div class="relative -mx-6 -mt-6 mb-5 overflow-hidden">
-                  <div class="aspect-video bg-gray-50">
-                    <img
-                      src="${post.coverImage}"
-                      alt="${post.title}"
-                      class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-              ` : ''}
-
-              ${categoriesHtml ? `
-                <div class="flex flex-wrap gap-2 mb-3">
-                  ${categoriesHtml}
-                </div>
-              ` : ''}
-
-              <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-gray-600 transition-colors">
-                ${post.title}
-              </h3>
-
-              <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">
-                ${post.excerpt}
-              </p>
-
-              <div class="flex items-center text-sm text-gray-400">
-                <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <time datetime="${post.publishedAt}">${formattedDate}</time>
-              </div>
-            </div>
-          </a>
-        `;
-      }).join('');
-      
-      postsGrid.innerHTML += postsHtml;
-      updateLoadMoreButton((currentPage * POSTS_PER_PAGE), currentFilteredPosts.length);
-    }
   }
 
   // 筛选文章
   function filterByCategory(categorySlug) {
     selectedCategory = categorySlug;
-    currentPage = 1; // 重置页码
-
-    // 更新 URL（不刷新页面）
-    const newUrl = categorySlug
-      ? `/blog?category=${categorySlug}`
-      : '/blog';
-    window.history.pushState({ category: categorySlug }, '', newUrl);
-
-    // 筛选文章 - 处理 categories 数组中每个 category 的 slug 可能是字符串或对象
-    const filteredPosts = categorySlug
-      ? posts.filter(post => {
-          if (!post.categories || !Array.isArray(post.categories)) return false;
-          return post.categories.some(cat => {
-            // cat 可能是 { slug: { current: 'xxx' } } 或 { slug: 'xxx' }
-            const catSlug = cat.slug?.current || cat.slug;
-            return catSlug === categorySlug;
-          });
-        })
+    currentPage = 1;
+    window.history.pushState({}, '', categorySlug ? `/blog?category=${categorySlug}` : '/blog');
+    
+    currentFilteredPosts = categorySlug 
+      ? posts.filter(p => p.categories?.some(c => (c.slug?.current || c.slug) === categorySlug))
       : posts;
-
-    // 更新 UI
+    
+    const toShow = currentFilteredPosts.slice(0, POSTS_PER_PAGE);
+    postsGrid.innerHTML = toShow.length ? toShow.map(createPostHtml).join('') : '<div class="col-span-full text-center py-12"><p class="text-gray-500">该分类下暂无博客文章</p></div>';
+    loadMoreContainer.style.display = toShow.length < currentFilteredPosts.length ? 'block' : 'none';
     renderCategories();
-    renderPosts(filteredPosts, false);
-    updateCategoryLabel(categorySlug);
   }
 
-  // 更新分类标签
-  function updateCategoryLabel(categorySlug) {
-    // 分类标签功能已被注释，跳过处理
-    // if (!categorySlug) {
-    //   currentCategoryDiv.classList.add('hidden');
-    //   return;
-    // }
-    // const category = categories.find(cat => cat.slug && cat.slug === categorySlug);
-    // if (category) {
-    //   categoryNameSpan.textContent = category.title;
-    //   currentCategoryDiv.classList.remove('hidden');
-    // } else {
-    //   currentCategoryDiv.classList.add('hidden');
-    // }
+  // 加载更多
+  function loadMore() {
+    currentPage++;
+    const newPosts = currentFilteredPosts.slice((currentPage - 1) * POSTS_PER_PAGE, currentPage * POSTS_PER_PAGE);
+    postsGrid.insertAdjacentHTML('beforeend', newPosts.map(createPostHtml).join(''));
+    if (currentPage * POSTS_PER_PAGE >= currentFilteredPosts.length) loadMoreContainer.style.display = 'none';
   }
 
-  // 将函数暴露到全局作用域
-  window.filterByCategory = filterByCategory;
+  // 绑定事件
+  categoryFilters.addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (btn) filterByCategory(btn.dataset.category);
+  });
+  loadMoreBtn?.addEventListener('click', loadMore);
 
-  // "加载更多"按钮事件
-  loadMoreBtn.addEventListener('click', loadMorePosts);
+  // 异步加载数据
+  async function loadData() {
+    const postsQuery = `*[_type == "post"] | order(publishedAt desc) {
+      _id, title, slug, excerpt, publishedAt,
+      "coverImage": coverImage.asset->url,
+      categories[]->{title, slug}
+    }`;
+    const categoriesQuery = `*[_type == "category"] | order(title asc) { _id, title, "slug": slug.current }`;
+    
+    [posts, categories] = await Promise.all([fetchSanity(postsQuery), fetchSanity(categoriesQuery)]);
+    currentFilteredPosts = posts;
+    
+    renderCategories();
+    filterByCategory(selectedCategory);
+  }
 
-  // 初始化
-  renderCategories();
-
-  // 初始筛选 - 处理 categories 数组中每个 category 的 slug 可能是字符串或对象
-  const filteredPosts = selectedCategory
-    ? posts.filter(post => {
-        if (!post.categories || !Array.isArray(post.categories)) return false;
-        return post.categories.some(cat => {
-          // cat 可能是 { slug: { current: 'xxx' } } 或 { slug: 'xxx' }
-          const catSlug = cat.slug?.current || cat.slug;
-          return catSlug === selectedCategory;
-        });
-      })
-    : posts;
-
-  renderPosts(filteredPosts);
-  updateCategoryLabel(selectedCategory);
+  loadData();
 </script>

@@ -50,28 +50,9 @@ export default defineType({
     defineField({
       name: 'body',
       title: 'Body',
-      type: 'array',
-      of: [
-        { type: 'block' },
-        { type: 'image', options: { hotspot: true } },
-        { 
-          type: 'object',
-          name: 'code',
-          title: 'Code Block',
-          fields: [
-            {
-              name: 'language',
-              type: 'string',
-              title: 'Language'
-            },
-            {
-              name: 'code',
-              type: 'text',
-              title: 'Code'
-            }
-          ]
-        },
-      ],
+      type: 'text',
+      description: '支持直接粘贴 Markdown 内容，包括代码块、标题、列表等',
+      rows: 30,
     }),
   ],
 
