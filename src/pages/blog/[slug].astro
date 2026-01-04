@@ -3,6 +3,8 @@ import Layout from '../../layouts/Layout.astro';
 import Badge from '../../components/ui/Badge.astro';
 import MarkdownContent from '../../components/MarkdownContent.astro';
 import PortableText from '../../components/PortableText.astro';
+import BlogPostSkeleton from '../../components/BlogPostSkeleton.astro';
+import PostContentLoader from '../../components/PostContentLoader.vue';
 import { fetchSanity, postBySlugQuery } from '../../lib/sanity';
 
 // 动态路由参数
@@ -37,8 +39,8 @@ const formattedDate = new Date(post.publishedAt).toLocaleDateString('zh-CN', {
 >
   <article class="section" transition:animate="fade">
     <div class="container-custom">
-      <!-- 文章头部 -->
-      <header class="max-w-3xl mx-auto text-center mb-12">
+      <!-- 文章头部 - 立即显示 -->
+      <header class="max-w-3xl mx-auto text-center mb-12 post-header">
         <!-- 分类 -->
         <div class="flex flex-wrap justify-center gap-2 mb-6">
           {safeCategories.map((cat: any) => (
@@ -70,9 +72,9 @@ const formattedDate = new Date(post.publishedAt).toLocaleDateString('zh-CN', {
         </div>
       </header>
       
-      <!-- 封面图 -->
+      <!-- 封面图 - 立即显示 -->
       {post.coverImage && (
-        <div class="max-w-4xl mx-auto mb-12 rounded-2xl overflow-hidden">
+        <div class="max-w-4xl mx-auto mb-12 rounded-2xl overflow-hidden post-cover">
           <img 
             src={post.coverImage} 
             alt={post.title}
@@ -82,13 +84,15 @@ const formattedDate = new Date(post.publishedAt).toLocaleDateString('zh-CN', {
         </div>
       )}
       
-      <!-- 文章内容 -->
+      <!-- 文章内容 - 使用骨架屏加载器 -->
       <div class="max-w-3xl mx-auto prose prose-lg dark:prose-invert max-w-none">
-        {Array.isArray(post.body) ? (
-          <PortableText blocks={post.body} />
-        ) : (
-          <MarkdownContent content={post.body} />
-        )}
+        <PostContentLoader client:load>
+          {Array.isArray(post.body) ? (
+            <PortableText blocks={post.body} />
+          ) : (
+            <MarkdownContent content={post.body} />
+          )}
+        </PostContentLoader>
         
         <!-- 返回按钮 -->
         <div class="mt-16 pt-8 border-t border-gray-200 dark:border-dark-200">
@@ -108,5 +112,22 @@ const formattedDate = new Date(post.publishedAt).toLocaleDateString('zh-CN', {
   /* 为 prose 添加额外样式 */
   .prose :where(h2):not(:where([class~="not-prose"] *)) {
     @apply border-b border-gray-200 dark:border-dark-200 pb-2;
+  }
+  
+  /* 文章头部和封面图入场动画 */
+  .post-header,
+  .post-cover {
+    animation: slideUp 0.4s ease-out;
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 </style>

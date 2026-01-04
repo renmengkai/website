@@ -174,3 +174,29 @@
     transform: translateY(0);
   }
 }
+
+/* 页面过渡加载状态 - View Transitions */
+/* 当页面正在导航时显示骨架屏 */
+html.is-loading .page-transition-skeleton {
+  display: block !important;
+  opacity: 1;
+}
+
+html:not(.is-loading) .page-transition-skeleton {
+  display: none;
+  opacity: 0;
+}
+
+/* 骨架屏动画 */
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.skeleton-animate {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}

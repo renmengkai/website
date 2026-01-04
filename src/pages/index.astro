@@ -6,68 +6,35 @@ import PostCard from '../components/PostCard.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import Card from '../components/ui/Card.astro';
 import Button from '../components/ui/Button.astro';
+import { fetchSanity } from '../lib/sanity';
 
-// 示例博客文章
-const posts = [
-  {
-    _id: '1',
-    title: '使用 Astro 构建现代静态网站',
-    slug: { current: 'building-with-astro' },
-    excerpt: '探索 Astro 框架的核心概念，了解如何利用其岛屿架构构建高性能的静态网站。',
-    publishedAt: '2024-12-15',
-    coverImage: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=450&fit=crop',
-    categories: [{ title: '技术', slug: { current: 'tech' } }]
-  },
-  {
-    _id: '2',
-    title: 'Tailwind CSS 最佳实践指南',
-    slug: { current: 'tailwind-best-practices' },
-    excerpt: '深入理解 Tailwind CSS 的设计哲学，掌握高效的样式编写技巧和组件化策略。',
-    publishedAt: '2024-12-10',
-    coverImage: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=450&fit=crop',
-    categories: [{ title: 'CSS', slug: { current: 'css' } }]
-  },
-  {
-    _id: '3',
-    title: 'Vue 3 组合式 API 完全指南',
-    slug: { current: 'vue3-composition-api' },
-    excerpt: '从响应式原理到自定义 Hooks，全面掌握 Vue 3 Composition API 的使用技巧。',
-    publishedAt: '2024-12-05',
-    coverImage: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=450&fit=crop',
-    categories: [{ title: 'Vue', slug: { current: 'vue' } }]
-  }
-];
+// 从 Sanity 获取最新文章（3篇）
+const postsQuery = `*[_type == "post"] | order(publishedAt desc)[0...3] {
+  _id,
+  title,
+  slug,
+  excerpt,
+  publishedAt,
+  "coverImage": coverImage.asset->url,
+  categories[]->{title, slug}
+}`;
 
-// 示例项目
-const projects = [
-  {
-    _id: '1',
-    title: '电商管理后台',
-    slug: { current: 'ecommerce-dashboard' },
-    description: '基于 Vue 3 + TypeScript 构建的现代化电商管理系统，支持商品管理、订单处理、数据分析等功能。',
-    thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=450&fit=crop',
-    technologies: ['Vue 3', 'TypeScript', 'Tailwind CSS', 'Pinia'],
-    featured: true
-  },
-  {
-    _id: '2',
-    title: '个人知识库',
-    slug: { current: 'knowledge-base' },
-    description: '使用 Notion API 构建的个人知识管理工具，支持 Markdown 编辑、标签分类、全文搜索。',
-    thumbnail: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800&h=450&fit=crop',
-    technologies: ['Next.js', 'Notion API', 'Vercel'],
-    featured: true
-  },
-  {
-    _id: '3',
-    title: 'AI 对话助手',
-    slug: { current: 'ai-chat-assistant' },
-    description: '基于大语言模型的智能对话应用，支持多轮对话、上下文记忆、流式输出。',
-    thumbnail: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop',
-    technologies: ['React', 'OpenAI API', 'Node.js'],
-    featured: true
-  }
-];
+// 从 Sanity 获取项目（优先精选，否则显示所有项目）
+const projectsQuery = `*[_type == "project"] | order(featured desc, order asc)[0...3] {
+  _id,
+  title,
+  slug,
+  description,
+  "thumbnail": thumbnail.asset->url,
+  technologies,
+  featured
+}`;
+
+// 并行获取数据
+const [posts, projects] = await Promise.all([
+  fetchSanity<any[]>(postsQuery),
+  fetchSanity<any[]>(projectsQuery)
+]);
 
 // 快速统计
 const stats = [
