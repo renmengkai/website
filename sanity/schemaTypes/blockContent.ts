@@ -11,49 +11,49 @@ import {defineType, defineArrayMember} from 'sanity'
  *  }
  */
 export default defineType({
-  title: 'Block Content',
+  title: '富文本内容',
   name: 'blockContent',
   type: 'array',
   of: [
     defineArrayMember({
-      title: 'Block',
+      title: '文本块',
       type: 'block',
       // Styles let you set what your user can mark up blocks with. These
       // correspond with HTML tags, but you can set any title or value
       // you want and decide how you want to deal with it where you want to
       // use your content.
       styles: [
-        {title: 'Normal', value: 'normal'},
-        {title: 'H1', value: 'h1'},
-        {title: 'H2', value: 'h2'},
-        {title: 'H3', value: 'h3'},
-        {title: 'H4', value: 'h4'},
-        {title: 'Quote', value: 'blockquote'},
+        {title: '正常', value: 'normal'},
+        {title: '标题 1', value: 'h1'},
+        {title: '标题 2', value: 'h2'},
+        {title: '标题 3', value: 'h3'},
+        {title: '标题 4', value: 'h4'},
+        {title: '引用', value: 'blockquote'},
       ],
       lists: [
-        {title: 'Bullet', value: 'bullet'},
-        {title: 'Number', value: 'number'},
+        {title: '无序列表', value: 'bullet'},
+        {title: '有序列表', value: 'number'},
       ],
       // Marks let you mark up inline text in the block editor.
       marks: {
         // Decorators usually describe a single property – e.g. a typographic
         // preference or highlighting by editors.
         decorators: [
-          {title: 'Strong', value: 'strong'},
-          {title: 'Emphasis', value: 'em'},
-          {title: 'Code', value: 'code'},
-          {title: 'Underline', value: 'underline'},
-          {title: 'Strike', value: 'strike-through'},
+          {title: '加粗', value: 'strong'},
+          {title: '斜体', value: 'em'},
+          {title: '代码', value: 'code'},
+          {title: '下划线', value: 'underline'},
+          {title: '删除线', value: 'strike-through'},
         ],
         // Annotations can be any object structure – e.g. a link or a footnote.
         annotations: [
           {
-            title: 'URL',
+            title: '链接',
             name: 'link',
             type: 'object',
             fields: [
               {
-                title: 'URL',
+                title: '链接地址',
                 name: 'href',
                 type: 'url',
               },
@@ -71,7 +71,7 @@ export default defineType({
     }),
     defineArrayMember({
       type: 'code',
-      title: 'Code Block',
+      title: '代码块',
       options: {
         language: 'javascript',
         languageAlternatives: [

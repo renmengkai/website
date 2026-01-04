@@ -2,71 +2,77 @@ import { defineField, defineType } from 'sanity'
 
 export const project = defineType({
   name: 'project',
-  title: 'Project',
+  title: '项目作品',
   type: 'document',
   fields: [
     defineField({
       name: 'title',
-      title: 'Title',
+      title: '标题',
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'slug',
-      title: 'Slug',
+      title: '路径别名',
       type: 'slug',
       options: { source: 'title', maxLength: 96 },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'description',
-      title: 'Description',
+      title: '简介',
       type: 'text',
       rows: 3,
     }),
     defineField({
       name: 'thumbnail',
-      title: 'Thumbnail',
+      title: '缩略图',
       type: 'image',
       options: { hotspot: true },
     }),
     defineField({
       name: 'gallery',
-      title: 'Gallery',
+      title: '图片集',
       type: 'array',
       of: [{ type: 'image', options: { hotspot: true } }],
     }),
     defineField({
+      name: 'categories',
+      title: '分类',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'category' }] }],
+    }),
+    defineField({
       name: 'technologies',
-      title: 'Technologies',
+      title: '技术栈',
       type: 'array',
       of: [{ type: 'string' }],
       options: { layout: 'tags' },
     }),
     defineField({
       name: 'liveUrl',
-      title: 'Live URL',
+      title: '在线地址',
       type: 'url',
     }),
     defineField({
       name: 'githubUrl',
-      title: 'GitHub URL',
+      title: 'GitHub 地址',
       type: 'url',
     }),
     defineField({
       name: 'featured',
-      title: 'Featured',
+      title: '精选推荐',
       type: 'boolean',
       initialValue: false,
     }),
     defineField({
       name: 'order',
-      title: 'Order',
+      title: '排序',
       type: 'number',
     }),
     defineField({
       name: 'body',
-      title: 'Body',
+      title: '正文内容',
       type: 'array',
       of: [
         { type: 'block' },
@@ -74,17 +80,17 @@ export const project = defineType({
         { 
           type: 'object',
           name: 'code',
-          title: 'Code Block',
+          title: '代码块',
           fields: [
             {
               name: 'language',
               type: 'string',
-              title: 'Language'
+              title: '语言'
             },
             {
               name: 'code',
               type: 'text',
-              title: 'Code'
+              title: '代码'
             }
           ]
         },

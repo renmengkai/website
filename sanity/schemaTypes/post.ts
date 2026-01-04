@@ -2,54 +2,54 @@ import {defineField, defineType} from 'sanity'
 
 export default defineType({
   name: 'post',
-  title: 'Blog Post',
+  title: '博客文章',
   type: 'document',
   fields: [
     defineField({
       name: 'title',
-      title: 'Title',
+      title: '标题',
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'slug',
-      title: 'Slug',
+      title: '路径别名',
       type: 'slug',
       options: { source: 'title', maxLength: 96 },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'excerpt',
-      title: 'Excerpt',
+      title: '摘要',
       type: 'text',
       rows: 3,
     }),
     defineField({
       name: 'coverImage',
-      title: 'Cover Image',
+      title: '封面图',
       type: 'image',
       options: { hotspot: true },
     }),
     defineField({
       name: 'author',
-      title: 'Author',
+      title: '作者',
       type: 'reference',
       to: [{ type: 'author' }],
     }),
     defineField({
       name: 'categories',
-      title: 'Categories',
+      title: '分类',
       type: 'array',
       of: [{ type: 'reference', to: [{ type: 'category' }] }],
     }),
     defineField({
       name: 'publishedAt',
-      title: 'Published At',
+      title: '发布时间',
       type: 'datetime',
     }),
     defineField({
       name: 'body',
-      title: 'Body',
+      title: '正文内容',
       type: 'text',
       description: '支持直接粘贴 Markdown 内容，包括代码块、标题、列表等',
       rows: 30,

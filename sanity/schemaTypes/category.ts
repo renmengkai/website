@@ -2,24 +2,24 @@ import {defineField, defineType} from 'sanity'
 
 export default defineType({
   name: 'category',
-  title: 'Category',
+  title: '分类',
   type: 'document',
   fields: [
     defineField({
       name: 'title',
-      title: 'Title',
+      title: '标题',
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'slug',
-      title: 'Slug',
+      title: '路径别名',
       type: 'slug',
       options: { source: 'title', maxLength: 96 },
     }),
     defineField({
       name: 'usedFor',
-      title: 'Used For',
+      title: '适用范围',
       description: '该分类用于哪个内容类型',
       type: 'string',
       options: {
@@ -35,7 +35,7 @@ export default defineType({
     }),
     defineField({
       name: 'description',
-      title: 'Description',
+      title: '描述',
       type: 'text',
     }),
   ],
