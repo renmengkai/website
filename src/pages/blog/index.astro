@@ -7,7 +7,7 @@ import Layout from '../../layouts/Layout.astro';
   description="技术博客与学习笔记，分享编程经验和开发心得"
 >
   <!-- 页面标题区 -->
-  <section class="pt-32 pb-16">
+  <section class="pt-24 pb-6">
     <div class="container-custom">
       <div class="text-center mb-4">
         <span class="text-sm font-medium text-gray-400 uppercase tracking-wider">思考</span>
@@ -15,7 +15,7 @@ import Layout from '../../layouts/Layout.astro';
       <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 text-center max-w-4xl mx-auto mb-6">
         最新洞察与日志
       </h1>
-      <p class="text-lg text-gray-500 text-center max-w-2xl mx-auto">
+      <p class="text-md text-gray-500 text-center max-w-2xl mx-auto">
         记录技术探索与思考，分享学习心得与实践经验。<br>
         在这里，你会找到关于AI开发、Web全栈技术和系统设计思考的文章。
       </p>
@@ -30,8 +30,27 @@ import Layout from '../../layouts/Layout.astro';
     </div>
   </section>
 
+  <!-- 搜索栏 -->
+  <section class="pb-4 mt-2">
+    <div class="container-custom">
+      <div class="max-w-xl mx-auto">
+        <div class="relative">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input 
+            type="text" 
+            id="search-input"
+            placeholder="搜索文章标题..."
+            class="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 bg-white focus:outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100 transition-all text-gray-700 placeholder-gray-400"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- 分类筛选 -->
-  <section class="pb-12">
+  <section class="pb-8">
     <div class="container-custom">
       <div id="category-filters" class="flex flex-wrap items-center justify-center gap-3">
         <!-- 分类按钮将通过 JS 动态加载 -->
@@ -114,11 +133,13 @@ import Layout from '../../layouts/Layout.astro';
   let currentPage = 1;
   let currentFilteredPosts = [];
   let selectedCategory = new URLSearchParams(window.location.search).get('category') || '';
+  let searchKeyword = '';
 
   const categoryFilters = document.getElementById('category-filters');
   const postsGrid = document.getElementById('posts-grid');
   const loadMoreContainer = document.getElementById('load-more-container');
   const loadMoreBtn = document.getElementById('load-more-btn');
+  const searchInput = document.getElementById('search-input');
 
   // Sanity API 查询
   async function fetchSanity(query) {
@@ -155,19 +176,26 @@ import Layout from '../../layouts/Layout.astro';
     }).join('');
   }
 
-  // 筛选文章
-  function filterByCategory(categorySlug) {
-    selectedCategory = categorySlug;
+  // 筛选文章（分类 + 搜索）
+  function filterPosts() {
     currentPage = 1;
-    window.history.pushState({}, '', categorySlug ? `/blog?category=${categorySlug}` : '/blog');
     
-    currentFilteredPosts = categorySlug 
-      ? posts.filter(p => p.categories?.some(c => (c.slug?.current || c.slug) === categorySlug))
-      : posts;
+    currentFilteredPosts = posts.filter(p => {
+      const matchCategory = !selectedCategory || p.categories?.some(c => (c.slug?.current || c.slug) === selectedCategory);
+      const matchSearch = !searchKeyword || p.title.toLowerCase().includes(searchKeyword.toLowerCase());
+      return matchCategory && matchSearch;
+    });
     
     const toShow = currentFilteredPosts.slice(0, POSTS_PER_PAGE);
-    postsGrid.innerHTML = toShow.length ? toShow.map(createPostHtml).join('') : '<div class="col-span-full text-center py-12"><p class="text-gray-500">该分类下暂无博客文章</p></div>';
+    postsGrid.innerHTML = toShow.length ? toShow.map(createPostHtml).join('') : '<div class="col-span-full text-center py-12"><p class="text-gray-500">没有找到匹配的文章</p></div>';
     loadMoreContainer.style.display = toShow.length < currentFilteredPosts.length ? 'block' : 'none';
+  }
+
+  // 筛选分类
+  function filterByCategory(categorySlug) {
+    selectedCategory = categorySlug;
+    window.history.pushState({}, '', categorySlug ? `/blog?category=${categorySlug}` : '/blog');
+    filterPosts();
     renderCategories();
   }
 
@@ -185,6 +213,16 @@ import Layout from '../../layouts/Layout.astro';
     if (btn) filterByCategory(btn.dataset.category);
   });
   loadMoreBtn?.addEventListener('click', loadMore);
+  
+  // 搜索功能（防抖）
+  let searchTimeout;
+  searchInput?.addEventListener('input', e => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      searchKeyword = e.target.value.trim();
+      filterPosts();
+    }, 300);
+  });
 
   // 异步加载数据
   async function loadData() {
@@ -199,7 +237,7 @@ import Layout from '../../layouts/Layout.astro';
     currentFilteredPosts = posts;
     
     renderCategories();
-    filterByCategory(selectedCategory);
+    filterPosts();
   }
 
   loadData();
