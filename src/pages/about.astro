@@ -5,79 +5,60 @@ import Button from '../components/ui/Button.astro';
 
 // 关于页面数据
 const about = {
-  name: '张涛',
+  name: '任孟锴',
   title: '创始人 & CEO',
-  avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
-  quote: '欢迎来到我的个人空间！我们团队致力于使用最先进的开发实践创建卓越的数字体验。在当今的数字时代，质量和创新不仅是必需品，更是我们的核心价值观。',
+  quote: 'AI时代已经到来，我们致力于用AI Agent技术帮助企业降本增效。在我们团队中，80%的工作由AI Agent完成，这让我们能够以更高的效率、更低的成本为客户创造价值。我们相信，选择我们，将是您在未来10年内做出的最好决策。',
 };
 
 // 核心价值观
 const values = [
   {
     icon: 'innovation',
-    title: '创新',
-    description: '不断改进和创新我们的解决方案，保持行业领先地位。'
+    title: 'AI驱动',
+    description: '80%工作由AI Agent完成，以最高效率交付卓越成果。'
   },
   {
     icon: 'integrity',
-    title: '诚信',
-    description: '在所有业务中始终坚持最高标准的诚实和透明。'
+    title: '合作共赢',
+    description: '招商合作，与合作伙伴共同成长，在AI时代携手领先。'
   },
   {
     icon: 'customer',
-    title: '以客户为中心',
-    description: '在所有交互中保持对客户需求的最高关注度。'
+    title: '降本增效',
+    description: '帮助企业适应时代变化，实现数字化转型与效率提升。'
   }
 ];
 
 // 统计数据
 const stats = [
-  { value: '1000+', label: '帮助超过1000家企业' },
-  { value: '99.9%', label: '客户满意度' },
-  { value: '24*7', label: '全天候支持' }
+  { value: '80%', label: '工作由AI Agent完成' },
+  { value: '10年', label: '未来领先的选择' },
+  { value: '24*7', label: '全天候AI协作' }
 ];
 
-// 团队成员
-const team = [
-  {
-    name: '王凯',
-    role: '首席开发者',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop'
-  },
-  {
-    name: '周文',
-    role: 'UI/UX 设计师',
-    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop'
-  },
-  {
-    name: '陈强',
-    role: '全栈开发者',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop'
-  },
-  {
-    name: '刘海',
-    role: '产品经理',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop'
-  }
+// 技术栈
+const techStack = [
+  { category: '编程语言', items: ['Python', 'JavaScript', 'Java', 'Go', 'Rust'] },
+  { category: '前端框架', items: ['Vue', 'React', 'Tauri', 'Electron'] },
 ];
 
 // FAQ 数据
 const faqs = [
   {
     question: '你们擅长哪些技术？',
-    answer: '我们擅长现代Web技术，包括React、Vue.js、Astro、Node.js和TypeScript。我们在云服务和DevOps实践方面也有丰富的专业知识。'
+    answer: '我们精通多种编程语言：Python、JavaScript、Java、Go、Rust，以及前端框架Vue、React、Tauri、Electron等。我们在AI Agent开发和多智能体编排方面具有深厚的专业知识。'
   },
   {
-    question: '你们如何处理新项目？',
-    answer: '我们从充分的需求调研阶段开始，了解您的需求，然后进行详细规划、带有定期检查的迭代开发，以及在发布前进行全面测试。'
+    question: 'AI Agent能完成哪些工作？',
+    answer: '在我们团队中，80%的工作由AI Agent完成，包括代码编写、测试、文档生成、数据分析、自动化流程等。这让我们的开发效率大幅提升，同时降低成本。'
   },
   {
-    question: '典型项目时间线是什么？',
-    answer: '项目时间线因范围和复杂性而异。典型网站需要4-8周，而较大的应用可能需要3-6个月。我们始终在提案阶段提供详细的时间线。'
+    question: '你们提供哪些服务？',
+    answer: '我们专注于开发AI Agent工具和Agent Team编排工具，帮助企业构建智能化的工作流程，实现降本增效。我们提供从咨询到实施的完整解决方案。'
   },
   {
-    question: '你们提供持续的支持和维护吗？',
-    answer: '是的，我们提供灵活的支持和维护套餐，确保您的应用在发布后保持最新、安全并以最佳状态运行。'
+    question: '如何与你们合作？',
+    answer: '我们目前处于创业阶段，诚挚邀请招商合作。无论您是希望采用AI技术的企业，还是寻求合作的伙伴，我们都欢迎与您洽谈，共同在AI时代领先发展。'
   }
 ];
 ---
@@ -93,10 +74,10 @@ const faqs = [
         <span class="text-sm font-medium text-gray-400 uppercase tracking-wider">关于我们</span>
       </div>
       <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 text-center max-w-4xl mx-auto mb-6">
-        对卓越的承诺
+        AI时代的创新团队
       </h1>
       <p class="text-md text-gray-500 text-center max-w-2xl mx-auto">
-        你在数字创新领域的可信赖合作伙伴，为全栈开发提供尖端解决方案。
+        专注AI Agent工具与多智能体编排，助力企业降本增效，共赢AI时代。
       </p>
     </div>
   </section>
@@ -131,11 +112,14 @@ const faqs = [
           <div class="relative z-10">
             <!-- CEO 信息 -->
             <div class="flex items-center gap-4 mb-6">
-              <img 
-                src={about.avatar} 
-                alt={about.name}
-                class="w-16 h-16 rounded-full object-cover"
-              />
+              <div class="w-16 h-16 rounded-full overflow-hidden">
+                <img 
+                  src="/images/founder.jpg" 
+                  alt={about.name}
+                  class="w-full h-full object-cover object-top scale-125"
+                  style="transform: rotate(-10deg) scale(1.25)"
+                />
+              </div>
               <div>
                 <h3 class="font-semibold text-gray-900">{about.name}</h3>
                 <p class="text-sm text-gray-500">{about.title}</p>
@@ -155,11 +139,12 @@ const faqs = [
   <!-- 客户 Logo -->
   <section class="py-12 border-y border-gray-100">
     <div class="container-custom">
-      <p class="text-sm text-gray-400 text-center mb-8">受到全球数千家企业的信赖</p>
-      <div class="flex flex-wrap items-center justify-center gap-12 opacity-50">
-        {[1, 2, 3, 4, 5, 6].map(() => (
-          <div class="w-24 h-8 bg-gray-200 rounded"></div>
-        ))}
+      <p class="text-sm text-gray-400 text-center mb-8">我们的团队来自知名企业</p>
+      <div class="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+        <span class="text-lg font-semibold text-gray-400">美团</span>
+        <span class="text-lg font-semibold text-gray-400">京东</span>
+        <span class="text-lg font-semibold text-gray-400">小米</span>
+        <span class="text-lg font-semibold text-gray-400">华为</span>
       </div>
     </div>
   </section>
@@ -169,9 +154,9 @@ const faqs = [
     <div class="container-custom">
       <div class="text-center mb-12">
         <span class="text-sm font-medium text-gray-400 uppercase tracking-wider">核心价值观</span>
-        <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mt-3">我们的价值观</h2>
+        <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mt-3">我们的优势</h2>
         <p class="text-lg text-gray-500 mt-4 max-w-2xl mx-auto">
-          你在数字创新领域的可信赖合作伙伴，为全面的Web开发提供尖端解决方案。
+          AI驱动开发，高效交付，助力企业在AI时代领先发展。
         </p>
       </div>
       
@@ -213,41 +198,77 @@ const faqs = [
     </div>
   </section>
 
-  <!-- 团队展示 -->
+  <!-- 技术栈展示 -->
   <section class="py-20 bg-gray-50/50">
     <div class="container-custom">
       <div class="text-center mb-12">
-        <span class="text-sm font-medium text-gray-400 uppercase tracking-wider">我们的团队</span>
-        <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mt-3">认识我们的团队</h2>
+        <span class="text-sm font-medium text-gray-400 uppercase tracking-wider">技术能力</span>
+        <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mt-3">我们的技术栈</h2>
         <p class="text-lg text-gray-500 mt-4 max-w-2xl mx-auto">
-          你在数字创新领域的可信赖合作伙伴，为全面的Web开发提供尖端解决方案。
+          多语言、多框架的技术储备，满足各类项目需求。
         </p>
       </div>
       
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-        {team.map((member) => (
-          <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center shadow-card hover:shadow-card-hover transition-shadow">
-            <img 
-              src={member.avatar} 
-              alt={member.name}
-              class="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
-            />
-            <h3 class="font-semibold text-gray-900">{member.name}</h3>
-            <p class="text-sm text-gray-500">{member.role}</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        {techStack.map((tech) => (
+          <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-card">
+            <h3 class="font-semibold text-gray-900 mb-4">{tech.category}</h3>
+            <div class="flex flex-wrap gap-2">
+              {tech.items.map((item) => (
+                <span class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">
+                  {item}
+                </span>
+              ))}
+            </div>
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- FAQ 区域 -->
+  <!-- 业务方向 -->
   <section class="py-20">
+    <div class="container-custom">
+      <div class="text-center mb-12">
+        <span class="text-sm font-medium text-gray-400 uppercase tracking-wider">业务方向</span>
+        <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mt-3">我们专注于</h2>
+        <p class="text-lg text-gray-500 mt-4 max-w-2xl mx-auto">
+          AI Agent工具开发与多智能体编排，助力企业智能化转型。
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div class="bg-white rounded-2xl border border-gray-100 p-8 shadow-card text-center">
+          <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-primary-100 flex items-center justify-center">
+            <svg class="w-8 h-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-3">AI Agent工具开发</h3>
+          <p class="text-gray-500">开发智能、高效的AI Agent工具，自动化处理各类业务场景。</p>
+        </div>
+        
+        <div class="bg-white rounded-2xl border border-gray-100 p-8 shadow-card text-center">
+          <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-primary-100 flex items-center justify-center">
+            <svg class="w-8 h-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-3">Agent Team编排</h3>
+          <p class="text-gray-500">多智能体协同编排，构建复杂的AI工作流，实现业务智能化。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ 区域 -->
+  <section class="py-20 bg-gray-50/50">
     <div class="container-custom">
       <div class="text-center mb-12">
         <span class="text-sm font-medium text-gray-400 uppercase tracking-wider">常见问题</span>
         <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mt-3">常见问答</h2>
         <p class="text-lg text-gray-500 mt-4 max-w-2xl mx-auto">
-          你在数字创新领域的可信赖合作伙伴，为全面的Web开发提供尖端解决方案。
+          了解我们的服务与合作方式
         </p>
       </div>
       
@@ -282,10 +303,10 @@ const faqs = [
         
         <div class="relative z-10">
           <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4">
-            使用我们的解决方案保护您的项目
+            招商合作，共赢AI时代
           </h2>
           <p class="text-gray-400 max-w-xl mx-auto mb-8">
-            允许您设置质量参数阈值，并在达到里程碑时接收实时更新。
+            我们正处于创业阶段，诚挚邀请合作伙伴。企业降本增效，适用时代变化的任务交给我们，会是未来10年内最好的选择。
           </p>
           <Button href="/contact" variant="primary" showArrow class="bg-primary-500 text-gray-900 font-semibold hover:bg-primary-400">
             联系我们
