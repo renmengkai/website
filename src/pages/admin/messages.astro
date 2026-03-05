@@ -1,0 +1,237 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// 检测是否在 Deno 环境中
+const isDeno = typeof (globalThis as any).Deno !== 'undefined';
+
+// 获取环境变量（支持 Deno 和 Node.js）
+function getEnv(key: string): string | undefined {
+  if (isDeno) {
+    return (globalThis as any).Deno.env.get(key);
+  }
+  return import.meta.env?.[key];
+}
+
+// 简单的密码保护（生产环境应该使用更强的认证）
+const ADMIN_PASSWORD = getEnv('ADMIN_PASSWORD') || 'deiioxydhydkljdu';
+
+// 检查认证
+const url = new URL(Astro.request.url);
+const password = url.searchParams.get('pwd');
+const isAuthenticated = password === ADMIN_PASSWORD;
+
+// 获取消息数据
+let messages: any[] = [];
+let error: string | null = null;
+
+if (isAuthenticated) {
+  try {
+    const response = await fetch(`${url.origin}/api/contact`);
+    const data = await response.json();
+    if (data.success) {
+      messages = data.data;
+    } else {
+      error = data.message || '获取消息失败';
+    }
+  } catch (e) {
+    error = '获取消息失败: ' + (e as Error).message;
+  }
+}
+
+// 格式化日期
+function formatDate(dateStr: string) {
+  const date = new Date(dateStr);
+  return date.toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+// 主题映射
+const subjectMap: Record<string, string> = {
+  project: '项目合作',
+  tech: '技术咨询',
+  feedback: '反馈建议',
+  other: '其他'
+};
+
+// 状态样式
+const statusStyles = {
+  unread: 'bg-red-100 text-red-700',
+  read: 'bg-blue-100 text-blue-700',
+  replied: 'bg-green-100 text-green-700'
+};
+
+const statusText = {
+  unread: '未读',
+  read: '已读',
+  replied: '已回复'
+};
+---
+
+<Layout title="消息管理 - RMK">
+  {!isAuthenticated ? (
+    <div class="min-h-screen flex items-center justify-center bg-gray-50">
+      <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
+        <h1 class="text-2xl font-bold text-gray-900 mb-6 text-center">消息管理</h1>
+        <form method="get" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">管理密码</label>
+            <input 
+              type="password" 
+              name="pwd" 
+              placeholder="请输入密码"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 outline-none transition-all"
+              required
+            />
+          </div>
+          <button 
+            type="submit"
+            class="w-full bg-gray-900 text-white py-3 rounded-xl font-medium hover:bg-gray-800 transition-colors"
+          >
+            登录
+          </button>
+        </form>
+      </div>
+    </div>
+  ) : (
+    <div class="min-h-screen bg-gray-50">
+      <!-- 顶部导航 -->
+      <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
+        <div class="container-custom">
+          <div class="flex items-center justify-between h-16">
+            <h1 class="text-xl font-bold text-gray-900">消息管理</h1>
+            <div class="flex items-center gap-4">
+              <span class="text-sm text-gray-500">
+                共 {messages.length} 条消息
+              </span>
+              <a 
+                href="/admin/messages?pwd=" 
+                class="text-sm text-red-600 hover:text-red-700"
+              >
+                退出
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- 消息列表 -->
+      <main class="container-custom py-8">
+        {error ? (
+          <div class="bg-red-50 text-red-700 p-4 rounded-xl">
+            {error}
+          </div>
+        ) : messages.length === 0 ? (
+          <div class="text-center py-16">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              </svg>
+            </div>
+            <p class="text-gray-500">暂无消息</p>
+          </div>
+        ) : (
+          <div class="space-y-4">
+            {messages.map((msg) => (
+              <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-start justify-between gap-4">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-3 mb-3">
+                      <h3 class="font-semibold text-gray-900">{msg.name}</h3>
+                      <span class={`text-xs px-2 py-1 rounded-full font-medium ${statusStyles[msg.status as keyof typeof statusStyles] || statusStyles.unread}`}>
+                        {statusText[msg.status as keyof typeof statusText] || '未读'}
+                      </span>
+                    </div>
+                    
+                    <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-3">
+                      <span class="flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        {msg.email}
+                      </span>
+                      <span class="flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                        </svg>
+                        {subjectMap[msg.subject] || msg.subject}
+                      </span>
+                      <span class="flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {formatDate(msg.createdAt)}
+                      </span>
+                    </div>
+                    
+                    <p class="text-gray-700 whitespace-pre-wrap">{msg.message}</p>
+                  </div>
+                  
+                  <div class="flex items-center gap-2">
+                    {msg.status === 'unread' && (
+                      <button 
+                        data-id={msg.id}
+                        data-action="mark-read"
+                        class="action-btn p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="标记为已读"
+                      >
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </button>
+                    )}
+                    <a 
+                      href={`mailto:${msg.email}?subject=回复：${subjectMap[msg.subject] || msg.subject}`}
+                      class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                      title="回复邮件"
+                    >
+                      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
+    </div>
+  )}
+</Layout>
+
+<script>
+  // 处理标记已读按钮
+  document.querySelectorAll('.action-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const target = e.currentTarget as HTMLButtonElement;
+      const id = target.dataset.id;
+      const action = target.dataset.action;
+      
+      if (!id || !action) return;
+      
+      try {
+        const response = await fetch('/api/contact', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, action })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // 刷新页面
+          window.location.reload();
+        } else {
+          alert('操作失败：' + result.message);
+        }
+      } catch (error) {
+        alert('操作失败，请重试');
+      }
+    });
+  });
+</script>

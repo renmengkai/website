@@ -372,3 +372,63 @@ export const GET: APIRoute = async ({ url }) => {
     });
   }
 };
+
+// PATCH 方法用于更新消息状态
+export const PATCH: APIRoute = async ({ request }) => {
+  try {
+    const body = await request.json();
+    const { id, action } = body;
+
+    if (!id || !action) {
+      return new Response(JSON.stringify({
+        success: false,
+        message: '缺少必要参数'
+      }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    const kv = await getKvStore();
+    const key = ['contacts', id];
+    
+    // 获取现有记录
+    const record = await kv.get(key);
+    if (!record.value) {
+      return new Response(JSON.stringify({
+        success: false,
+        message: '消息不存在'
+      }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // 更新状态
+    const updatedRecord = {
+      ...(record.value as object),
+      status: action === 'mark-read' ? 'read' : action
+    };
+
+    await kv.set(key, updatedRecord);
+
+    return new Response(JSON.stringify({
+      success: true,
+      message: '状态更新成功'
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+  } catch (error) {
+    console.error('Update contact error:', error);
+    
+    return new Response(JSON.stringify({
+      success: false,
+      message: '更新失败'
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+};
