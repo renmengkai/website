@@ -14,8 +14,8 @@ export const postsQuery = `*[_type == "post"] | order(publishedAt desc) {
   slug,
   excerpt,
   publishedAt,
-  "coverImage": coverImage.asset->url,
-  "author": author->{name, "avatar": avatar.asset->url},
+  "coverImage": coverImage.asset->url + "?auto=format&w=800&q=80",
+  "author": author->{name, "avatar": avatar.asset->url + "?auto=format&w=100&q=80"},
   categories[]->{title, slug}
 }`;
 
@@ -34,8 +34,8 @@ export const postBySlugQuery = `*[_type == "post" && slug.current == $slug][0] {
   excerpt,
   body,
   publishedAt,
-  "coverImage": coverImage.asset->url,
-  "author": author->{name, bio, "avatar": avatar.asset->url},
+  "coverImage": coverImage.asset->url + "?auto=format&w=1200&q=85",
+  "author": author->{name, bio, "avatar": avatar.asset->url + "?auto=format&w=100&q=80"},
   categories[]->{title, slug}
 }`;
 
@@ -45,7 +45,7 @@ export const projectsQuery = `*[_type == "project"] | order(order asc) {
   title,
   slug,
   description,
-  "thumbnail": thumbnail.asset->url,
+  "thumbnail": thumbnail.asset->url + "?auto=format&w=600&q=80",
   technologies,
   liveUrl,
   githubUrl,
@@ -59,8 +59,8 @@ export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug
   slug,
   description,
   body,
-  "thumbnail": thumbnail.asset->url,
-  "gallery": gallery[].asset->url,
+  "thumbnail": thumbnail.asset->url + "?auto=format&w=1200&q=85",
+  "gallery": gallery[].asset->url + "?auto=format&w=1200&q=85",
   technologies,
   liveUrl,
   githubUrl,
@@ -71,7 +71,7 @@ export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug
 export const aboutQuery = `*[_type == "about"][0] {
   title,
   bio,
-  "avatar": avatar.asset->url,
+  "avatar": avatar.asset->url + "?auto=format&w=400&q=80",
   skills,
   experience,
   education,
@@ -81,10 +81,10 @@ export const aboutQuery = `*[_type == "about"][0] {
 // GROQ 查询：获取精选内容（首页用）
 export const featuredContentQuery = `{
   "posts": *[_type == "post"] | order(publishedAt desc)[0...3] {
-    _id, title, slug, excerpt, publishedAt, "coverImage": coverImage.asset->url
+    _id, title, slug, excerpt, publishedAt, "coverImage": coverImage.asset->url + "?auto=format&w=800&q=80"
   },
   "projects": *[_type == "project" && featured == true] | order(order asc)[0...3] {
-    _id, title, slug, description, "thumbnail": thumbnail.asset->url, technologies
+    _id, title, slug, description, "thumbnail": thumbnail.asset->url + "?auto=format&w=600&q=80", technologies
   }
 }`;
 

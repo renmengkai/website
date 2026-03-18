@@ -9,12 +9,13 @@ export default defineConfig({
     vue(),
     tailwind()
   ],
-  output: 'server',
+  output: 'static',
   adapter: deno(),
   site: 'https://www.mengkai.ren',
   prefetch: {
-    prefetchAll: false,
-    defaultStrategy: 'hover'
+    prefetchAll: true,
+    defaultStrategy: 'viewport',
+    cacheAbility: true
   },
   vite: {
     ssr: {

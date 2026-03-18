@@ -45,10 +45,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonicalURL} />
     
-    <!-- Fira Code 字体 -->
+    <!-- 字体预连接 + 异步加载 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"></noscript>
     
     <title>{title}</title>
     <ViewTransitions />
@@ -123,39 +124,14 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     
     <Footer />
     
-    <!-- 全局导航加载状态管理 -->
+    <!-- 骨架屏状态管理 -->
     <script is:inline>
-      // 监听博客文章链接点击，立即显示骨架屏
-      document.addEventListener('click', (e) => {
-        const link = e.target.closest('a[href^="/blog/"]');
-        if (link && !link.href.endsWith('/blog/') && !link.href.endsWith('/blog')) {
-          // 点击的是博客文章链接，立即显示骨架屏
-          document.documentElement.classList.add('is-loading');
-        }
-      });
-      
-      // 页面加载完成后隐藏骨架屏
       document.addEventListener('astro:page-load', () => {
         document.documentElement.classList.remove('is-loading');
       });
       
-      // 页面开始加载时显示骨架屏
       document.addEventListener('astro:before-preparation', () => {
-        const currentPath = window.location.pathname;
-        // 如果是从博客列表导航到文章详情
-        if (currentPath === '/blog' || currentPath === '/blog/') {
-          document.documentElement.classList.add('is-loading');
-        }
-      });
-      
-      // 如果导航取消，隐藏骨架屏
-      document.addEventListener('astro:after-preparation', () => {
-        // 如果导航失败或取消，延迟隐藏
-        setTimeout(() => {
-          if (!document.startViewTransition) {
-            document.documentElement.classList.remove('is-loading');
-          }
-        }, 100);
+        document.documentElement.classList.add('is-loading');
       });
     </script>
   </body>
