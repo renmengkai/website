@@ -6,13 +6,6 @@ import MarkdownContent from '../../components/MarkdownContent.astro';
 import PortableText from '../../components/PortableText.astro';
 import { fetchSanity, projectBySlugQuery } from '../../lib/sanity';
 
-// 动态路由参数
-export async function getStaticPaths() {
-  const projectsQuery = `*[_type == "project"] { "slug": slug.current }`;
-  const projects = await fetchSanity<any[]>(projectsQuery);
-  return projects.map((project) => ({ params: { slug: project.slug } }));
-}
-
 // 获取当前项目数据
 const { slug } = Astro.params;
 const project = await fetchSanity<any>(projectBySlugQuery, { slug });

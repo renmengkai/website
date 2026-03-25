@@ -3,19 +3,16 @@ import Layout from '../../layouts/Layout.astro';
 import Badge from '../../components/ui/Badge.astro';
 import MarkdownContent from '../../components/MarkdownContent.astro';
 import PortableText from '../../components/PortableText.astro';
-import BlogPostSkeleton from '../../components/BlogPostSkeleton.astro';
 import PostContentLoader from '../../components/PostContentLoader.vue';
 import { fetchSanity, postBySlugQuery } from '../../lib/sanity';
-
-// 使用SSR模式，允许动态处理任意slug
-export const prerender = false;
 
 // 获取当前文章数据
 const { slug } = Astro.params;
 const post = await fetchSanity<any>(postBySlugQuery, { slug });
 
-// 标记是否显示404内容
-const show404 = !post;
+if (!post) {
+  return Astro.redirect('/404');
+}
 
 // 确保 categories 是一个数组，过滤掉 null 值
 const safeCategories = post && Array.isArray(post.categories) ? post.categories.filter((cat: any) => cat != null) : [];
@@ -28,61 +25,10 @@ const formattedDate = post?.publishedAt ? new Date(post.publishedAt).toLocaleDat
 ---
 
 <Layout 
-  title={show404 ? '文章未找到 - RMK' : `${post.title} - RMK`}
-  description={show404 ? '抱歉，您访问的文章不存在' : post.excerpt}
+  title={`${post.title} - RMK`}
+  description={post.excerpt}
   image={post?.coverImage}
 >
-  {show404 ? (
-    <!-- 404 内容 -->
-    <div class="section min-h-[60vh] flex items-center justify-center">
-      <div class="container-custom">
-        <div class="max-w-2xl mx-auto text-center">
-          <!-- 404 图标/数字 -->
-          <div class="mb-8">
-            <div class="inline-flex items-center justify-center w-32 h-32 rounded-full bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/30 dark:to-primary-800/30 mb-6 animate-float">
-              <span class="text-6xl font-bold bg-gradient-to-r from-primary-500 to-primary-600 bg-clip-text text-transparent">
-                404
-              </span>
-            </div>
-          </div>
-          
-          <!-- 标题 -->
-          <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            文章不存在
-          </h1>
-          
-          <!-- 描述 -->
-          <p class="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
-            抱歉，您访问的文章 <code class="px-2 py-1 bg-gray-100 dark:bg-dark-100 rounded text-primary-500">{slug}</code> 不存在或已被删除。
-          </p>
-          
-          <!-- 操作按钮 -->
-          <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a 
-              href="/blog"
-              class="inline-flex items-center gap-2 px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-xl transition-colors shadow-lg shadow-primary-500/25"
-            >
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-              </svg>
-              浏览所有文章
-            </a>
-            
-            <a 
-              href="/"
-              class="inline-flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-dark-100 dark:hover:bg-dark-200 text-gray-700 dark:text-gray-300 font-medium rounded-xl transition-colors"
-            >
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
-              返回首页
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  ) : (
-    <!-- 正常文章内容 -->
     <article class="section" transition:animate="fade">
       <div class="container-custom">
         <!-- 文章头部 - 立即显示 -->
@@ -152,7 +98,6 @@ const formattedDate = post?.publishedAt ? new Date(post.publishedAt).toLocaleDat
         </div>
       </div>
     </article>
-  )}
 </Layout>
 
 <style>

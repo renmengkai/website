@@ -19,8 +19,8 @@ const postsQuery = `*[_type == "post"] | order(publishedAt desc)[0...3] {
   categories[]->{title, slug}
 }`;
 
-// 从 Sanity 获取项目（优先精选，否则显示所有项目）
-const projectsQuery = `*[_type == "project"] | order(featured desc, order asc)[0...3] {
+// 从 Sanity 获取项目（显示所有项目，按 order 排序）
+const projectsQuery = `*[_type == "project"] | order(order asc)[0...3] {
   _id,
   title,
   slug,
