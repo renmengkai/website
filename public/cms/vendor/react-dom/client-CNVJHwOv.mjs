@@ -4741,22 +4741,14 @@ function y1(l, a, t) {
               t
             );
             break l;
-          } else {
-            switch (l = a.stateNode.containerInfo, l.nodeType) {
-              case 9:
-                l = l.body;
-                break;
-              default:
-                l = l.nodeName === "HTML" ? l.ownerDocument.body : l;
-            }
-            for (W = Kl(l.firstChild), hl = a, G = !0, qa = null, Vl = !0, t = Av(
+          } else
+            for (l = a.stateNode.containerInfo, l.nodeType === 9 ? l = l.body : l = l.nodeName === "HTML" ? l.ownerDocument.body : l, W = Kl(l.firstChild), hl = a, G = !0, qa = null, Vl = !0, t = Av(
               a,
               null,
               u,
               t
             ), a.child = t; t; )
               t.flags = t.flags & -3 | 4096, t = t.sibling;
-          }
         else {
           if (tt(), u === e) {
             a = ga(
@@ -8406,14 +8398,7 @@ function Sl(l, a, t) {
       return;
     case "option":
       for (i in t)
-        if (t.hasOwnProperty(i) && (u = t[i], u != null))
-          switch (i) {
-            case "selected":
-              l.selected = u && typeof u != "function" && typeof u != "symbol";
-              break;
-            default:
-              p(l, a, i, u, t, null);
-          }
+        t.hasOwnProperty(i) && (u = t[i], u != null) && (i === "selected" ? l.selected = u && typeof u != "function" && typeof u != "symbol" : p(l, a, i, u, t, null));
       return;
     case "dialog":
       q("beforetoggle", l), q("toggle", l), q("cancel", l), q("close", l);
@@ -8626,37 +8611,23 @@ function hh(l, a, t, u) {
       return;
     case "option":
       for (var A in t)
-        if (m = t[A], t.hasOwnProperty(A) && m != null && !u.hasOwnProperty(A))
-          switch (A) {
-            case "selected":
-              l.selected = !1;
-              break;
-            default:
-              p(
-                l,
-                a,
-                A,
-                null,
-                u,
-                m
-              );
-          }
+        m = t[A], t.hasOwnProperty(A) && m != null && !u.hasOwnProperty(A) && (A === "selected" ? l.selected = !1 : p(
+          l,
+          a,
+          A,
+          null,
+          u,
+          m
+        ));
       for (i in u)
-        if (m = u[i], S = t[i], u.hasOwnProperty(i) && m !== S && (m != null || S != null))
-          switch (i) {
-            case "selected":
-              l.selected = m && typeof m != "function" && typeof m != "symbol";
-              break;
-            default:
-              p(
-                l,
-                a,
-                i,
-                m,
-                u,
-                S
-              );
-          }
+        m = u[i], S = t[i], u.hasOwnProperty(i) && m !== S && (m != null || S != null) && (i === "selected" ? l.selected = m && typeof m != "function" && typeof m != "symbol" : p(
+          l,
+          a,
+          i,
+          m,
+          u,
+          S
+        ));
       return;
     case "img":
     case "link":
@@ -9330,12 +9301,7 @@ function qh(l, a, t) {
     case "link":
       if (typeof a.rel != "string" || typeof a.href != "string" || a.href === "" || a.onLoad || a.onError)
         break;
-      switch (a.rel) {
-        case "stylesheet":
-          return l = a.disabled, typeof a.precedence == "string" && l == null;
-        default:
-          return !0;
-      }
+      return a.rel === "stylesheet" ? (l = a.disabled, typeof a.precedence == "string" && l == null) : !0;
     case "script":
       if (a.async && typeof a.async != "function" && typeof a.async != "symbol" && !a.onLoad && !a.onError && a.src && typeof a.src == "string")
         return !0;
@@ -9940,12 +9906,12 @@ Tn.prototype.unstable_scheduleHydration = function(l) {
   }
 };
 var E0 = O0.version;
-if (E0 !== "19.2.3")
+if (E0 !== "19.2.4")
   throw Error(
     s(
       527,
       E0,
-      "19.2.3"
+      "19.2.4"
     )
   );
 R.findDOMNode = function(l) {
@@ -9956,10 +9922,10 @@ R.findDOMNode = function(l) {
 };
 var ph = {
   bundleType: 0,
-  version: "19.2.3",
+  version: "19.2.4",
   rendererPackageName: "react-dom",
   currentDispatcherRef: D,
-  reconcilerVersion: "19.2.3"
+  reconcilerVersion: "19.2.4"
 };
 if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ < "u") {
   var de = __REACT_DEVTOOLS_GLOBAL_HOOK__;
@@ -10005,7 +9971,7 @@ var Lh = ac.createRoot = function(l, a) {
     c,
     yy
   ), a.context = ny(null), t = a.current, u = Bl(), u = nc(u), e = Ya(u), e.callback = null, Qa(t, e, u), t = u, a.current.lanes = t, pu(a, t), Il(a), l[Wt] = a.current, Jc(l), new Tn(a);
-}, Wh = ac.version = "19.2.3";
+}, Wh = ac.version = "19.2.4";
 export {
   Lh as createRoot,
   ac as default,

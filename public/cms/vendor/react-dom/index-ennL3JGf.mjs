@@ -127,7 +127,7 @@ var _ = i.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE = n, S = 
   return c.H.useFormState(e, r, t);
 }, p = i.useFormStatus = function() {
   return c.H.useHostTransitionStatus();
-}, M = i.version = "19.2.3";
+}, M = i.version = "19.2.4";
 export {
   _ as __DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE,
   S as createPortal,

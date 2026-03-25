@@ -11,7 +11,9 @@
     "sanity-install": "cd sanity && npm install",
     "sanity-dev": "cd sanity && npm run dev",
     "sanity-build": "cd sanity && npm run build",
-    "build-cms": "scripts\\install-sanity.bat && scripts\\build-cms.bat"
+    "build-cms": "node scripts/build-cms.js",
+    "build-cms:win": "scripts\\install-sanity.bat && scripts\\build-cms.bat",
+    "build-cms:linux": "scripts/install-sanity.sh && scripts/build-cms.sh"
   },
   "dependencies": {
     "@astrojs/node": "^9.5.1",

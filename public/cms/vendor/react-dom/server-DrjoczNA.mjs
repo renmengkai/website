@@ -1682,16 +1682,7 @@ function Gr(n, l, e) {
               return;
           } else
             a = {}, t.unknownResources[l] = a;
-          if (a[n] = K, (t = r.headers) && 0 < t.remainingCapacity && l === "font" && (f = ne(n, l, e), 0 <= (t.remainingCapacity -= f.length + 2)))
-            r.resets.font[n] = K, t.fontPreloads && (t.fontPreloads += ", "), t.fontPreloads += f;
-          else
-            switch (t = [], n = J({ rel: "preload", href: n, as: l }, e), Y(t, n), l) {
-              case "font":
-                r.fontPreloads.add(t);
-                break;
-              default:
-                r.bulkPreloads.add(t);
-            }
+          a[n] = K, (t = r.headers) && 0 < t.remainingCapacity && l === "font" && (f = ne(n, l, e), 0 <= (t.remainingCapacity -= f.length + 2)) ? (r.resets.font[n] = K, t.fontPreloads && (t.fontPreloads += ", "), t.fontPreloads += f) : (t = [], n = J({ rel: "preload", href: n, as: l }, e), Y(t, n), l) === "font" ? r.fontPreloads.add(t) : r.bulkPreloads.add(t);
       }
       On(i);
     }
@@ -2576,11 +2567,7 @@ function Sn(n, l, e, i, t, r) {
 }
 function xl(n) {
   var l = n.node;
-  if (typeof l == "object" && l !== null)
-    switch (l.$$typeof) {
-      case Tt:
-        n.componentStack = { parent: n.componentStack, type: l.type };
-    }
+  typeof l == "object" && l !== null && l.$$typeof === Tt && (n.componentStack = { parent: n.componentStack, type: l.type });
 }
 function Ge(n) {
   return n === null ? null : { parent: n.parent, type: "Suspense Fallback" };
@@ -4083,7 +4070,7 @@ var xa = Ke.renderToStaticMarkup = function(n, l) {
     !1,
     'The server used "renderToString" which does not support Suspense. If you intended for this Suspense boundary to render the fallback content on the server consider throwing an Error somewhere within the Suspense boundary. If you intended to have the server wait for the suspended component please switch to "renderToReadableStream" which supports Suspense on the server'
   );
-}, wa = Ke.version = "19.2.3";
+}, wa = Ke.version = "19.2.4";
 export {
   Ke as default,
   xa as renderToStaticMarkup,
