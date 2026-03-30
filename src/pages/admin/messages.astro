@@ -20,19 +20,67 @@ const url = new URL(Astro.request.url);
 const password = url.searchParams.get('pwd');
 const isAuthenticated = password === ADMIN_PASSWORD;
 
+// 开发环境内存存储（与 api/contact.ts 共享）
+const memoryStore: Map<string, unknown> = new Map();
+
+// KV 存储抽象（与 api/contact.ts 保持一致）
+async function getKvStore() {
+  if (isDeno) {
+    return await (globalThis as any).Deno.openKv();
+  }
+  // 开发环境使用内存存储
+  return {
+    async set(key: unknown[], value: unknown) {
+      memoryStore.set(JSON.stringify(key), value);
+    },
+    async get(key: unknown[]) {
+      const value = memoryStore.get(JSON.stringify(key));
+      return { value: value ?? null };
+    },
+    async delete(key: unknown[]) {
+      memoryStore.delete(JSON.stringify(key));
+    },
+    list(options: { prefix: unknown[] }) {
+      const prefix = JSON.stringify(options.prefix);
+      const results: { key: unknown[]; value: unknown }[] = [];
+      for (const [key, value] of memoryStore.entries()) {
+        if (key.startsWith(prefix.slice(0, -1))) {
+          results.push({ key: JSON.parse(key), value });
+        }
+      }
+      return {
+        async *[Symbol.asyncIterator]() {
+          for (const item of results) {
+            yield item;
+          }
+        }
+      };
+    }
+  };
+}
+
 // 获取消息数据
 let messages: any[] = [];
 let error: string | null = null;
 
 if (isAuthenticated) {
   try {
-    const response = await fetch(`${url.origin}/api/contact`);
-    const data = await response.json();
-    if (data.success) {
-      messages = data.data;
-    } else {
-      error = data.message || '获取消息失败';
+    const kv = await getKvStore();
+    const msgs: unknown[] = [];
+    
+    // 遍历所有联系消息
+    const entries = kv.list({ prefix: ['contacts'] });
+    
+    for await (const entry of entries) {
+      // 跳过索引条目
+      if (entry.key[0] === 'contacts_index') continue;
+      msgs.push(entry.value);
     }
+    
+    // 按创建时间倒序排序
+    messages = msgs.sort((a: any, b: any) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   } catch (e) {
     error = '获取消息失败: ' + (e as Error).message;
   }
