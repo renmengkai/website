@@ -1,7 +1,8 @@
 ---
-// Markdown 渲染组件 - 支持代码高亮
+// Markdown 渲染组件 - 支持代码高亮和数学公式
 import { marked } from 'marked';
 import { codeToHtml } from 'shiki';
+import katex from 'katex';
 
 interface Props {
   content: string | null;
@@ -84,9 +85,56 @@ const shikiLangMap: Record<string, string> = {
   '': 'text'
 };
 
-// 存储代码块，稍后处理
+// 存储代码块和数学公式，稍后处理
 const codeBlocks: Array<{placeholder: string, language: string, code: string}> = [];
+const mathBlocks: Array<{placeholder: string, latex: string, displayMode: boolean}> = [];
 let codeBlockIndex = 0;
+let mathBlockIndex = 0;
+
+// 处理数学公式的函数
+function processMath(content: string): string {
+  // 处理块级公式 $$...$$
+  content = content.replace(/\$\$([\s\S]*?)\$\$/g, (match, latex) => {
+    const placeholder = `<!--MATH_BLOCK_${mathBlockIndex}-->`;
+    mathBlocks.push({
+      placeholder,
+      latex: latex.trim(),
+      displayMode: true
+    });
+    mathBlockIndex++;
+    return placeholder;
+  });
+
+  // 处理行内公式 $...$ (注意排除转义的 \$ 和在代码块中的 $)
+  content = content.replace(/(?<!\\)\$([^\$\n]+?)\$(?!\d)/g, (match, latex) => {
+    const placeholder = `<!--MATH_INLINE_${mathBlockIndex}-->`;
+    mathBlocks.push({
+      placeholder,
+      latex: latex.trim(),
+      displayMode: false
+    });
+    mathBlockIndex++;
+    return placeholder;
+  });
+
+  return content;
+}
+
+// 渲染数学公式
+function renderMath(latex: string, displayMode: boolean): string {
+  try {
+    return katex.renderToString(latex, {
+      displayMode,
+      throwOnError: false,
+      strict: false
+    });
+  } catch (error) {
+    console.error('KaTeX rendering failed:', error);
+    return displayMode 
+      ? `<div class="math-error">$$${latex}$$</div>`
+      : `<span class="math-error">$${latex}$</span>`;
+  }
+}
 
 // 自定义 renderer 处理代码块
 const renderer = new marked.Renderer();
@@ -110,12 +158,25 @@ marked.setOptions({
   breaks: true
 });
 
-// 第一步：解析 Markdown（代码块用占位符）
+// 第一步：预处理内容，提取数学公式
+let processedContent = content || '';
+if (processedContent) {
+  processedContent = processMath(processedContent);
+}
+
+// 第二步：解析 Markdown（代码块用占位符）
 let html = '';
-if (content) {
-  html = await marked.parse(content);
+if (processedContent) {
+  html = await marked.parse(processedContent);
   
-  // 第二步：处理代码块，添加高亮
+  // 第三步：处理数学公式
+  for (const block of mathBlocks) {
+    const { placeholder, latex, displayMode } = block;
+    const mathHtml = renderMath(latex, displayMode);
+    html = html.replace(placeholder, mathHtml);
+  }
+  
+  // 第四步：处理代码块，添加高亮
   for (const block of codeBlocks) {
     const { placeholder, language, code } = block;
     const lang = language.toLowerCase();
@@ -285,6 +346,23 @@ if (content) {
   
   .markdown-content img {
     @apply max-w-full h-auto rounded-lg my-4;
+  }
+
+  /* 数学公式样式 */
+  .markdown-content .katex {
+    font-size: 1.1em;
+  }
+  
+  .markdown-content .katex-display {
+    @apply my-6 overflow-x-auto;
+  }
+  
+  .markdown-content .katex-display .katex {
+    @apply text-base;
+  }
+  
+  .markdown-content .math-error {
+    @apply text-red-500 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded;
   }
 
   /* 代码块样式 */
