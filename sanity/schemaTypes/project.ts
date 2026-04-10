@@ -73,28 +73,8 @@ export const project = defineType({
     defineField({
       name: 'body',
       title: '正文内容',
-      type: 'array',
-      of: [
-        { type: 'block' },
-        { type: 'image', options: { hotspot: true } },
-        { 
-          type: 'object',
-          name: 'code',
-          title: '代码块',
-          fields: [
-            {
-              name: 'language',
-              type: 'string',
-              title: '语言'
-            },
-            {
-              name: 'code',
-              type: 'text',
-              title: '代码'
-            }
-          ]
-        },
-      ],
+      type: 'text',
+      rows: 20,
     }),
   ],
   preview: {
