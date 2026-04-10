@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-white rounded-3xl border border-gray-100 overflow-hidden">
+  <div class="bg-white rounded-3xl border border-gray-200 overflow-hidden">
     <!-- 顶部导航栏 -->
-    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
       <div class="flex items-center gap-2">
         <span class="font-semibold text-gray-900">{{ currentTabTitle }}</span>
       </div>
@@ -55,7 +55,7 @@
             <div
               v-for="type in overview.types"
               :key="type.name"
-              class="rounded-2xl p-5 border border-gray-100 bg-white"
+              class="rounded-2xl p-5 border border-gray-200 bg-white"
             >
               <div class="flex items-center justify-between mb-3">
                 <span class="text-sm font-semibold text-gray-900">{{ type.name }}</span>
@@ -89,9 +89,9 @@
           
           <!-- 技术分类分组 -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div v-for="group in tech.groups" :key="group.name" class="rounded-2xl border border-gray-100 overflow-hidden">
+            <div v-for="group in tech.groups" :key="group.name" class="rounded-2xl border border-gray-200 overflow-hidden">
               <!-- 分组标题 -->
-              <div class="flex items-center justify-between px-5 py-4 bg-gray-50 border-b border-gray-100">
+              <div class="flex items-center justify-between px-5 py-4 bg-gray-50 border-b border-gray-200">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 rounded-lg bg-dark-100 flex items-center justify-center">
                     <svg v-if="group.icon === 'web'" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
@@ -103,7 +103,7 @@
                 <span class="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-600">{{ group.percent }}%</span>
               </div>
               <!-- 语言列表 -->
-              <div class="px-5 py-3 bg-white border-b border-gray-100">
+              <div class="px-5 py-3 bg-white border-b border-gray-200">
                 <div class="flex flex-wrap gap-1">
                   <span v-for="lang in group.languages" :key="lang" class="text-xs px-2 py-1 rounded bg-gray-100 text-gray-600">{{ lang }}</span>
                 </div>
@@ -149,7 +149,7 @@
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-            <div v-for="hl in report.highlights" :key="hl.title" class="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+            <div v-for="hl in report.highlights" :key="hl.title" class="bg-gray-50 rounded-2xl p-5 border border-gray-200">
               <div class="flex items-center justify-between mb-2">
                 <span class="text-xs text-primary-500 font-medium px-2 py-0.5 bg-primary-500/10 rounded-full">{{ hl.tag }}</span>
               </div>
@@ -175,9 +175,9 @@
             <div
               v-for="(update, i) in updates.updates"
               :key="i"
-              class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:bg-white transition-all duration-200"
+              class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-200 hover:bg-white transition-all duration-200"
             >
-              <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center border border-gray-100 shrink-0">
+              <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center border border-gray-200 shrink-0">
                 <span class="text-lg">{{ i + 1 }}</span>
               </div>
               <div class="flex-1 min-w-0">

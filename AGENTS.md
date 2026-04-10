@@ -16,7 +16,7 @@
 
 ### 色彩比例
 - 背景: 白 `white` 为主
-- 边框: `border-gray-100`
+- 边框: `border-gray-200`
 - 文字: 深灰 `gray-900`、中灰 `gray-500`、浅灰 `gray-400`
 - 强调: 仅绿色 `primary-500` 用于关键元素
 
@@ -61,8 +61,8 @@
 ## 边框系统
 
 ### 卡片边框
-- 默认: `border border-gray-100`
-- Hover: `hover:border-gray-200`
+- 默认: `border border-gray-200`
+- Hover: `hover:border-gray-300`
 
 ### 按钮边框
 - 次要按钮: `border border-gray-200`
@@ -101,7 +101,7 @@ background-size: 60px 60px;
 
 **无阴影**，纯边框风格：
 ```html
-<div class="bg-white rounded-2xl border border-gray-100 p-6">
+<div class="bg-white rounded-2xl border border-gray-200 p-6">
 ```
 
 ### 标签/徽章
@@ -157,3 +157,4 @@ background-size: 60px 60px;
 ## 更新日志
 
 - **2026-04-10**: 初始版本，定义极简科技风格规范
+- **2026-04-10 (下午)**: 增强卡片边框颜色由 `gray-100` 改为 `gray-200`，hover 由 `gray-200` 改为 `gray-300`
