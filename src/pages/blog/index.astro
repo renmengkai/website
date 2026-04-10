@@ -124,14 +124,13 @@ import Layout from '../../layouts/Layout.astro';
 </Layout>
 
 <script is:inline>
-  // 共享 Sanity 配置
-  if (typeof SANITY_PROJECT_ID === 'undefined') {
-    var SANITY_PROJECT_ID = 'k2j30muc';
-    var SANITY_DATASET = 'production';
-  }
+  // 共享 Sanity 配置 - 使用 window 对象避免重复声明
+  window.SANITY_PROJECT_ID = window.SANITY_PROJECT_ID || 'k2j30muc';
+  window.SANITY_DATASET = window.SANITY_DATASET || 'production';
   
-  async function fetchSanity(query) {
-    const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2024-01-01/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`;
+  // blog 页面专用的 fetch 函数
+  async function fetchSanityBlog(query) {
+    const url = `https://${window.SANITY_PROJECT_ID}.api.sanity.io/v2024-01-01/data/query/${window.SANITY_DATASET}?query=${encodeURIComponent(query)}`;
     const res = await fetch(url);
     const data = await res.json();
     return data.result;
@@ -243,7 +242,7 @@ import Layout from '../../layouts/Layout.astro';
       }`;
       const categoriesQuery = `*[_type == "category" && (usedFor == "blog" || usedFor == "both")] | order(title asc) { _id, title, "slug": slug.current }`;
       
-      [posts, categories] = await Promise.all([fetchSanity(postsQuery), fetchSanity(categoriesQuery)]);
+      [posts, categories] = await Promise.all([fetchSanityBlog(postsQuery), fetchSanityBlog(categoriesQuery)]);
       currentFilteredPosts = posts;
       
       renderCategories();
