@@ -126,8 +126,10 @@ import Layout from '../../layouts/Layout.astro';
 
 <script is:inline>
   // 共享 Sanity 配置
-  const SANITY_PROJECT_ID = 'k2j30muc';
-  const SANITY_DATASET = 'production';
+  if (typeof SANITY_PROJECT_ID === 'undefined') {
+    var SANITY_PROJECT_ID = 'k2j30muc';
+    var SANITY_DATASET = 'production';
+  }
   
   async function fetchSanity(query) {
     const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2024-01-01/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`;
