@@ -1,52 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue';
+import { initCopyButtons } from '../lib/copyCode';
 
 // 状态
 const isLoading = ref(true);
 const contentRef = ref<HTMLElement | null>(null);
-
-// 初始化复制按钮功能
-function initCopyButtons() {
-  if (!contentRef.value) return;
-  
-  const copyButtons = contentRef.value.querySelectorAll('.copy-code-btn');
-  
-  copyButtons.forEach(button => {
-    // 避免重复绑定
-    if ((button as any)._copyBound) return;
-    (button as any)._copyBound = true;
-    
-    button.addEventListener('click', async () => {
-      const codeText = button.getAttribute('data-code') || '';
-      const copyText = button.querySelector('.copy-text');
-      const copiedText = button.querySelector('.copied-text');
-      
-      try {
-        // 解码 HTML 实体
-        const textarea = document.createElement('textarea');
-        textarea.innerHTML = codeText;
-        const decodedCode = textarea.value;
-        
-        // 复制到剪贴板
-        await navigator.clipboard.writeText(decodedCode);
-        
-        // 显示复制成功提示
-        if (copyText && copiedText) {
-          copyText.classList.add('hidden');
-          copiedText.classList.remove('hidden');
-          
-          // 2秒后恢复
-          setTimeout(() => {
-            copyText.classList.remove('hidden');
-            copiedText.classList.add('hidden');
-          }, 2000);
-        }
-      } catch (err) {
-        console.error('复制失败:', err);
-      }
-    });
-  });
-}
 
 onMounted(async () => {
   // 确保内容已经渲染完成
@@ -58,7 +16,9 @@ onMounted(async () => {
     isLoading.value = false;
     // 初始化复制按钮
     nextTick(() => {
-      initCopyButtons();
+      if (contentRef.value) {
+        initCopyButtons(contentRef.value);
+      }
     });
   }, 100);
 });

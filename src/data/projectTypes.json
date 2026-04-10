@@ -1,0 +1,98 @@
+{
+  "hero": {
+    "cards": [
+      {
+        "type": "stats",
+        "label": "开源项目",
+        "value": "28",
+        "trend": "+5",
+        "trendType": "up",
+        "icon": "github",
+        "description": "GitHub 开源项目数"
+      },
+      {
+        "type": "default",
+        "label": "AI Agent 生态",
+        "description": "推动 AI Agent 行业生态建设"
+      },
+      {
+        "type": "tags",
+        "label": "技术布道",
+        "tags": [
+          { "label": "技术博客", "active": true },
+          { "label": "开源贡献", "active": true },
+          { "label": "行业分享", "active": false }
+        ],
+        "icon": "传播",
+        "description": "持续输出，推动行业进步"
+      }
+    ]
+  },
+  "dashboard": {
+    "title": "项目概览",
+    "navItems": ["概览", "技术分类", "项目报告", "业务动态"],
+    "stats": [
+      { "label": "项目总数", "value": "40+", "trend": "↗" },
+      { "label": "完成率", "value": "96%", "trend": "↗" },
+      { "label": "客户满意度", "value": "4.8", "trend": "↗" }
+    ],
+    "overview": {
+      "description": "涵盖企业官网、管理系统、小程序、AI应用等多种业务类型",
+      "timeFilters": ["24小时", "7天", "30天"],
+      "types": [
+        { "name": "企业官网", "count": 12, "percent": 30, "description": "品牌展示型网站" },
+        { "name": "管理系统", "count": 8, "percent": 20, "description": "后台管理/ERP系统" },
+        { "name": "小程序", "count": 15, "percent": 38, "description": "微信/抖音小程序" },
+        { "name": "AI应用", "count": 5, "percent": 12, "description": "智能客服/Agent应用" }
+      ]
+    },
+    "techCategories": {
+      "description": "核心技术能力与开发语言栈",
+      "groups": [
+        {
+          "name": "Web 开发",
+          "icon": "web",
+          "languages": ["TypeScript", "JavaScript", "Go", "Rust"],
+          "frameworks": ["Vue/Nuxt", "Node.js", "Astro"],
+          "percent": 45
+        },
+        {
+          "name": "跨端应用",
+          "icon": "mobile",
+          "languages": ["TypeScript", "JavaScript", "Python"],
+          "frameworks": ["微信小程序", "React Native", "Tauri"],
+          "percent": 30
+        },
+        {
+          "name": "工具与 CLI",
+          "icon": "cli",
+          "languages": ["Rust", "Go", "Python", "TypeScript"],
+          "frameworks": ["Clap", "Cobra", "Raycast"],
+          "percent": 25
+        }
+      ]
+    },
+    "projectReport": {
+      "description": "项目交付与质量统计",
+      "milestones": [
+        { "label": "已交付", "value": "38", "total": "40" },
+        { "label": "按时交付", "value": "36", "total": "40" },
+        { "label": "客户好评", "value": "35", "total": "40" }
+      ],
+      "highlights": [
+        { "title": "平均交付周期", "value": "14天", "tag": "高效" },
+        { "title": "代码质量评分", "value": "A+", "tag": "优秀" },
+        { "title": "售后响应", "value": "<2h", "tag": "及时" }
+      ]
+    },
+    "businessUpdates": {
+      "description": "近期业务动态与项目进展",
+      "updates": [
+        { "title": "开源 AI Agent 工具链发布", "date": "2026-04", "tag": "开源" },
+        { "title": "AI自动视频生成系统上线运行", "date": "2026-03", "tag": "上线" },
+        { "title": "技术博客获行业精选推荐", "date": "2026-03", "tag": "布道" },
+        { "title": "参与 AI Agent 生态峰会", "date": "2026-02", "tag": "行业" }
+      ]
+    }
+  }
+}

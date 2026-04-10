@@ -248,125 +248,32 @@ if (blocks && blocks.length > 0) {
 <Fragment set:html={html} />
 
 <script>
-  // 代码块复制功能
+  import { initCopyButtons } from '../lib/copyCode';
+  
   document.addEventListener('DOMContentLoaded', () => {
-    const copyButtons = document.querySelectorAll('.copy-code-btn');
-    
-    copyButtons.forEach(button => {
-      button.addEventListener('click', async () => {
-        const codeText = button.getAttribute('data-code') || '';
-        const copyText = button.querySelector('.copy-text');
-        const copiedText = button.querySelector('.copied-text');
-        
-        try {
-          // 解码 HTML 实体
-          const textarea = document.createElement('textarea');
-          textarea.innerHTML = codeText;
-          const decodedCode = textarea.value;
-          
-          // 复制到剪贴板
-          await navigator.clipboard.writeText(decodedCode);
-          
-          // 显示复制成功提示
-          if (copyText && copiedText) {
-            copyText.classList.add('hidden');
-            copiedText.classList.remove('hidden');
-            
-            // 2秒后恢复
-            setTimeout(() => {
-              copyText.classList.remove('hidden');
-              copiedText.classList.add('hidden');
-            }, 2000);
-          }
-        } catch (err) {
-          console.error('复制失败:', err);
-        }
-      });
-    });
+    initCopyButtons();
   });
 </script>
 
 <style is:global>
-  /* 代码块样式 */
-  .code-block-wrapper {
-    position: relative;
-  }
-
-  .code-block-pre {
-    font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace !important;
-  }
-
-  /* Shiki 生成的代码块样式 */
-  .shiki-wrapper code {
-    display: block;
-    font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace !important;
-    font-variant-ligatures: normal;
-    font-feature-settings: "calt" 1, "liga" 1;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-size: 0.875rem;
-    line-height: 1.7;
-  }
-
-  /* 覆盖 Shiki 注释的内联样式（使用属性选择器 + !important）*/
-  .shiki-wrapper code span[style*="color:#464B5D"] {
-    color: #89DDFF !important; /* 亮青色注释，高对比度 */
-    font-style: italic !important;
-  }
-
-  /* Plain Text 代码块样式 - 确保文字清晰可读 */
-  .shiki-wrapper.plaintext-code code {
-    color: #e0e0e0 !important;
-  }
-
-  .shiki-wrapper.plaintext-code code span {
-    color: #e0e0e0 !important;
-  }
-
+  /* PortableText 特有样式 */
   .shiki-wrapper code .token.function,
   .shiki-wrapper .line .token.function {
-    color: #9dbcff !important; /* 更亮的函数名 */
+    color: #9dbcff !important;
   }
 
   .shiki-wrapper code .token.number,
   .shiki-wrapper .line .token.number {
-    color: #ffa07a !important; /* 更亮的数字 */
+    color: #ffa07a !important;
   }
 
   .shiki-wrapper code .token.operator,
   .shiki-wrapper .line .token.operator {
-    color: #a0e4ff !important; /* 更亮的操作符 */
+    color: #a0e4ff !important;
   }
 
   .shiki-wrapper code .token.class-name,
   .shiki-wrapper .line .token.class-name {
-    color: #ffd78c !important; /* 更亮的类名 */
-  }
-
-  /* 滚动条美化 - 深色主题 */
-  .code-block-pre::-webkit-scrollbar {
-    height: 8px;
-  }
-
-  .code-block-pre::-webkit-scrollbar-track {
-    background-color: #2a2a2a;
-  }
-
-  .code-block-pre::-webkit-scrollbar-thumb {
-    background-color: #555555;
-    border-radius: 4px;
-  }
-
-  .code-block-pre::-webkit-scrollbar-thumb:hover {
-    background-color: #777777;
-  }
-
-  /* 复制按钮动画 */
-  .copy-code-btn {
-    transition: all 0.2s;
-  }
-
-  .copy-code-btn:active {
-    transform: scale(0.95);
+    color: #ffd78c !important;
   }
 </style>

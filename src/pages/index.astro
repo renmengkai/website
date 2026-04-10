@@ -6,6 +6,7 @@ import PostCard from '../components/PostCard.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import Card from '../components/ui/Card.astro';
 import Button from '../components/ui/Button.astro';
+import DashboardTabs from '../components/DashboardTabs.vue';
 import { fetchSanity } from '../lib/sanity';
 
 // 从 Sanity 获取最新文章（3篇）
@@ -35,13 +36,6 @@ const [posts, projects] = await Promise.all([
   fetchSanity<any[]>(postsQuery),
   fetchSanity<any[]>(projectsQuery)
 ]);
-
-// 快速统计
-const stats = [
-  { label: '检测项目', value: '5.43k', trend: '↗' },
-  { label: '响应时间', value: '125s', trend: '↗' },
-  { label: '活跃项目', value: '432', trend: '↗' },
-];
 ---
 
 <Layout title="RMK - 博客与作品集">
@@ -54,71 +48,7 @@ const stats = [
   <!-- 数据统计展示 -->
   <section class="py-16 border-t border-gray-100">
     <div class="container-custom">
-      <!-- 仪表板展示 -->
-      <div class="bg-white rounded-3xl border border-gray-100 shadow-card overflow-hidden">
-        <!-- 顶部导航栏 -->
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <div class="flex items-center gap-2">
-            <!-- <svg class="w-6 h-6" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="32" height="32" rx="8" fill="#1a1a1a"/>
-              <path d="M10 22V10h8l4 4v8H10z" stroke="#c8ff00" stroke-width="2" stroke-linejoin="round"/>
-            </svg> -->
-            <span class="font-semibold text-gray-900">个人空间</span>
-          </div>
-          <nav class="hidden md:flex items-center gap-6">
-            <span class="text-sm text-gray-900 font-medium">概览</span>
-            <span class="text-sm text-gray-400">技术监控</span>
-            <span class="text-sm text-gray-400">项目报告</span>
-            <span class="text-sm text-gray-400">用户活动</span>
-          </nav>
-          <div class="flex items-center gap-3">
-            <button class="p-2 rounded-lg hover:bg-gray-100">
-              <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
-            <div class="w-8 h-8 rounded-full bg-gray-200"></div>
-          </div>
-        </div>
-        
-        <!-- 主内容区 -->
-        <div class="p-6">
-          <div class="flex flex-col lg:flex-row gap-8">
-            <!-- 左侧信息 -->
-            <div class="flex-1">
-              <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-                  <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                </div>
-              </div>
-              <h3 class="text-xl font-semibold text-gray-900 mb-1">数据分析概览</h3>
-              <p class="text-sm text-gray-500 mb-6">近24小时、一周和一个月的数据统计。</p>
-              
-              <!-- 时间选择 -->
-              <div class="flex gap-2">
-                <button class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-full">24小时</button>
-                <button class="px-3 py-1.5 text-xs font-medium text-gray-400 hover:bg-gray-50 rounded-full">7天</button>
-                <button class="px-3 py-1.5 text-xs font-medium text-gray-400 hover:bg-gray-50 rounded-full">30天</button>
-              </div>
-            </div>
-            
-            <!-- 右侧统计 -->
-            <div class="flex gap-8">
-              {stats.map((stat) => (
-                <div class="text-center">
-                  <div class="flex items-center justify-center gap-1 mb-1">
-                    <span class="text-2xl font-bold text-gray-900">{stat.value}</span>
-                    <span class="text-green-500 text-sm">{stat.trend}</span>
-                  </div>
-                  <p class="text-sm text-gray-400">{stat.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+      <DashboardTabs client:visible />
     </div>
   </section>
 

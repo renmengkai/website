@@ -124,14 +124,23 @@ import Layout from '../../layouts/Layout.astro';
 </Layout>
 
 <script is:inline>
+  // 共享 Sanity 配置
+  const SANITY_PROJECT_ID = 'k2j30muc';
+  const SANITY_DATASET = 'production';
+  
+  async function fetchSanity(query) {
+    const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2024-01-01/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    return data.result;
+  }
+
   // 使用 astro:page-load 事件确保 View Transitions 导航后也能执行
   document.addEventListener('astro:page-load', () => {
     // 只在 blog 页面执行
     if (!window.location.pathname.startsWith('/blog') || window.location.pathname.match(/\/blog\/.+/)) return;
     
     const POSTS_PER_PAGE = 6;
-    const SANITY_PROJECT_ID = 'k2j30muc';
-    const SANITY_DATASET = 'production';
     
     let posts = [];
     let categories = [];
@@ -147,14 +156,6 @@ import Layout from '../../layouts/Layout.astro';
     const searchInput = document.getElementById('search-input');
     
     if (!categoryFilters || !postsGrid) return;
-
-    // Sanity API 查询
-    async function fetchSanity(query) {
-      const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2024-01-01/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      return data.result;
-    }
 
     // 生成文章卡片 HTML
     function createPostHtml(post) {

@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -39,22 +37,22 @@
 }
 
 @layer components {
-  /* 网格线背景 */
+  /* 极简科技网格 - 纯色线条 */
   .bg-grid {
     background-image: 
       linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
       linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-    background-size: 80px 80px;
+    background-size: 60px 60px;
   }
 
-  /* 网格线背景 - 渐隐效果 */
+  /* 网格背景 - 顶部渐隐 */
   .bg-grid-fade {
     background-image: 
-      linear-gradient(to right, rgba(0, 0, 0, 0.06) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
-    background-size: 80px 80px;
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0) 100%);
-    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0) 100%);
+      linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.3) 100%);
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.3) 100%);
   }
 
   /* 按钮样式 */
@@ -67,7 +65,7 @@
   .btn-primary {
     @apply btn;
     @apply bg-dark-100 text-white px-6 py-3 rounded-full;
-    @apply hover:bg-dark-300 hover:shadow-button-hover;
+    @apply hover:bg-dark-300;
   }
 
   .btn-primary svg {
@@ -198,4 +196,69 @@ html:not(.is-loading) .page-transition-skeleton {
 
 .skeleton-animate {
   animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+/* 代码块共享样式 */
+.code-block-wrapper {
+  position: relative;
+}
+
+.code-block-pre {
+  font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace !important;
+}
+
+/* Shiki 生成的代码块样式 */
+.shiki-wrapper code {
+  display: block;
+  font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace !important;
+  font-variant-ligatures: normal;
+  font-feature-settings: "calt" 1, "liga" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+/* 覆盖 Shiki 注释的内联样式 */
+.shiki-wrapper code span[style*="color:#464B5D"] {
+  color: #89DDFF !important;
+  font-style: italic !important;
+}
+
+/* Plain Text 代码块样式 */
+.shiki-wrapper code[data-lang="text"],
+.shiki-wrapper code[data-lang="plaintext"],
+.shiki-wrapper.plaintext-code code {
+  color: #e0e0e0 !important;
+}
+
+.shiki-wrapper.plaintext-code code span {
+  color: #e0e0e0 !important;
+}
+
+/* 滚动条美化 - 深色主题 */
+.code-block-pre::-webkit-scrollbar {
+  height: 8px;
+}
+
+.code-block-pre::-webkit-scrollbar-track {
+  background-color: #2a2a2a;
+}
+
+.code-block-pre::-webkit-scrollbar-thumb {
+  background-color: #555555;
+  border-radius: 4px;
+}
+
+.code-block-pre::-webkit-scrollbar-thumb:hover {
+  background-color: #777777;
+}
+
+/* 复制按钮动画 */
+.copy-code-btn {
+  transition: all 0.2s;
+}
+
+.copy-code-btn:active {
+  transform: scale(0.95);
 }
