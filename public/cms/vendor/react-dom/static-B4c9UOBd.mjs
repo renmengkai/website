@@ -2031,16 +2031,7 @@ function ac(n, l, e) {
               return;
           } else
             a = {}, r.unknownResources[l] = a;
-          if (a[n] = tn, (r = i.headers) && 0 < r.remainingCapacity && l === "font" && (f = ve(n, l, e), 0 <= (r.remainingCapacity -= f.length + 2)))
-            i.resets.font[n] = tn, r.fontPreloads && (r.fontPreloads += ", "), r.fontPreloads += f;
-          else
-            switch (r = [], n = K({ rel: "preload", href: n, as: l }, e), U(r, n), l) {
-              case "font":
-                i.fontPreloads.add(r);
-                break;
-              default:
-                i.bulkPreloads.add(r);
-            }
+          a[n] = tn, (r = i.headers) && 0 < r.remainingCapacity && l === "font" && (f = ve(n, l, e), 0 <= (r.remainingCapacity -= f.length + 2)) ? (i.resets.font[n] = tn, r.fontPreloads && (r.fontPreloads += ", "), r.fontPreloads += f) : (r = [], n = K({ rel: "preload", href: n, as: l }, e), U(r, n), l) === "font" ? i.fontPreloads.add(r) : i.bulkPreloads.add(r);
       }
       Xn(t);
     }
@@ -2939,11 +2930,7 @@ function An(n, l, e, t, r, i) {
 }
 function Yn(n) {
   var l = n.node;
-  if (typeof l == "object" && l !== null)
-    switch (l.$$typeof) {
-      case ti:
-        n.componentStack = { parent: n.componentStack, type: l.type };
-    }
+  typeof l == "object" && l !== null && l.$$typeof === ti && (n.componentStack = { parent: n.componentStack, type: l.type });
 }
 function bt(n) {
   return n === null ? null : { parent: n.parent, type: "Suspense Fallback" };
@@ -4415,12 +4402,12 @@ function Ji(n) {
 }
 function Qi() {
   var n = xt.version;
-  if (n !== "19.2.3")
+  if (n !== "19.2.5")
     throw Error(
       y(
         527,
         n,
-        "19.2.3"
+        "19.2.5"
       )
     );
 }
@@ -4645,7 +4632,7 @@ var Lc = Gl.prerender = function(n, l) {
     }
     Oe(i);
   });
-}, Dc = Gl.version = "19.2.3";
+}, Dc = Gl.version = "19.2.5";
 export {
   Gl as default,
   Lc as prerender,

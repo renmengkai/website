@@ -355,7 +355,7 @@ var h = typeof reportError == "function" ? reportError : function(e) {
   );
 }, $e = u.useTransition = function() {
   return i.H.useTransition();
-}, Ye = u.version = "19.2.3";
+}, Ye = u.version = "19.2.5";
 export {
   Q as Activity,
   V as Children,
