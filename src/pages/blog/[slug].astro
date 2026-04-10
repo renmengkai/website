@@ -132,10 +132,10 @@ const formattedDate = post?.publishedAt ? new Date(post.publishedAt).toLocaleDat
         <!-- 文章内容 - 使用骨架屏加载器 -->
         <div class="max-w-3xl mx-auto prose prose-lg dark:prose-invert max-w-none">
           <PostContentLoader client:load>
-            {Array.isArray(post.body) ? (
-              <PortableText blocks={post.body} />
-            ) : (
+            {typeof post.body === 'string' ? (
               <MarkdownContent content={post.body} />
+            ) : (
+              <PortableText blocks={post.body} />
             )}
           </PostContentLoader>
           

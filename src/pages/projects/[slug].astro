@@ -113,10 +113,10 @@ const safeTechnologies = Array.isArray(project.technologies) ? project.technolog
       {project.body && (
         <div class="max-w-3xl mx-auto">
           <div class="prose prose-lg dark:prose-invert max-w-none">
-            {Array.isArray(project.body) ? (
-              <PortableText blocks={project.body} />
-            ) : (
+            {typeof project.body === 'string' ? (
               <MarkdownContent content={project.body} />
+            ) : (
+              <PortableText blocks={project.body} />
             )}
           </div>
         </div>
