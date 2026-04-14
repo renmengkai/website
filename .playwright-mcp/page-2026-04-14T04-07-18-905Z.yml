@@ -1,0 +1,226 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - navigation [ref=e4]:
+      - link "RMK" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - img "RMK" [ref=e6]
+      - generic [ref=e7]:
+        - link "首页" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "博客" [ref=e9] [cursor=pointer]:
+          - /url: /blog
+        - link "作品" [ref=e10] [cursor=pointer]:
+          - /url: /projects
+        - link "关于" [ref=e11] [cursor=pointer]:
+          - /url: /about
+      - link "联系我们" [ref=e13] [cursor=pointer]:
+        - /url: /contact
+        - text: 联系我们
+        - img [ref=e14]
+  - main [ref=e16]:
+    - generic [ref=e19]:
+      - generic [ref=e21]: 联系我们
+      - heading "开始对话" [level=1] [ref=e22]
+      - paragraph [ref=e23]: 无论是项目咨询、技术探讨还是简单的交流，我们都期待收到您的消息。
+      - generic [ref=e24]:
+        - link "发送邮件" [ref=e25] [cursor=pointer]:
+          - /url: mailto:renmengkai@gmail.com
+          - img [ref=e26]
+          - generic [ref=e28]: 发送邮件
+        - link "电话联系" [ref=e29] [cursor=pointer]:
+          - /url: tel:+8615511199912
+          - img [ref=e30]
+          - generic [ref=e32]: 电话联系
+    - generic [ref=e35]:
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - generic [ref=e38]:
+            - img [ref=e40]
+            - heading "发送消息" [level=2] [ref=e43]
+          - paragraph [ref=e44]: 填写以下表单，我们会尽快回复您。
+          - generic [ref=e45]:
+            - generic [ref=e46]:
+              - generic [ref=e47]:
+                - generic [ref=e48]: 姓名 *
+                - generic [ref=e49]:
+                  - generic:
+                    - img
+                  - textbox "姓名 *" [ref=e50]:
+                    - /placeholder: 您的姓名
+              - generic [ref=e51]:
+                - generic [ref=e52]: 邮箱 *
+                - generic [ref=e53]:
+                  - generic:
+                    - img
+                  - textbox "邮箱 *" [ref=e54]:
+                    - /placeholder: your@email.com
+            - generic [ref=e55]:
+              - generic [ref=e56]: 主题 *
+              - generic [ref=e57]:
+                - generic:
+                  - img
+                - combobox "主题 *" [ref=e58] [cursor=pointer]:
+                  - option "请选择咨询类型" [selected]
+                  - option "项目合作"
+                  - option "技术咨询"
+                  - option "反馈建议"
+                  - option "其他"
+                - generic:
+                  - img
+            - generic [ref=e59]:
+              - generic [ref=e60]: 消息内容 *
+              - generic [ref=e61]:
+                - generic:
+                  - img
+                - textbox "消息内容 *" [ref=e62]:
+                  - /placeholder: 请详细描述您的需求或问题...
+              - generic [ref=e63]:
+                - paragraph [ref=e64]: 最少10个字符，最多2000个字符
+                - paragraph [ref=e65]: 0/2000
+            - button "发送消息" [ref=e67] [cursor=pointer]:
+              - generic [ref=e68]: 发送消息
+              - img [ref=e69]
+        - generic [ref=e71]:
+          - generic [ref=e72]:
+            - img [ref=e74]
+            - generic [ref=e76]:
+              - heading "我们的承诺" [level=3] [ref=e77]
+              - paragraph [ref=e78]: 我们承诺在24小时内回复您的消息，并为您提供最优质的服务。
+          - generic [ref=e79]:
+            - generic [ref=e80]:
+              - img [ref=e82]
+              - generic [ref=e84]:
+                - paragraph [ref=e85]: 快速响应
+                - paragraph [ref=e86]: 24小时内回复，紧急情况优先处理
+            - generic [ref=e87]:
+              - img [ref=e89]
+              - generic [ref=e91]:
+                - paragraph [ref=e92]: 质量保障
+                - paragraph [ref=e93]: AI驱动开发，80%工作由智能体完成
+            - generic [ref=e94]:
+              - img [ref=e96]
+              - generic [ref=e98]:
+                - paragraph [ref=e99]: 专属服务
+                - paragraph [ref=e100]: 一对一项目经理全程跟进
+          - generic [ref=e101]:
+            - generic [ref=e102]: 快速响应
+            - generic [ref=e103]: 专业服务
+            - generic [ref=e104]: AI驱动
+      - generic [ref=e105]:
+        - generic [ref=e106]:
+          - generic [ref=e107]:
+            - img [ref=e109]
+            - heading "联系方式" [level=3] [ref=e111]
+          - generic [ref=e112]:
+            - link "邮箱 renmengkai@gmail.com" [ref=e113] [cursor=pointer]:
+              - /url: mailto:renmengkai@gmail.com
+              - img [ref=e115]
+              - generic [ref=e117]:
+                - paragraph [ref=e118]: 邮箱
+                - paragraph [ref=e119]: renmengkai@gmail.com
+              - img [ref=e120]
+            - link "电话 +86 155 1119 9912" [ref=e122] [cursor=pointer]:
+              - /url: tel:+8615511199912
+              - img [ref=e124]
+              - generic [ref=e126]:
+                - paragraph [ref=e127]: 电话
+                - paragraph [ref=e128]: +86 155 1119 9912
+              - img [ref=e129]
+            - link "地址 河北省石家庄市长安区谈固大街" [ref=e131] [cursor=pointer]:
+              - /url: "#"
+              - img [ref=e133]
+              - generic [ref=e136]:
+                - paragraph [ref=e137]: 地址
+                - paragraph [ref=e138]: 河北省石家庄市长安区谈固大街
+        - generic [ref=e139]:
+          - generic [ref=e140]:
+            - img [ref=e142]
+            - heading "工作时间" [level=3] [ref=e144]
+          - generic [ref=e145]:
+            - generic [ref=e146]:
+              - generic [ref=e147]: 周一至周五
+              - generic [ref=e148]: 9:00 - 18:00
+            - generic [ref=e149]:
+              - generic [ref=e150]: 周六
+              - generic [ref=e151]: 10:00 - 16:00
+            - generic [ref=e152]:
+              - generic [ref=e153]: 周日
+              - generic [ref=e154]: 休息
+        - generic [ref=e155]:
+          - generic [ref=e156]:
+            - img [ref=e158]
+            - heading "关注我们" [level=3] [ref=e160]
+          - link "GitHub" [ref=e162] [cursor=pointer]:
+            - /url: https://github.com/renmengkai
+            - img [ref=e163]
+            - generic [ref=e165]: GitHub
+        - generic [ref=e167]:
+          - img [ref=e169]
+          - generic [ref=e171]:
+            - heading "有疑问？" [level=3] [ref=e172]
+            - paragraph [ref=e173]: 在发送消息之前，您可以先查看常见问题解答。
+            - link "查看常见问题" [ref=e174] [cursor=pointer]:
+              - /url: /about#faq
+    - generic [ref=e182]:
+      - generic [ref=e183]:
+        - img [ref=e184]
+        - text: 快速响应
+      - heading "期待与您的合作" [level=2] [ref=e186]
+      - paragraph [ref=e187]: 我们始终致力于为客户提供最优质的服务和解决方案，让我们一起创造卓越。
+      - generic [ref=e188]:
+        - link "查看作品" [ref=e189] [cursor=pointer]:
+          - /url: /projects
+          - text: 查看作品
+          - img [ref=e190]
+        - link "了解更多" [ref=e192] [cursor=pointer]:
+          - /url: /about
+          - text: 了解更多
+          - img [ref=e193]
+      - generic [ref=e195]:
+        - generic [ref=e196]:
+          - generic [ref=e197]: 24h
+          - generic [ref=e198]: 平均响应时间
+        - generic [ref=e199]:
+          - generic [ref=e200]: 100%
+          - generic [ref=e201]: 客户满意度
+        - generic [ref=e202]:
+          - generic [ref=e203]: 80%
+          - generic [ref=e204]: AI驱动效率
+  - contentinfo [ref=e205]:
+    - generic [ref=e206]:
+      - generic [ref=e207]:
+        - link "RMK" [ref=e208] [cursor=pointer]:
+          - /url: /
+          - img "RMK" [ref=e209]
+        - navigation [ref=e210]:
+          - link "博客" [ref=e211] [cursor=pointer]:
+            - /url: /blog
+          - link "作品" [ref=e212] [cursor=pointer]:
+            - /url: /projects
+          - link "关于" [ref=e213] [cursor=pointer]:
+            - /url: /about
+      - generic [ref=e215]:
+        - paragraph [ref=e216]: © 2026 RMK。保留所有权利。
+        - generic [ref=e217]:
+          - link "GitHub" [ref=e218] [cursor=pointer]:
+            - /url: https://github.com
+            - img [ref=e219]
+          - link "Twitter" [ref=e221] [cursor=pointer]:
+            - /url: https://twitter.com
+            - img [ref=e222]
+          - link "LinkedIn" [ref=e224] [cursor=pointer]:
+            - /url: https://linkedin.com
+            - img [ref=e225]
+  - generic [ref=e229]:
+    - button "Menu" [ref=e230]:
+      - img [ref=e232]
+      - generic: Menu
+    - button "Inspect" [ref=e236]:
+      - img [ref=e238]
+      - generic: Inspect
+    - button "Audit" [ref=e240]:
+      - img [ref=e242]
+      - generic: Audit
+    - button "Settings" [ref=e245]:
+      - img [ref=e247]
+      - generic: Settings

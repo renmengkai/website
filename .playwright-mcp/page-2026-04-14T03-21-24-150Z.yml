@@ -1,0 +1,238 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - navigation [ref=e4]:
+      - link "RMK" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - img "RMK" [ref=e6]
+      - generic [ref=e7]:
+        - link "首页" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "博客" [ref=e9] [cursor=pointer]:
+          - /url: /blog
+        - link "作品" [ref=e10] [cursor=pointer]:
+          - /url: /projects
+        - link "关于" [ref=e11] [cursor=pointer]:
+          - /url: /about
+      - link "联系我们" [ref=e13] [cursor=pointer]:
+        - /url: /contact
+        - text: 联系我们
+        - img [ref=e14]
+  - main [ref=e16]:
+    - generic [ref=e18]:
+      - generic [ref=e19]: 关于我们
+      - heading "AI时代的创新团队" [level=1] [ref=e20]
+      - paragraph [ref=e21]: 专注AI Agent工具与多智能体编排，助力企业降本增效，共赢AI时代。
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - img "团队协作" [ref=e27]
+        - img "办公工作" [ref=e29]
+      - generic [ref=e30]:
+        - generic [ref=e31]: "\""
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - img "任孟锴" [ref=e35]
+            - generic [ref=e36]:
+              - heading "任孟锴" [level=3] [ref=e37]
+              - paragraph [ref=e38]: 创始人 & CEO
+          - paragraph [ref=e39]: AI时代已经到来，我们致力于用AI Agent技术帮助企业降本增效。在我们团队中，80%的工作由AI Agent完成，这让我们能够以更高的效率、更低的成本为客户创造价值。我们相信，选择我们，将是您在未来10年内做出的最好决策。
+    - generic [ref=e42]:
+      - generic [ref=e43]:
+        - text: 团队实力
+        - heading "我们的团队来自" [level=2] [ref=e44]
+        - paragraph [ref=e45]: 核心成员均来自一线互联网公司，拥有丰富的技术经验与行业资源
+      - generic [ref=e46]:
+        - generic [ref=e48]: 美团
+        - generic [ref=e50]: 京东
+        - generic [ref=e52]: 小米
+        - generic [ref=e54]: 华为
+    - generic [ref=e56]:
+      - generic [ref=e57]:
+        - text: 核心价值观
+        - heading "我们的优势" [level=2] [ref=e58]
+        - paragraph [ref=e59]: AI驱动开发，高效交付，助力企业在AI时代领先发展。
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - img [ref=e63]
+          - heading "AI驱动" [level=3] [ref=e65]
+          - paragraph [ref=e66]: 80%工作由AI Agent完成，以最高效率交付卓越成果。
+        - generic [ref=e67]:
+          - img [ref=e69]
+          - heading "合作共赢" [level=3] [ref=e71]
+          - paragraph [ref=e72]: 招商合作，与合作伙伴共同成长，在AI时代携手领先。
+        - generic [ref=e73]:
+          - img [ref=e75]
+          - heading "降本增效" [level=3] [ref=e77]
+          - paragraph [ref=e78]: 帮助企业适应时代变化，实现数字化转型与效率提升。
+      - generic [ref=e79]:
+        - generic [ref=e80]:
+          - generic [ref=e81]: 80%
+          - paragraph [ref=e82]: 工作由AI Agent完成
+        - generic [ref=e83]:
+          - generic [ref=e84]: 10年
+          - paragraph [ref=e85]: 未来领先的选择
+        - generic [ref=e86]:
+          - generic [ref=e87]: 24*7
+          - paragraph [ref=e88]: 全天候AI协作
+    - generic [ref=e90]:
+      - generic [ref=e91]:
+        - text: 技术能力
+        - heading "技术栈" [level=2] [ref=e92]
+        - paragraph [ref=e93]: 多语言、多框架的技术储备
+      - generic [ref=e94]:
+        - generic [ref=e95]:
+          - generic [ref=e96]:
+            - generic [ref=e97]:
+              - img [ref=e99]
+              - generic [ref=e101]: Web 开发
+            - generic [ref=e102]: 45%
+          - generic [ref=e104]:
+            - generic [ref=e105]: TypeScript
+            - generic [ref=e106]: JavaScript
+            - generic [ref=e107]: Go
+            - generic [ref=e108]: Rust
+          - generic [ref=e110]:
+            - generic [ref=e111]:
+              - img [ref=e112]
+              - text: Vue/Nuxt
+            - generic [ref=e114]:
+              - img [ref=e115]
+              - text: Node.js
+            - generic [ref=e117]:
+              - img [ref=e118]
+              - text: Astro
+        - generic [ref=e120]:
+          - generic [ref=e121]:
+            - generic [ref=e122]:
+              - img [ref=e124]
+              - generic [ref=e126]: 跨端应用
+            - generic [ref=e127]: 30%
+          - generic [ref=e129]:
+            - generic [ref=e130]: TypeScript
+            - generic [ref=e131]: JavaScript
+            - generic [ref=e132]: Python
+          - generic [ref=e134]:
+            - generic [ref=e135]:
+              - img [ref=e136]
+              - text: 微信小程序
+            - generic [ref=e138]:
+              - img [ref=e139]
+              - text: React Native
+            - generic [ref=e141]:
+              - img [ref=e142]
+              - text: Tauri
+        - generic [ref=e144]:
+          - generic [ref=e145]:
+            - generic [ref=e146]:
+              - img [ref=e148]
+              - generic [ref=e150]: 工具与 CLI
+            - generic [ref=e151]: 25%
+          - generic [ref=e153]:
+            - generic [ref=e154]: Rust
+            - generic [ref=e155]: Go
+            - generic [ref=e156]: Python
+            - generic [ref=e157]: TypeScript
+          - generic [ref=e159]:
+            - generic [ref=e160]:
+              - img [ref=e161]
+              - text: Clap
+            - generic [ref=e163]:
+              - img [ref=e164]
+              - text: Cobra
+            - generic [ref=e166]:
+              - img [ref=e167]
+              - text: Raycast
+    - generic [ref=e170]:
+      - generic [ref=e171]:
+        - text: 业务布局
+        - heading "业务方向" [level=2] [ref=e172]
+        - paragraph [ref=e173]: AI Agent工具开发与多智能体编排
+      - generic [ref=e174]:
+        - generic [ref=e175]:
+          - img [ref=e177]
+          - heading "AI Agent 开发" [level=3] [ref=e179]
+          - paragraph [ref=e180]: 开发智能、高效的AI Agent工具，自动化处理各类业务场景
+        - generic [ref=e181]:
+          - img [ref=e183]
+          - heading "Agent Team 编排" [level=3] [ref=e185]
+          - paragraph [ref=e186]: 多智能体协同编排，构建复杂的AI工作流
+        - generic [ref=e187]:
+          - img [ref=e189]
+          - heading "企业数字化咨询" [level=3] [ref=e191]
+          - paragraph [ref=e192]: 帮助企业规划AI转型路径，实现降本增效
+    - generic [ref=e194]:
+      - generic [ref=e195]:
+        - text: 常见问题
+        - heading "常见问答" [level=2] [ref=e196]
+        - paragraph [ref=e197]: 了解我们的服务与合作方式
+      - generic [ref=e198]:
+        - button "1. 你们擅长哪些技术？" [ref=e200] [cursor=pointer]:
+          - generic [ref=e201]: 1. 你们擅长哪些技术？
+          - img [ref=e202]
+        - button "2. AI Agent能完成哪些工作？" [ref=e205] [cursor=pointer]:
+          - generic [ref=e206]: 2. AI Agent能完成哪些工作？
+          - img [ref=e207]
+        - button "3. 你们提供哪些服务？" [ref=e210] [cursor=pointer]:
+          - generic [ref=e211]: 3. 你们提供哪些服务？
+          - img [ref=e212]
+        - button "4. 如何与你们合作？" [ref=e215] [cursor=pointer]:
+          - generic [ref=e216]: 4. 如何与你们合作？
+          - img [ref=e217]
+        - button "5. 与传统开发团队相比，你们有什么优势？" [ref=e220] [cursor=pointer]:
+          - generic [ref=e221]: 5. 与传统开发团队相比，你们有什么优势？
+          - img [ref=e222]
+        - button "6. 你们的收费模式是怎样的？" [ref=e225] [cursor=pointer]:
+          - generic [ref=e226]: 6. 你们的收费模式是怎样的？
+          - img [ref=e227]
+        - button "7. 你们目前做过哪些类型的项目？" [ref=e230] [cursor=pointer]:
+          - generic [ref=e231]: 7. 你们目前做过哪些类型的项目？
+          - img [ref=e232]
+        - button "8. 如何开始合作？" [ref=e235] [cursor=pointer]:
+          - generic [ref=e236]: 8. 如何开始合作？
+          - img [ref=e237]
+    - generic [ref=e242]:
+      - heading "招商合作，共赢AI时代" [level=2] [ref=e243]
+      - paragraph [ref=e244]: 我们正处于创业阶段，诚挚邀请合作伙伴。企业降本增效，适用时代变化的任务交给我们，会是未来10年内最好的选择。
+      - link "联系我们" [ref=e245] [cursor=pointer]:
+        - /url: /contact
+        - text: 联系我们
+        - img [ref=e246]
+  - contentinfo [ref=e248]:
+    - generic [ref=e249]:
+      - generic [ref=e250]:
+        - link "RMK" [ref=e251] [cursor=pointer]:
+          - /url: /
+          - img "RMK" [ref=e252]
+        - navigation [ref=e253]:
+          - link "博客" [ref=e254] [cursor=pointer]:
+            - /url: /blog
+          - link "作品" [ref=e255] [cursor=pointer]:
+            - /url: /projects
+          - link "关于" [ref=e256] [cursor=pointer]:
+            - /url: /about
+      - generic [ref=e258]:
+        - paragraph [ref=e259]: © 2026 RMK。保留所有权利。
+        - generic [ref=e260]:
+          - link "GitHub" [ref=e261] [cursor=pointer]:
+            - /url: https://github.com
+            - img [ref=e262]
+          - link "Twitter" [ref=e264] [cursor=pointer]:
+            - /url: https://twitter.com
+            - img [ref=e265]
+          - link "LinkedIn" [ref=e267] [cursor=pointer]:
+            - /url: https://linkedin.com
+            - img [ref=e268]
+  - generic [ref=e272]:
+    - button "Menu" [ref=e273]:
+      - img [ref=e275]
+      - generic: Menu
+    - button "Inspect" [ref=e279]:
+      - img [ref=e281]
+      - generic: Inspect
+    - button "Audit" [ref=e283]:
+      - generic [ref=e284]:
+        - img [ref=e285]
+        - img [ref=e288]
+      - generic: Audit
+    - button "Settings" [ref=e291]:
+      - img [ref=e293]
+      - generic: Settings
