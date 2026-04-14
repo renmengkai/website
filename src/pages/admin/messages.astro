@@ -1,6 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
+// 强制此页面使用 SSR 而非静态生成
+export const prerender = false;
+
 // 检测是否在 Deno 环境中
 const isDeno = typeof (globalThis as any).Deno !== 'undefined';
 
@@ -13,12 +16,21 @@ function getEnv(key: string): string | undefined {
 }
 
 // 简单的密码保护（生产环境应该使用更强的认证）
-const ADMIN_PASSWORD = getEnv('ADMIN_PASSWORD') || 'deiioxydhydkljdu';
+const ADMIN_PASSWORD = getEnv('ADMIN_PASSWORD') || 'deiulphydhydkljdu';
 
-// 检查认证
-const url = new URL(Astro.request.url);
-const password = url.searchParams.get('pwd');
+// 检查认证 - 使用 Astro.url 而非 new URL(Astro.request.url)
+const password = Astro.url.searchParams.get('pwd');
 const isAuthenticated = password === ADMIN_PASSWORD;
+
+// DEBUG: 记录认证调试信息
+console.log('[DEBUG] === 留言管理页面调试 ===');
+console.log('[DEBUG] Astro.url:', Astro.url.toString());
+console.log('[DEBUG] Astro.url.search:', Astro.url.search);
+console.log('[DEBUG] 输入的密码:', password);
+console.log('[DEBUG] 正确的密码:', ADMIN_PASSWORD);
+console.log('[DEBUG] 密码是否匹配:', password === ADMIN_PASSWORD);
+console.log('[DEBUG] isAuthenticated:', isAuthenticated);
+console.log('=============================');
 
 // 获取消息数据
 let messages: any[] = [];
@@ -26,16 +38,22 @@ let error: string | null = null;
 
 if (isAuthenticated) {
   try {
-    const response = await fetch(`${url.origin}/api/contact`);
+    console.log('[DEBUG] 开始获取留言数据...');
+    const response = await fetch(`${Astro.url.origin}/api/contact`);
+    console.log('[DEBUG] API 响应状态:', response.status);
     const data = await response.json();
+    console.log('[DEBUG] API 返回数据:', JSON.stringify(data));
     if (data.success) {
       messages = data.data;
     } else {
       error = data.message || '获取消息失败';
     }
   } catch (e) {
+    console.log('[DEBUG] 获取消息失败:', e);
     error = '获取消息失败: ' + (e as Error).message;
   }
+} else {
+  console.log('[DEBUG] 未认证，不获取留言数据');
 }
 
 // 格式化日期
