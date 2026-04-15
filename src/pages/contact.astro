@@ -3,6 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import Button from '../components/ui/Button.astro';
 
 const phoneNumber = import.meta.env.PUBLIC_PHONE_NUMBER || 'NOT_SET';
+console.log('[DEBUG] PUBLIC_PHONE_NUMBER =', JSON.stringify(import.meta.env.PUBLIC_PHONE_NUMBER));
+console.log('[DEBUG] All env keys =', Object.keys(import.meta.env).join(', '));
 
 const contactInfo = [
   {
@@ -451,6 +453,11 @@ const workHours = [
 </Layout>
 
 <script>
+  const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
+  phoneLinks.forEach((el, i) => console.log(`[DEBUG] tel link ${i}:`, el.getAttribute('href'), '| text:', el.textContent?.trim()));
+  const phoneValues = document.querySelectorAll('.text-gray-900.font-medium');
+  phoneValues.forEach((el, i) => console.log(`[DEBUG] phone value ${i}:`, el.textContent));
+
   const form = document.getElementById('contact-form') as HTMLFormElement;
   const statusDiv = document.getElementById('form-status') as HTMLDivElement;
   const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
