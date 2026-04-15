@@ -9,7 +9,7 @@ export default defineConfig({
     vue(),
     tailwind()
   ],
-  output: 'static',
+  output: 'server',
   adapter: deno(),
   site: 'https://www.mengkai.ren',
   prefetch: {
