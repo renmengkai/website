@@ -1,0 +1,364 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import MarkdownContent from '../../../components/MarkdownContent.astro';
+import PortableText from '../../../components/PortableText.astro';
+import PostContentLoader from '../../../components/PostContentLoader.vue';
+
+// 文章数据由调度层（src/pages/blog/[slug].astro）统一取数后通过 props 传入
+const { post } = Astro.props;
+
+// 标记是否显示404内容（post 不存在时渲染「文章不存在」状态）
+const show404 = !post;
+
+// 确保 categories 是一个数组，过滤掉 null 值
+const safeCategories = post && Array.isArray(post.categories) ? post.categories.filter((cat: any) => cat != null) : [];
+
+// 日期格式化为 YYYY-MM-DD（设计稿 mono 风格）
+const formattedDate = post?.publishedAt ? new Date(post.publishedAt).toISOString().slice(0, 10) : '';
+
+// 估算阅读时长（按中文约 400 字/分钟）
+function estimateReadingMinutes(body: any): number {
+  let text = '';
+  if (typeof body === 'string') {
+    text = body;
+  } else if (Array.isArray(body)) {
+    text = body
+      .map((b: any) => {
+        const spans = Array.isArray(b?.children) ? b.children.map((c: any) => c?.text || '').join('') : '';
+        return spans + (b?.code || '');
+      })
+      .join('\n');
+  }
+  return Math.max(1, Math.round(text.length / 400));
+}
+const readingMinutes = post ? estimateReadingMinutes(post.body) : 0;
+
+// 作者信息（无作者时回退团队名）
+const authorName = post?.author?.name || 'vima tech';
+const authorInitial = authorName.charAt(0);
+const authorAvatar = post?.author?.avatar || null;
+
+const currentYear = new Date().getFullYear();
+---
+
+<Layout
+  title={show404 ? '文章不存在 - RMK' : `${post.title} - RMK`}
+  description={show404 ? '文章不存在或已被移动' : post.excerpt}
+  image={post?.coverImage}
+>
+  {show404 ? (
+    <!-- 404 状态：文章不存在 -->
+    <main class="min-h-[60vh] flex flex-col items-center justify-center gap-[18px] px-8 py-24 text-center animate-fade-in-up">
+      <span class="logo-wave flex-none w-40 h-[30px] bg-sand"></span>
+      <h1 class="font-serif text-[32px] font-black text-ink m-0">文章不存在或已被移动</h1>
+      <p class="m-0 text-[14.5px] text-stone leading-[1.8]">链接可能已失效，去列表页看看其他文章吧。</p>
+      <a
+        href="/blog"
+        class="bg-brand text-white text-sm font-medium px-[26px] py-[11px] rounded-lg mt-2 hover:bg-brand-dark transition-colors"
+      >返回博客列表</a>
+    </main>
+  ) : (
+    <!-- 文章正文 -->
+    <main class="animate-fade-in-up">
+      <article class="max-w-[760px] mx-auto px-5 sm:px-8 pt-16 pb-20">
+        <!-- 返回列表 -->
+        <a href="/blog" class="inline-flex items-center gap-1.5 text-[13.5px] text-stone hover:text-brand transition-colors">← 返回列表</a>
+
+        <!-- 分类胶囊 -->
+        {safeCategories.length > 0 && (
+          <div class="mt-7 flex flex-wrap gap-2">
+            {safeCategories.map((cat: any) => (
+              <span class="font-mono text-xs text-brand bg-brand-tint border border-brand-line px-3 py-1 rounded-full">{cat.title}</span>
+            ))}
+          </div>
+        )}
+
+        <!-- 标题 -->
+        <h1 class="font-serif text-[30px] sm:text-[38px] font-black leading-[1.4] text-ink mt-[18px] mb-[22px] text-balance">
+          {post.title}
+        </h1>
+
+        <!-- 作者行 -->
+        <div class="flex items-center gap-3 pb-7 border-b border-line">
+          {authorAvatar ? (
+            <img
+              src={authorAvatar}
+              alt={authorName}
+              class="w-10 h-10 rounded-full object-cover border border-line flex-none"
+            />
+          ) : (
+            <span class="w-10 h-10 rounded-full bg-cream border border-line flex items-center justify-center font-serif font-bold text-[15px] text-brand flex-none">{authorInitial}</span>
+          )}
+          <div>
+            <div class="text-sm font-medium text-ink">{authorName}</div>
+            <div class="font-mono text-xs text-stone mt-px">
+              <time datetime={post.publishedAt}>{formattedDate}</time> · 约 {readingMinutes} 分钟
+            </div>
+          </div>
+        </div>
+
+        <!-- 封面大图 -->
+        {post.coverImage ? (
+          <div class="aspect-video bg-cream border border-line rounded-xl my-8 overflow-hidden">
+            <img src={post.coverImage} alt={post.title} class="w-full h-full object-cover" loading="eager" />
+          </div>
+        ) : (
+          <div class="aspect-video bg-cream border border-line rounded-xl my-8 flex items-center justify-center">
+            <span class="logo-wave flex-none w-20 h-4 bg-sand"></span>
+          </div>
+        )}
+
+        <!-- 正文（保留现有渲染管线：骨架屏加载器 + PortableText / Markdown） -->
+        <div id="post-body">
+          <PostContentLoader client:load>
+            {typeof post.body === 'string' ? (
+              <MarkdownContent content={post.body} />
+            ) : (
+              <PortableText blocks={post.body} />
+            )}
+          </PostContentLoader>
+        </div>
+
+        <!-- 底部：返回按钮 + 版权说明 -->
+        <div class="mt-14 pt-7 border-t border-line flex justify-between items-center gap-4 flex-wrap">
+          <a
+            href="/blog"
+            data-astro-prefetch="hover"
+            class="inline-flex items-center gap-1.5 text-sm font-medium text-ink bg-white border border-line-strong px-[22px] py-2.5 rounded-lg hover:border-ink transition-colors"
+          >← 返回列表</a>
+          <span class="font-mono text-xs text-mist">© {currentYear} vima tech · 转载请注明出处</span>
+        </div>
+      </article>
+    </main>
+  )}
+</Layout>
+
+<style is:global>
+  /* ===== 正文排版（覆盖 PortableText / MarkdownContent 输出，对齐设计稿） ===== */
+
+  #post-body {
+    font-size: 16px;
+    line-height: 2;
+    color: #4d463e; /* clay */
+  }
+
+  #post-body p {
+    margin: 0 0 24px;
+    font-size: 16px;
+    line-height: 2;
+    color: #4d463e;
+    text-wrap: pretty;
+  }
+
+  #post-body h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 30px;
+    font-weight: 900;
+    color: #221e1b; /* ink */
+    margin: 48px 0 18px;
+    line-height: 1.5;
+  }
+
+  #post-body h2 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #221e1b;
+    margin: 44px 0 16px;
+    padding-bottom: 0;
+    border-bottom: none;
+    line-height: 1.6;
+  }
+
+  #post-body h3 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 21px;
+    font-weight: 700;
+    color: #221e1b;
+    margin: 36px 0 14px;
+    line-height: 1.6;
+  }
+
+  #post-body h4 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 17.5px;
+    font-weight: 700;
+    color: #221e1b;
+    margin: 28px 0 12px;
+  }
+
+  #post-body strong {
+    color: #221e1b;
+    font-weight: 700;
+  }
+
+  #post-body a:not(.copy-code-btn) {
+    color: #a5282c; /* brand */
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  #post-body a:not(.copy-code-btn):hover {
+    color: #8c1f23; /* brand-dark */
+  }
+
+  /* 引用块：brand 左边框 + serif */
+  #post-body blockquote {
+    margin: 28px 0;
+    padding: 4px 0 4px 24px;
+    border-left: 3px solid #a5282c;
+    font-family: 'Noto Serif SC', serif;
+    font-style: normal;
+    font-size: 17px;
+    color: #221e1b;
+    line-height: 1.9;
+  }
+
+  #post-body blockquote p {
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    line-height: inherit;
+  }
+
+  /* 列表 */
+  #post-body ul,
+  #post-body ol {
+    margin: 0 0 24px;
+    padding-left: 24px;
+  }
+
+  #post-body li {
+    margin-bottom: 8px;
+    line-height: 2;
+  }
+
+  /* 行内代码 */
+  #post-body code:not(pre code) {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13.5px;
+    color: #a5282c;
+    background: #f4f0ea; /* cream */
+    border: 1px solid #e7e1d8; /* line */
+    border-radius: 5px;
+    padding: 1px 6px;
+  }
+
+  /* 正文内图片 */
+  #post-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid #e7e1d8;
+    margin: 28px 0;
+  }
+
+  /* 表格 */
+  #post-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 24px;
+    font-size: 14.5px;
+  }
+
+  #post-body th,
+  #post-body td {
+    border: 1px solid #e7e1d8;
+    padding: 10px 14px;
+    background: transparent;
+  }
+
+  #post-body th {
+    background: #f4f0ea;
+    color: #221e1b;
+    font-weight: 700;
+  }
+
+  #post-body hr {
+    margin: 40px 0;
+    border: none;
+    border-top: 1px solid #e7e1d8;
+  }
+
+  /* ===== 代码块：ink 深底 + 文件名栏（覆盖组件输出的灰色主题） ===== */
+
+  #post-body .code-block-wrapper {
+    margin: 28px 0;
+  }
+
+  #post-body .code-block-container {
+    border: 1px solid #e7e1d8;
+    border-radius: 12px;
+    background: #221e1b; /* ink */
+    box-shadow: none;
+  }
+
+  #post-body .code-block-container:hover {
+    box-shadow: none;
+  }
+
+  #post-body .code-block-header {
+    background-image: none;
+    background-color: #221e1b;
+    border-bottom: 1px solid #3a342e;
+    padding: 10px 16px;
+  }
+
+  #post-body .code-block-header span {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 400;
+    color: #8a8178; /* stone */
+  }
+
+  #post-body .copy-code-btn {
+    opacity: 1;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 12px;
+    color: #b4aca2; /* mist */
+    background-color: transparent;
+    border: 1px solid #3a342e;
+    border-radius: 6px;
+    padding: 4px 12px;
+    box-shadow: none;
+  }
+
+  #post-body .copy-code-btn:hover {
+    color: #faf8f4; /* paper */
+    background-color: transparent;
+    border-color: #8a8178;
+  }
+
+  #post-body .copy-code-btn .copy-text,
+  #post-body .copy-code-btn .copied-text {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+  }
+
+  #post-body .code-block-pre {
+    background-color: #221e1b !important;
+    padding: 18px 20px;
+    font-family: 'IBM Plex Mono', monospace !important;
+  }
+
+  #post-body .shiki-wrapper code {
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  #post-body .code-block-pre::-webkit-scrollbar-track {
+    background-color: #221e1b;
+  }
+
+  #post-body .code-block-pre::-webkit-scrollbar-thumb {
+    background-color: #3a342e;
+  }
+
+  /* MarkdownContent 外层 .prose 兜底：避免 typography 插件（若存在）覆盖设计排版 */
+  #post-body .markdown-content {
+    max-width: none;
+  }
+</style>

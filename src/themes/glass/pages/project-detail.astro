@@ -1,0 +1,126 @@
+---
+import Layout from '../Layout.astro';
+import Button from '../components/ui/Button.astro';
+import MarkdownContent from '../components/MarkdownContent.astro';
+import PortableText from '../components/PortableText.astro';
+
+// 项目数据由调度层（src/pages/projects/[slug].astro）统一取数后通过 props 传入
+// （项目不存在时调度层已 redirect，此处可假定 project 存在）
+const { project } = Astro.props;
+
+// 确保 technologies 是一个数组
+const safeTechnologies = Array.isArray(project.technologies) ? project.technologies : [];
+---
+
+<Layout
+  title={`${project.title} - RMK`}
+  description={project.description}
+  image={project.thumbnail}
+>
+  <article class="relative pt-32 pb-24 lg:pb-40 overflow-hidden" transition:animate="fade">
+    <!-- 头部环境层：网格线 + 辉光球 -->
+    <div class="absolute inset-x-0 top-0 h-[32rem] bg-grid-dark pointer-events-none" aria-hidden="true"></div>
+    <div class="orb orb-primary -top-40 left-1/2 -translate-x-1/2 w-[48rem] h-[30rem]" aria-hidden="true"></div>
+
+    <div class="container-custom relative">
+      <!-- 项目头部 -->
+      <header class="max-w-4xl mx-auto mb-12">
+        <!-- 返回按钮 -->
+        <div class="mb-10" data-reveal>
+          <a href="/projects" data-astro-prefetch="hover" class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm text-fg-soft bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] hover:text-fg hover:border-white/20 transition-colors duration-300">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+            </svg>
+            返回作品列表
+          </a>
+        </div>
+
+        <!-- 眉题 -->
+        <p class="eyebrow mb-6" data-reveal style="--reveal-delay: 100ms;">Project · 作品</p>
+
+        <!-- 标题 -->
+        <h1 class="text-display font-bold text-fg mb-4" data-reveal-lines>
+          <span class="reveal-line"><span style="--line-index: 1;">{project.title}</span></span>
+        </h1>
+
+        <!-- 描述 -->
+        <p class="text-lg text-fg-faint leading-relaxed mb-6 max-w-2xl" data-reveal style="--reveal-delay: 300ms;">
+          {project.description}
+        </p>
+
+        <!-- 技术栈：等宽玻璃胶囊 -->
+        {safeTechnologies.length > 0 && (
+          <div class="flex flex-wrap gap-2 mb-8" data-reveal style="--reveal-delay: 400ms;">
+            {safeTechnologies.map((tech: string) => (
+              <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-mono bg-white/[0.05] text-fg-soft border border-white/10">
+                {tech}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <!-- 操作按钮：岛式胶囊 -->
+        <div class="flex flex-wrap gap-4" data-reveal style="--reveal-delay: 500ms;">
+          {project.liveUrl && (
+            <Button href={project.liveUrl} variant="primary" showArrow magnetic>
+              在线预览
+            </Button>
+          )}
+          {project.githubUrl && (
+            <Button href={project.githubUrl} variant="secondary" showArrow>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+              查看源码
+            </Button>
+          )}
+        </div>
+      </header>
+
+      <!-- 项目封面 -->
+      {project.thumbnail && (
+        <div class="max-w-4xl mx-auto mb-16 rounded-3xl overflow-hidden border border-white/10 bg-white/[0.03] shadow-depth" data-reveal>
+          <img
+            src={project.thumbnail}
+            alt={project.title}
+            class="w-full aspect-video object-cover"
+            loading="eager"
+          />
+        </div>
+      )}
+
+      <!-- 项目图库 -->
+      {project.gallery && project.gallery.length > 0 && (
+        <div class="max-w-5xl mx-auto mb-16">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-5">
+            {project.gallery.map((img: string, i: number) => (
+              <div class="rounded-3xl overflow-hidden border border-white/10 bg-white/[0.03]" data-reveal style={`--reveal-delay: ${(i % 2) * 120}ms;`}>
+                <img src={img} alt={project.title} class="w-full h-full object-cover" loading="lazy" />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <!-- 项目内容 -->
+      {project.body && (
+        <div class="max-w-3xl mx-auto border-t hairline pt-12">
+          <div class="prose prose-lg max-w-none">
+            {typeof project.body === 'string' ? (
+              <MarkdownContent content={project.body} />
+            ) : (
+              <PortableText blocks={project.body} />
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  </article>
+</Layout>
+
+<style>
+  /* 为 prose 添加额外样式（深色发丝线） */
+  .prose :where(h2):not(:where([class~="not-prose"] *)) {
+    @apply border-b border-white/10 pb-2;
+  }
+</style>

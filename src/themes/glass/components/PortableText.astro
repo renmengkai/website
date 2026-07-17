@@ -1,0 +1,279 @@
+---
+// Portable Text 渲染组件
+import { codeToHtml } from 'shiki';
+
+interface Block {
+  _type: string;
+  _key?: string;
+  style?: string;
+  children?: Array<{
+    _type: string;
+    text: string;
+    marks?: string[];
+  }>;
+  markDefs?: Array<{
+    _key: string;
+    _type: string;
+    href?: string;
+    [key: string]: any;
+  }>;
+  level?: number;
+  listItem?: string;
+  // 代码块字段 (新格式)
+  language?: string;
+  code?: string;
+  filename?: string;
+}
+
+interface Props {
+  blocks: Block[] | null;
+}
+
+const { blocks } = Astro.props;
+
+// 渲染单个 block
+function renderBlock(block: Block): string {
+  if (!block || block._type !== 'block') {
+    return '';
+  }
+
+  const style = block.style || 'normal';
+  const children = block.children || [];
+
+  // 渲染带有标记的文本
+  function renderSpans(children: any[]): string {
+    return children.map(child => {
+      if (!child.text) return '';
+
+      let text = child.text;
+      const marks = child.marks || [];
+
+      // 处理不同的标记
+      for (const mark of marks) {
+        if (mark === 'strong') {
+          text = `<strong>${text}</strong>`;
+        } else if (mark === 'em') {
+          text = `<em>${text}</em>`;
+        } else if (mark === 'code') {
+          text = `<code class="bg-white/[0.06] border border-white/10 text-primary-300 px-1.5 py-0.5 rounded-md text-sm font-mono">${text}</code>`;
+        } else if (mark === 'underline') {
+          text = `<u>${text}</u>`;
+        } else if (mark === 'strike-through') {
+          text = `<s>${text}</s>`;
+        } else {
+          // 查找 markDefs 中的链接
+          const markDef = block.markDefs?.find((def: any) => def._key === mark);
+          if (markDef && markDef._type === 'link' && markDef.href) {
+            text = `<a href="${markDef.href}" class="text-primary-400 underline-offset-4 hover:text-primary-300 hover:underline transition-colors duration-300">${text}</a>`;
+          }
+        }
+      }
+
+      return text;
+    }).join('');
+  }
+
+  const content = renderSpans(children);
+
+  // 根据样式渲染不同的 HTML 标签
+  switch (style) {
+    case 'h1':
+      return `<h1 class="text-3xl font-bold mt-8 mb-4 text-fg">${content}</h1>`;
+    case 'h2':
+      return `<h2 class="text-2xl font-bold mt-8 mb-4 pb-2 border-b border-white/10 text-fg">${content}</h2>`;
+    case 'h3':
+      return `<h3 class="text-xl font-bold mt-6 mb-3 text-fg">${content}</h3>`;
+    case 'h4':
+      return `<h4 class="text-lg font-semibold mt-4 mb-2 text-fg">${content}</h4>`;
+    case 'blockquote':
+      return `<blockquote class="border-l-2 border-primary-500/50 bg-white/[0.04] rounded-r-xl pl-5 pr-5 py-3 my-6 italic text-fg-soft">${content}</blockquote>`;
+    case 'normal':
+    default:
+      if (content.trim()) {
+        return `<p class="mb-4 leading-relaxed text-fg-soft">${content}</p>`;
+      }
+      return '';
+  }
+}
+
+// 渲染代码块
+async function renderCodeBlock(block: Block): Promise<string> {
+  if (!block || block._type !== 'code') {
+    return '';
+  }
+  
+  const code = block.code || '';
+  const language = block.language || 'text';
+  const filename = block.filename || '';  // 获取文件名
+  
+  // 语言标签的显示名称映射
+  const languageLabels: Record<string, string> = {
+    'javascript': 'JavaScript',
+    'typescript': 'TypeScript',
+    'python': 'Python',
+    'java': 'Java',
+    'csharp': 'C#',
+    'cpp': 'C++',
+    'html': 'HTML',
+    'css': 'CSS',
+    'json': 'JSON',
+    'bash': 'Bash',
+    'shell': 'Shell',
+    'sql': 'SQL',
+    'go': 'Go',
+    'rust': 'Rust',
+    'php': 'PHP',
+    'ruby': 'Ruby',
+    'swift': 'Swift',
+    'kotlin': 'Kotlin',
+    'yaml': 'YAML',
+    'markdown': 'Markdown',
+    'docker': 'Docker',
+    'dockerfile': 'Dockerfile',
+    'nginx': 'Nginx',
+    'ini': 'INI',
+    'conf': 'Config',
+    'text': 'Plain Text'
+  };
+  
+  const displayLanguage = languageLabels[language.toLowerCase()] || language.toUpperCase();
+  
+  // Shiki 语言映射
+  const shikiLangMap: Record<string, string> = {
+    'javascript': 'javascript',
+    'typescript': 'typescript',
+    'python': 'python',
+    'java': 'java',
+    'csharp': 'csharp',
+    'cpp': 'cpp',
+    'html': 'html',
+    'css': 'css',
+    'json': 'json',
+    'bash': 'bash',
+    'shell': 'bash',
+    'sh': 'bash',
+    'sql': 'sql',
+    'go': 'go',
+    'rust': 'rust',
+    'php': 'php',
+    'ruby': 'ruby',
+    'swift': 'swift',
+    'kotlin': 'kotlin',
+    'yaml': 'yaml',
+    'yml': 'yaml',
+    'markdown': 'markdown',
+    'md': 'markdown',
+    'docker': 'dockerfile',
+    'dockerfile': 'dockerfile',
+    'nginx': 'nginx',
+    'ini': 'ini',
+    'conf': 'ini',
+    'text': 'text',
+    'plaintext': 'text'
+  };
+  
+  const shikiLang = shikiLangMap[language.toLowerCase()] || 'text';
+  
+  // 使用 Shiki 生成高亮代码
+  let highlightedCode = '';
+  try {
+    const html = await codeToHtml(code, {
+      lang: shikiLang,
+      theme: 'material-theme-ocean'  // 使用 Material Ocean 主题（海洋蓝绿色调）
+    });
+    // 提取 <pre> 内部的内容（去掉 Shiki 的 <pre> 外壳）
+    const match = html.match(/<pre[^>]*>([\s\S]*?)<\/pre>/);
+    if (match) {
+      highlightedCode = match[1];
+    } else {
+      highlightedCode = html;
+    }
+  } catch (error) {
+    console.error('Shiki highlighting failed:', error);
+    // 备用方案：转义 HTML
+    highlightedCode = `<code>${code
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')}</code>`;
+  }
+  
+  // 用于复制的纯文本
+  const escapedForCopy = code
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+  
+  // 如果有文件名，显示文件名；否则显示语言标签
+  const headerLabel = filename
+    ? `<span class="text-xs font-mono text-fg-faint">${filename}</span>`
+    : `<span class="text-xs font-semibold font-mono text-fg-soft">${displayLanguage}</span>`;
+  
+  // 判断是否为 Plain Text
+  const isPlainText = shikiLang === 'text';
+  const preClasses = `code-block-pre !mt-0 !mb-0 !rounded-none p-4 overflow-x-auto shiki-wrapper${isPlainText ? ' plaintext-code' : ''}`;
+  
+  return `<div class="code-block-wrapper my-6 group">
+    <div class="code-block-container rounded-2xl overflow-hidden border border-white/10 transition-colors duration-300 hover:border-white/20">
+      <div class="code-block-header flex items-center justify-between bg-white/[0.04] px-4 py-2.5 border-b border-white/10">
+        <div class="flex items-center gap-2">
+          ${headerLabel}
+        </div>
+        <button class="copy-code-btn opacity-0 group-hover:opacity-100 transition-opacity duration-200 px-3 py-1 text-xs font-medium text-fg-faint hover:text-fg bg-white/[0.06] rounded-md border border-white/10 hover:border-white/20 focus:outline-none focus:ring-2 focus:ring-primary-500/60" data-code="${escapedForCopy.replace(/"/g, '&quot;')}" title="复制代码">
+          <span class="copy-text">复制</span>
+          <span class="copied-text hidden">已复制!</span>
+        </button>
+      </div>
+      <pre class="${preClasses}" style="background-color: #333333;">${highlightedCode}</pre>
+    </div>
+  </div>`;
+}
+
+// 渲染所有 blocks
+let html = '';
+if (blocks && blocks.length > 0) {
+  for (const block of blocks) {
+    if (block._type === 'block') {
+      html += renderBlock(block);
+    } else if (block._type === 'code') {
+      html += await renderCodeBlock(block);
+    }
+  }
+} else {
+  html = '<div class="text-fg-faint">暂无内容</div>';
+}
+---
+
+<Fragment set:html={html} />
+
+<script>
+  import { initCopyButtons } from '../../../lib/copyCode';
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    initCopyButtons();
+  });
+</script>
+
+<style is:global>
+  /* PortableText 特有样式 */
+  .shiki-wrapper code .token.function,
+  .shiki-wrapper .line .token.function {
+    color: #9dbcff !important;
+  }
+
+  .shiki-wrapper code .token.number,
+  .shiki-wrapper .line .token.number {
+    color: #ffa07a !important;
+  }
+
+  .shiki-wrapper code .token.operator,
+  .shiki-wrapper .line .token.operator {
+    color: #a0e4ff !important;
+  }
+
+  .shiki-wrapper code .token.class-name,
+  .shiki-wrapper .line .token.class-name {
+    color: #ffd78c !important;
+  }
+</style>

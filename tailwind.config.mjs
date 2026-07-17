@@ -1,17 +1,33 @@
 /** @type {import('tailwindcss').Config} */
+// 双设计系统共用一份 Tailwind 配置：
+//  - vima（浅色 · 暖纸酒红）令牌：brand/paper/ink/clay/stone/mist/sand/cream/line/moss
+//  - glass（深色 · Ethereal Glass）令牌：void/fg/primary/dark + 辉光阴影/动效
+// sans/mono 字体按主题经 CSS 变量解析（--font-sans/--font-mono 在各主题样式表 :root 中定义）
 export default {
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
-  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        // 绿色强调色
+        // ===== glass · 深空底色体系（OLED 黑） =====
+        void: {
+          DEFAULT: '#050505',   // 页面底
+          raised: '#0a0a0b',    // 抬升面
+          panel: '#0e0e10',     // 卡片内核
+        },
+        // glass · 文字体系（暖中性灰）
+        fg: {
+          DEFAULT: '#f4f4f2',   // 主文字
+          soft: '#b6b6b1',      // 次级文字
+          faint: '#7c7c76',     // 弱文字
+          ghost: '#4b4b47',     // 装饰性文字
+        },
+        // glass · 品牌绿（glass 唯一强调色）
         primary: {
           50: '#f0fdf4',
           100: '#dcfce7',
           200: '#bbf7d0',
           300: '#86efac',
-          400: '#4ade80', // 主强调色
+          400: '#4ade80',
           500: '#4ade80',
           600: '#22c55e',
           700: '#16a34a',
@@ -19,38 +35,57 @@ export default {
           900: '#14532d',
           950: '#052e16',
         },
-        // 浅色模式背景
-        light: {
-          DEFAULT: '#ffffff',
-          50: '#fafafa',
-          100: '#f5f5f5',
-          200: '#ebebeb',
-          300: '#e0e0e0',
-        },
-        // 深色模式背景
+        // 兼容旧类名
         dark: {
-          DEFAULT: '#0a0a0a',
-          50: '#141414',
-          100: '#1a1a1a',
-          200: '#262626',
-          300: '#404040',
+          DEFAULT: '#050505',
+          50: '#0a0a0b',
+          100: '#0e0e10',
+          200: '#161618',
+          300: '#232326',
         },
-        // 强调色
-        accent: {
-          lime: '#4ade80',
-          dark: '#1a1a1a',
-        }
+        // ===== vima · 暖纸底 + 酒红品牌色 =====
+        brand: {
+          DEFAULT: '#A5282C', // 品牌主色（酒红）
+          dark: '#8C1F23',    // hover 加深
+          tint: '#F7ECEA',    // 品牌浅底（标签底色）
+          line: '#EAD5D2',    // 品牌浅描边
+        },
+        paper: '#FAF8F4',     // 页面底色（暖纸色）
+        ink: {
+          DEFAULT: '#221E1B', // 标题 / 深色块
+          soft: '#5A524A',    // 深色块内描边
+        },
+        clay: '#4D463E',      // 正文
+        stone: '#8A8178',     // 次要文字
+        mist: '#B4ACA2',      // 弱化文字（日期等）
+        sand: '#D9D3CA',      // 占位图形
+        cream: '#F4F0EA',     // 浅填充（进度条底 / 占位块）
+        line: {
+          DEFAULT: '#E7E1D8', // 描边
+          soft: '#F0EBE4',    // 弱描边 / 分隔线
+          strong: '#C9C2B8',  // 次按钮描边
+        },
+        moss: {
+          DEFAULT: '#2E7D5B', // 成功 / 运行中
+          tint: '#EBF3EE',
+          line: '#D3E4DA',
+        },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        // 按主题解析：vima → Noto Sans SC / IBM Plex Mono；glass → Plus Jakarta Sans / JetBrains Mono
+        sans: ['var(--font-sans)', 'system-ui', '-apple-system', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'sans-serif'],
+        mono: ['var(--font-mono)', 'JetBrains Mono', 'Fira Code', 'monospace'],
+        // glass 专用展示字体
+        display: ['Space Grotesk', 'Plus Jakarta Sans', 'system-ui', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'sans-serif'],
+        // vima 专用衬线标题
+        serif: ['"Noto Serif SC"', 'Songti SC', 'SimSun', 'serif'],
       },
       fontSize: {
-        'display-xl': ['4.5rem', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
-        'display-lg': ['3.75rem', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
-        'display': ['3rem', { lineHeight: '1.2', letterSpacing: '-0.02em' }],
-        'heading-xl': ['2.25rem', { lineHeight: '1.3', letterSpacing: '-0.01em' }],
-        'heading-lg': ['1.875rem', { lineHeight: '1.3' }],
+        'display-xl': ['clamp(3rem, 8.5vw, 7rem)', { lineHeight: '1.02', letterSpacing: '-0.03em' }],
+        'display-lg': ['clamp(2.5rem, 6vw, 4.75rem)', { lineHeight: '1.05', letterSpacing: '-0.025em' }],
+        'display': ['clamp(2rem, 4.5vw, 3.5rem)', { lineHeight: '1.08', letterSpacing: '-0.02em' }],
+        'heading-xl': ['2.25rem', { lineHeight: '1.25', letterSpacing: '-0.015em' }],
+        'heading-lg': ['1.875rem', { lineHeight: '1.3', letterSpacing: '-0.01em' }],
         'heading': ['1.5rem', { lineHeight: '1.4' }],
       },
       spacing: {
@@ -64,53 +99,31 @@ export default {
         '4xl': '2rem',
       },
       boxShadow: {
-        'subtle': 'none',
-        'card': 'none',
-        'card-hover': 'none',
-        'button': 'none',
-        'button-hover': 'none',
+        // glass · 绿色辉光体系
+        'glow-sm': '0 0 24px -8px rgba(74, 222, 128, 0.35)',
+        'glow': '0 0 48px -12px rgba(74, 222, 128, 0.4)',
+        'glow-lg': '0 0 80px -16px rgba(74, 222, 128, 0.45)',
+        'depth': '0 24px 48px -24px rgba(0, 0, 0, 0.8)',
+        'bezel-core': 'inset 0 1px 1px rgba(255, 255, 255, 0.08)',
       },
-      backdropBlur: {
-        'xs': '2px',
+      transitionTimingFunction: {
+        'out-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
+        'spring': 'cubic-bezier(0.32, 0.72, 0, 1)',
       },
       animation: {
-        'float': 'float 6s ease-in-out infinite',
-        'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
-        'fade-in': 'fade-in 0.5s ease-out',
-        'fade-in-up': 'fade-in-up 0.6s ease-out',
-        'slide-in-left': 'slide-in-left 0.5s ease-out',
-        'slide-in-right': 'slide-in-right 0.5s ease-out',
+        'marquee': 'marquee 36s linear infinite',
+        'orb-drift': 'orb-drift 18s ease-in-out infinite alternate',
+        'ping-slow': 'ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite',
       },
       keyframes: {
-        float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-10px)' },
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
         },
-        'glow-pulse': {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.6' },
+        'orb-drift': {
+          '0%': { transform: 'translate3d(0, 0, 0) scale(1)' },
+          '100%': { transform: 'translate3d(6%, 4%, 0) scale(1.12)' },
         },
-        'fade-in': {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
-        'fade-in-up': {
-          '0%': { opacity: '0', transform: 'translateY(20px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        'slide-in-left': {
-          '0%': { opacity: '0', transform: 'translateX(-20px)' },
-          '100%': { opacity: '1', transform: 'translateX(0)' },
-        },
-        'slide-in-right': {
-          '0%': { opacity: '0', transform: 'translateX(20px)' },
-          '100%': { opacity: '1', transform: 'translateX(0)' },
-        },
-      },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'grid-pattern': 'linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px)',
-        'grid-pattern-dark': 'linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px)',
       },
     },
   },

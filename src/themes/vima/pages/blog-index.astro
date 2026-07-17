@@ -1,0 +1,52 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import BlogExplorer from '../../../components/BlogExplorer.vue';
+import { fetchSanity, postsQuery } from '../../../lib/sanity';
+
+// 从 Sanity 获取全部文章（按发布时间倒序）
+const posts = await fetchSanity<any[]>(postsQuery);
+---
+
+<Layout
+  title="博客 - RMK"
+  description="技术博客与学习笔记，分享编程经验和开发心得"
+>
+  <div class="animate-fade-in-up">
+
+    <!-- 页头 -->
+    <section class="container-page pt-[72px] pb-10">
+      <div class="flex items-center gap-2.5 font-mono text-[12.5px] tracking-[0.14em] text-brand mb-4">
+        <span class="logo-wave flex-none w-[34px] h-2 bg-brand"></span>
+        BLOG
+      </div>
+      <h1 class="font-serif text-[44px] font-black text-ink m-0 mb-3">博客</h1>
+      <p class="m-0 text-[15.5px] leading-[1.8] max-w-[560px]">Agent 工程实践、工具链与行业观察。写我们真正做过、验证过的东西。</p>
+    </section>
+
+    <!-- 搜索 / 筛选 / 文章网格（客户端交互岛屿） -->
+    <section class="container-page">
+      <BlogExplorer client:visible posts={posts} />
+    </section>
+
+    <!-- 订阅更新 -->
+    <section class="container-page pb-24">
+      <div class="border border-line rounded-xl bg-white px-8 py-7 flex items-center justify-between gap-6 flex-wrap">
+        <div>
+          <div class="text-[15px] font-bold text-ink">订阅更新</div>
+          <p class="m-0 mt-1 text-[13px] text-stone">每月一封，只发干货，随时退订。</p>
+        </div>
+        <div class="flex gap-2.5 flex-wrap">
+          <input
+            type="email"
+            placeholder="you@example.com"
+            class="font-mono text-[13.5px] text-ink bg-white border border-line-strong rounded-lg px-3.5 py-2.5 outline-none w-[240px] transition-all focus:border-brand focus:shadow-[0_0_0_3px_rgba(165,40,44,0.12)]"
+          />
+          <button
+            type="button"
+            class="bg-ink text-white border-none text-sm font-medium px-[22px] py-2.5 rounded-lg cursor-pointer hover:bg-[#3A342E] transition-colors"
+          >订阅</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>

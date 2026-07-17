@@ -1,5 +1,5 @@
 ---
-// Header 组件 - 简洁风格导航
+// Header 组件 - 按 claude.ai/design 原型（页头.dc.html）实现
 
 const currentPath = Astro.url.pathname;
 
@@ -19,53 +19,60 @@ function isActive(href: string): boolean {
 }
 ---
 
-<header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100" id="main-header">
-  <div class="container-custom">
-    <nav class="flex items-center justify-between h-16 lg:h-20">
+<header class="sticky top-0 z-50 bg-paper/90 backdrop-blur-md border-b border-line" id="main-header">
+  <div class="container-page">
+    <nav class="flex items-center justify-between gap-6 h-[68px]">
       <!-- Logo -->
-      <a 
-        href="/" 
-        class="flex items-center gap-2 text-xl font-bold text-gray-900 hover:opacity-80 transition-opacity"
-      >
-        <img src="/favicon.svg" alt="RMK" class="h-8" />
+      <a href="/" class="flex items-center gap-2.5 flex-none hover:opacity-80 transition-opacity">
+        <img src="/images/logo-lockup.png" alt="vima tech" class="h-9 block" />
       </a>
 
-      <!-- 桌面端导航 - 居中 -->
-      <div class="hidden md:flex items-center gap-8">
+      <!-- 桌面端导航 -->
+      <div class="hidden md:flex items-center gap-[34px] text-[15px]">
         {navLinks.map((link) => (
           <a
             href={link.href}
-            class={`text-sm font-medium transition-colors duration-200
+            class={`relative flex flex-col items-center gap-0.5 px-0.5 py-1 transition-colors duration-200 hover:text-brand
               ${isActive(link.href)
-                ? 'text-gray-900 font-semibold' 
-                : 'text-gray-500 hover:text-gray-900'
+                ? 'text-ink font-semibold'
+                : 'text-[#7B7369] font-normal'
               }`}
           >
-            {link.label}
+            <span>{link.label}</span>
+            <span class={`logo-wave block flex-none w-[26px] h-1.5 bg-brand transition-opacity ${isActive(link.href) ? 'opacity-100' : 'opacity-0'}`}></span>
           </a>
         ))}
       </div>
 
       <!-- 右侧操作区 -->
       <div class="flex items-center gap-4">
+        <!-- 设计切换按钮（切换到深色 glass 设计） -->
+        <button
+          type="button"
+          class="hidden sm:flex w-9 h-9 rounded-lg border border-line text-stone hover:border-brand hover:text-brand transition-colors items-center justify-center"
+          aria-label="切换到深色设计"
+          onclick="document.cookie='design=glass;path=/;max-age=31536000;samesite=lax';location.reload()"
+        >
+          <svg class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        </button>
+
         <!-- CTA 按钮 -->
         <a
           href="/contact"
-          class="hidden sm:inline-flex items-center gap-2 bg-dark-100 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-dark-300 transition-colors"
+          class="hidden sm:inline-flex flex-none items-center bg-brand text-white px-5 py-2.5 rounded-lg text-sm font-medium tracking-[0.02em] hover:bg-brand-dark transition-colors"
         >
           联系我们
-          <svg class="w-4 h-4 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
         </a>
 
         <!-- 移动端菜单按钮 -->
         <button
-          class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          class="md:hidden p-2 rounded-lg hover:bg-cream transition-colors"
           id="mobile-menu-btn"
           aria-label="打开菜单"
         >
-          <svg class="w-6 h-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="w-6 h-6 text-clay" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
@@ -74,21 +81,21 @@ function isActive(href: string): boolean {
   </div>
 
   <!-- 移动端菜单 -->
-  <div 
-    class="md:hidden fixed inset-0 z-50 hidden" 
+  <div
+    class="md:hidden fixed inset-0 z-50 hidden"
     id="mobile-menu"
   >
-    <div class="absolute inset-0 bg-black/20 backdrop-blur-sm" id="mobile-menu-overlay"></div>
-    <div class="absolute right-0 top-0 bottom-0 w-72 bg-white shadow-xl transform transition-transform duration-300 translate-x-full" id="mobile-menu-panel">
+    <div class="absolute inset-0 bg-ink/20 backdrop-blur-sm" id="mobile-menu-overlay"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-72 bg-paper shadow-xl transform transition-transform duration-300 translate-x-full" id="mobile-menu-panel">
       <div class="p-6">
         <div class="flex items-center justify-between mb-8">
-          <span class="text-lg font-bold text-gray-900">菜单</span>
+          <img src="/images/logo-lockup.png" alt="vima tech" class="h-8" />
           <button
-            class="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            class="p-2 rounded-lg hover:bg-cream transition-colors"
             id="mobile-menu-close"
             aria-label="关闭菜单"
           >
-            <svg class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-5 h-5 text-stone" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -97,28 +104,43 @@ function isActive(href: string): boolean {
           {navLinks.map((link) => (
             <a
               href={link.href}
-              class={`block px-4 py-3 rounded-xl text-base font-medium transition-colors
+              class={`flex items-center justify-between px-4 py-3 rounded-xl text-base transition-colors
                 ${isActive(link.href)
-                  ? 'text-gray-900 bg-gray-100 font-semibold' 
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'text-ink bg-cream font-semibold'
+                  : 'text-[#7B7369] font-normal hover:bg-cream/60 hover:text-ink'
                 }`}
             >
-              {link.label}
+              <span>{link.label}</span>
+              {isActive(link.href) && (
+                <span class="logo-wave block flex-none w-[26px] h-1.5 bg-brand"></span>
+              )}
             </a>
           ))}
         </nav>
-        
+
         <!-- 移动端 CTA -->
-        <div class="mt-8 pt-8 border-t border-gray-100">
+        <div class="mt-8 pt-8 border-t border-line-soft">
           <a
             href="/contact"
-            class="flex items-center justify-center gap-2 w-full bg-dark-100 text-white px-5 py-3 rounded-full text-sm font-medium hover:bg-dark-300 transition-colors"
+            class="flex items-center justify-center w-full bg-brand text-white px-5 py-3 rounded-lg text-sm font-medium tracking-[0.02em] hover:bg-brand-dark transition-colors"
           >
             联系我们
-            <svg class="w-4 h-4 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
           </a>
+
+          <!-- 设计切换按钮（切换到深色 glass 设计） -->
+          <div class="mt-4 flex items-center justify-between px-1">
+            <span class="text-[13px] text-stone">切换到深色设计</span>
+            <button
+              type="button"
+              class="w-9 h-9 rounded-lg border border-line text-stone hover:border-brand hover:text-brand transition-colors flex items-center justify-center"
+              aria-label="切换到深色设计"
+              onclick="document.cookie='design=glass;path=/;max-age=31536000;samesite=lax';location.reload()"
+            >
+              <svg class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>

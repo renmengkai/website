@@ -1,0 +1,43 @@
+---
+// Section 标题组件 - 序号 + 眉题 + 大字标题（深色编辑风）
+interface Props {
+  title: string;
+  subtitle?: string;
+  /** 区块序号，如 "01" */
+  index?: string;
+  centered?: boolean;
+  class?: string;
+}
+
+const {
+  title,
+  subtitle,
+  index,
+  centered = false,
+  class: className = ''
+} = Astro.props;
+---
+
+<div class:list={[centered ? 'text-center' : 'text-left', 'mb-14 lg:mb-20', className]} data-reveal>
+  {(subtitle || index) && (
+    <div class:list={['flex items-center gap-3 mb-5', centered && 'justify-center']}>
+      {index && (
+        <span class="font-mono text-sm text-primary-400 tracking-wider" aria-hidden="true">{index}</span>
+      )}
+      {index && <span class="w-10 h-px bg-white/15" aria-hidden="true"></span>}
+      {subtitle && (
+        <p class="text-[11px] font-medium text-fg-faint uppercase tracking-[0.22em]">
+          {subtitle}
+        </p>
+      )}
+    </div>
+  )}
+  <h2 class="text-display font-bold text-fg text-balance">
+    {title}
+  </h2>
+  {Astro.slots.has('default') && (
+    <p class:list={['mt-5 text-lg text-fg-faint max-w-2xl leading-relaxed', centered && 'mx-auto']}>
+      <slot />
+    </p>
+  )}
+</div>

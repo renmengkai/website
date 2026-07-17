@@ -1,0 +1,210 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import DashboardTabs from '../../../components/DashboardTabs.vue';
+import { fetchSanity } from '../../../lib/sanity';
+
+// 从 Sanity 获取最新文章（3篇）
+const postsQuery = `*[_type == "post"] | order(publishedAt desc)[0...3] {
+  _id,
+  title,
+  slug,
+  excerpt,
+  publishedAt,
+  "coverImage": coverImage.asset->url,
+  categories[]->{title, slug}
+}`;
+
+// 从 Sanity 获取项目（优先精选，否则显示所有项目）
+const projectsQuery = `*[_type == "project"] | order(featured desc, order asc)[0...3] {
+  _id,
+  title,
+  slug,
+  description,
+  "thumbnail": thumbnail.asset->url,
+  technologies,
+  featured
+}`;
+
+// 并行获取数据
+const [posts, projects] = await Promise.all([
+  fetchSanity<any[]>(postsQuery),
+  fetchSanity<any[]>(projectsQuery)
+]);
+
+// 日期格式化为 YYYY-MM-DD（设计稿 mono 风格）
+const formatDate = (d?: string) => (d ? new Date(d).toISOString().slice(0, 10) : '');
+const dataMonth = new Date().toISOString().slice(0, 7).replace('-', '-');
+
+// Hero 标签
+const heroTags = ['AI Agent 工具开发', '多智能体编排', '80% 工作由 AI 完成', '降本增效', '招商合作共赢'];
+
+// Hero 右侧 agent-orchestrator 卡片数据
+const agents = [
+  { name: 'planner', task: '拆解需求 → 生成任务图', pct: '100%', done: true },
+  { name: 'coder ×2', task: '实现订单模块 / 编写单测', pct: '72%', done: false },
+  { name: 'reviewer', task: '静态检查 + 代码评审', pct: '58%', done: false },
+  { name: 'qa-runner', task: '回归测试 · 214/230 通过', pct: '93%', done: true },
+];
+---
+
+<Layout title="RMK - AI Agent 驱动的软件开发团队">
+  <div class="animate-fade-in-up">
+
+    <!-- Hero -->
+    <section class="container-page pt-16 lg:pt-[88px] pb-16 lg:pb-[72px] flex flex-wrap items-center gap-10 lg:gap-14">
+      <div class="flex-[1.2] min-w-full sm:min-w-[420px] flex flex-col items-start gap-6">
+        <div class="flex items-center gap-2.5 font-mono text-[12.5px] tracking-[0.14em] text-brand">
+          <span class="logo-wave flex-none w-[34px] h-2 bg-brand"></span>
+          AI AGENT DEV TEAM
+        </div>
+        <h1 class="font-serif font-black text-4xl sm:text-5xl lg:text-[56px] leading-[1.22] text-ink m-0 text-balance">
+          AI Agent 驱动的<br />软件开发团队
+        </h1>
+        <p class="m-0 text-[16.5px] leading-[1.9] max-w-[520px]" style="text-wrap: pretty;">
+          我们用多智能体编排交付软件：<strong class="text-brand font-bold">80%</strong> 的工程工作由 AI Agent 完成，人负责决策与验收。同样的预算，更快的交付，可验证的质量。
+        </p>
+        <div class="flex gap-2 flex-wrap">
+          {heroTags.map((t) => (
+            <span class="text-[13px] text-clay bg-white border border-line px-3.5 py-1.5 rounded-full">{t}</span>
+          ))}
+        </div>
+        <div class="flex gap-3.5 mt-1.5 flex-wrap">
+          <a href="/projects" class="bg-brand text-white text-[15px] font-medium px-[30px] py-[13px] rounded-lg hover:bg-brand-dark transition-colors">查看作品</a>
+          <a href="/contact" class="bg-white text-ink border border-line-strong text-[15px] font-medium px-[30px] py-3 rounded-lg hover:border-ink transition-colors">联系我们</a>
+        </div>
+      </div>
+
+      <!-- agent-orchestrator 状态卡片 -->
+      <div class="flex-1 min-w-full sm:min-w-[380px] max-w-[480px]">
+        <div class="bg-white border border-line rounded-2xl overflow-hidden shadow-[0_16px_48px_rgba(34,30,27,0.07)]">
+          <div class="flex items-center justify-between px-5 py-3.5 border-b border-line-soft bg-paper">
+            <span class="font-mono text-[12.5px] text-ink font-medium">agent-orchestrator</span>
+            <span class="inline-flex items-center gap-1.5 font-mono text-[11.5px] text-moss bg-moss-tint border border-moss-line px-2.5 py-[3px] rounded-full">
+              <span class="w-1.5 h-1.5 rounded-full bg-moss animate-pulse-dot"></span>运行中
+            </span>
+          </div>
+          <div class="px-5 py-[18px] flex flex-col gap-3">
+            {agents.map((a) => (
+              <div class="flex items-center gap-3">
+                <span class={`w-2 h-2 rounded-full flex-none ${a.done ? 'bg-moss' : 'bg-brand animate-pulse-dot'}`}></span>
+                <span class="font-mono text-[13px] text-ink w-[118px] flex-none">{a.name}</span>
+                <span class="text-[12.5px] text-stone flex-1 overflow-hidden text-ellipsis whitespace-nowrap">{a.task}</span>
+                <span class={`font-mono text-xs flex-none ${a.done ? 'text-moss' : 'text-brand'}`}>{a.pct}</span>
+              </div>
+            ))}
+            <div class="h-px bg-line-soft my-1"></div>
+            <div class="flex justify-between items-baseline">
+              <span class="text-[12.5px] text-stone">本迭代 AI 完成占比</span>
+              <span class="font-mono text-xl font-medium text-brand">80%</span>
+            </div>
+            <div class="h-1.5 bg-cream rounded-full overflow-hidden">
+              <div class="w-[80%] h-full bg-brand rounded-full"></div>
+            </div>
+            <div class="font-mono text-[11.5px] text-mist mt-0.5">$ review --human-in-the-loop<span class="animate-blink">▌</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 数据看板 -->
+    <section class="container-page pb-16 lg:pb-[88px]">
+      <div class="flex items-baseline justify-between gap-4 flex-wrap mb-6">
+        <h2 class="font-serif text-[30px] font-black text-ink m-0 flex items-center gap-3.5">
+          <span class="logo-wave flex-none w-[34px] h-2 bg-brand"></span>团队数据看板
+        </h2>
+        <span class="font-mono text-xs text-mist">DATA · {dataMonth} · 实时更新</span>
+      </div>
+      <DashboardTabs client:visible />
+    </section>
+
+    <!-- 最新日志 -->
+    <section class="container-page pb-16 lg:pb-[88px]">
+      <div class="flex items-baseline justify-between gap-4 mb-6">
+        <h2 class="font-serif text-[30px] font-black text-ink m-0 flex items-center gap-3.5">
+          <span class="logo-wave flex-none w-[34px] h-2 bg-brand"></span>最新日志
+        </h2>
+        <a href="/blog" class="text-sm font-medium text-brand hover:text-brand-dark transition-colors flex-none">查看全部 →</a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {posts.map((post) => (
+          <a
+            href={`/blog/${post.slug.current}`}
+            class="bg-white border border-line rounded-xl overflow-hidden flex flex-col transition-all duration-200 hover:shadow-[0_8px_28px_rgba(34,30,27,0.08)] hover:-translate-y-0.5"
+          >
+            {post.coverImage ? (
+              <div class="aspect-video border-b border-line-soft overflow-hidden bg-cream">
+                <img src={post.coverImage} alt={post.title} class="w-full h-full object-cover" loading="lazy" />
+              </div>
+            ) : (
+              <div class="aspect-video bg-cream border-b border-line-soft flex flex-col items-center justify-center gap-2">
+                <span class="logo-wave flex-none w-[60px] h-3 bg-sand"></span>
+              </div>
+            )}
+            <div class="px-5 pt-[18px] pb-[22px]">
+              {post.categories?.[0] && (
+                <span class="font-mono text-[11.5px] text-brand bg-brand-tint border border-brand-line px-2.5 py-[3px] rounded-full">{post.categories[0].title}</span>
+              )}
+              <h3 class="text-[17px] font-bold text-ink mt-3 mb-1.5 leading-normal">{post.title}</h3>
+              <p class="m-0 text-[13.5px] text-stone leading-[1.7] line-clamp-2">{post.excerpt}</p>
+              <span class="block font-mono text-xs text-mist mt-3">{formatDate(post.publishedAt)}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- 精选作品 -->
+    <section class="container-page pb-16 lg:pb-[88px]">
+      <div class="flex items-baseline justify-between gap-4 mb-6">
+        <h2 class="font-serif text-[30px] font-black text-ink m-0 flex items-center gap-3.5">
+          <span class="logo-wave flex-none w-[34px] h-2 bg-brand"></span>精选作品
+        </h2>
+        <a href="/projects" class="text-sm font-medium text-brand hover:text-brand-dark transition-colors flex-none">查看全部 →</a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {projects.map((project) => (
+          <a
+            href={`/projects/${project.slug.current}`}
+            class="bg-white border border-line rounded-xl overflow-hidden flex flex-col transition-all duration-200 hover:shadow-[0_8px_28px_rgba(34,30,27,0.08)] hover:-translate-y-0.5"
+          >
+            {project.thumbnail ? (
+              <div class="aspect-[16/10] bg-ink overflow-hidden">
+                <img src={project.thumbnail} alt={project.title} class="w-full h-full object-cover" loading="lazy" />
+              </div>
+            ) : (
+              <div class="aspect-[16/10] bg-ink flex flex-col items-center justify-center gap-2">
+                <span class="logo-wave flex-none w-[60px] h-3 bg-ink-soft"></span>
+              </div>
+            )}
+            <div class="px-5 pt-[18px] pb-[22px]">
+              <h3 class="text-[17px] font-bold text-ink m-0 mb-1.5 leading-normal">{project.title}</h3>
+              <p class="m-0 text-[13.5px] text-stone leading-[1.7] line-clamp-2">{project.description}</p>
+              {project.technologies?.length > 0 && (
+                <div class="flex gap-1.5 flex-wrap mt-3">
+                  {project.technologies.slice(0, 4).map((tech: string) => (
+                    <span class="font-mono text-[11.5px] text-clay bg-cream border border-line px-2.5 py-[3px] rounded-full">{tech}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="container-page pb-20 lg:pb-24">
+      <div class="bg-ink rounded-2xl px-8 py-12 sm:px-14 sm:py-16 flex items-center justify-between gap-8 flex-wrap relative overflow-hidden">
+        <span class="logo-wave flex-none w-[420px] h-[60px] bg-brand absolute -right-10 bottom-[18px] opacity-[0.22]"></span>
+        <div class="relative">
+          <h2 class="font-serif text-[28px] sm:text-[34px] font-black text-paper m-0 mb-2.5">有项目想法？</h2>
+          <p class="m-0 text-[15px] text-mist leading-[1.8]">聊聊你的需求，我们在 24 小时内给出可行性评估与报价。</p>
+        </div>
+        <div class="flex gap-3.5 relative flex-wrap">
+          <a href="/contact" class="bg-brand text-white text-[15px] font-medium px-[30px] py-[13px] rounded-lg hover:bg-brand-dark transition-colors">联系我们</a>
+          <a href="mailto:hi@vimatech.cn" class="bg-transparent text-paper border border-ink-soft text-[15px] font-medium px-[30px] py-3 rounded-lg hover:border-paper transition-colors">发送邮件</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>

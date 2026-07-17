@@ -1,0 +1,293 @@
+---
+import Layout from '../Layout.astro';
+---
+
+<Layout
+  title="博客 - RMK"
+  description="技术博客与学习笔记，分享编程经验和开发心得"
+>
+  <!-- 页面标题区 -->
+  <section class="relative pt-32 pb-16 lg:pb-24 overflow-hidden">
+    <div class="absolute inset-0 bg-grid-dark pointer-events-none" aria-hidden="true"></div>
+    <div class="orb orb-primary -top-40 left-1/2 -translate-x-1/2 w-[48rem] h-[30rem]" aria-hidden="true"></div>
+    <div class="container-custom relative text-center">
+      <p class="eyebrow mb-8" data-reveal>Blog · 思考</p>
+      <h1 class="text-display-lg font-bold text-fg mb-6" data-reveal-lines>
+        <span class="reveal-line"><span style="--line-index: 1;">最新洞察与日志</span></span>
+      </h1>
+      <p class="text-lg text-fg-faint max-w-2xl mx-auto" data-reveal style="--reveal-delay: 300ms;">
+        记录技术探索与思考，分享学习心得与实践经验
+      </p>
+
+      <!--&lt;!&ndash; 当前分类提示 &ndash;&gt;-->
+      <!--<div id="current-category" class="text-center mt-4 hidden">-->
+      <!--  <span class="text-sm text-fg-faint">-->
+      <!--    正在查看分类：-->
+      <!--    <span id="category-name" class="font-medium text-fg-soft"></span>-->
+      <!--  </span>-->
+      <!--</div>-->
+    </div>
+  </section>
+
+  <!-- 搜索栏 -->
+  <section class="pb-4 mt-2">
+    <div class="container-custom">
+      <div class="max-w-xl mx-auto" data-reveal style="--reveal-delay: 420ms;">
+        <div class="relative">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-fg-ghost pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            id="search-input"
+            placeholder="搜索文章标题..."
+            class="input-dark rounded-full pl-12"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 分类筛选 -->
+  <section class="pb-8">
+    <div class="container-custom">
+      <div id="category-filters" class="flex flex-wrap items-center justify-center gap-3">
+        <!-- 分类按钮将通过 JS 动态加载 -->
+        <div class="h-10 w-16 bg-white/[0.06] rounded-full animate-pulse" aria-hidden="true"></div>
+        <div class="h-10 w-20 bg-white/[0.04] rounded-full animate-pulse" aria-hidden="true"></div>
+        <div class="h-10 w-24 bg-white/[0.04] rounded-full animate-pulse" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 文章列表 -->
+  <section class="pb-24 lg:pb-32 border-t hairline pt-12">
+    <div class="container-custom">
+      <div id="posts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        <!-- 骨架屏加载状态 -->
+        {[1,2,3,4,5,6].map((_, i) => (
+          <div class="bezel animate-pulse" data-reveal style={`--reveal-delay: ${i * 120}ms;`} aria-hidden="true">
+            <div class="bezel-core overflow-hidden p-6">
+              <div class="aspect-video bg-white/[0.05] -mx-6 -mt-6 mb-5"></div>
+              <div class="flex gap-2 mb-3">
+                <div class="h-6 w-16 bg-white/[0.06] rounded-full"></div>
+              </div>
+              <div class="h-6 skeleton-block w-3/4 mb-2"></div>
+              <div class="h-4 skeleton-block w-full mb-1"></div>
+              <div class="h-4 skeleton-block w-2/3 mb-4"></div>
+              <div class="h-4 skeleton-block w-24"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- 加载更多按钮 -->
+      <div id="load-more-container" class="text-center mt-12" style="display: none;">
+        <button id="load-more-btn" class="inline-flex items-center gap-2 px-8 py-3 rounded-full text-base font-medium bg-white/[0.05] text-fg border border-white/10 hover:bg-white/[0.09] hover:border-white/20 transition-colors duration-300">
+          加载更多文章
+          <svg class="w-4 h-4 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 订阅区域 -->
+  <section class="py-24 lg:py-32 border-t hairline relative overflow-hidden">
+    <div class="orb orb-teal -bottom-48 -right-48 w-[36rem] h-[36rem]" aria-hidden="true"></div>
+    <div class="container-custom relative">
+      <div class="max-w-2xl mx-auto" data-reveal>
+        <div class="bezel" data-spotlight>
+          <div class="bezel-core p-8 lg:p-12 text-center">
+            <p class="eyebrow mb-6">Newsletter</p>
+            <h2 class="text-2xl lg:text-3xl font-bold text-fg mb-4">
+              订阅我们的通讯
+            </h2>
+            <p class="text-fg-faint mb-8">
+              获取最新文章和洞察，直接发送到您的邮箱。
+            </p>
+            <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+              <input
+                type="email"
+                placeholder="输入您的邮箱"
+                class="input-dark rounded-full flex-1 px-5"
+              />
+              <button
+                type="submit"
+                class="group inline-flex items-center justify-center gap-3 bg-primary-500 text-void pl-6 pr-2 py-2 rounded-full font-semibold hover:bg-primary-400 hover:shadow-glow active:scale-[0.98] transition-all duration-500 ease-spring shrink-0"
+              >
+                订阅
+                <span class="w-8 h-8 rounded-full bg-void/15 flex items-center justify-center transition-transform duration-500 ease-spring group-hover:translate-x-0.5 group-hover:-translate-y-px group-hover:scale-105">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style is:global>
+  /* JS 注入卡片的入场动画（motion.ts 只在 page-load 时观察 data-reveal，
+     动态插入的卡片改用自驱 keyframe 完成 stagger 入场） */
+  @keyframes blog-card-in {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+      filter: blur(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  .blog-card-enter {
+    animation: blog-card-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--card-index, 0) * 90ms);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blog-card-enter {
+      animation: none;
+    }
+  }
+</style>
+
+<script is:inline>
+  // 共享 Sanity 配置 - 使用 window 对象避免重复声明
+  window.SANITY_PROJECT_ID = window.SANITY_PROJECT_ID || 'k2j30muc';
+  window.SANITY_DATASET = window.SANITY_DATASET || 'production';
+
+  // blog 页面专用的 fetch 函数
+  async function fetchSanityBlog(query) {
+    const url = `https://${window.SANITY_PROJECT_ID}.api.sanity.io/v2024-01-01/data/query/${window.SANITY_DATASET}?query=${encodeURIComponent(query)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    return data.result;
+  }
+
+  // 使用 astro:page-load 事件确保 View Transitions 导航后也能执行
+  document.addEventListener('astro:page-load', () => {
+    // 只在 blog 页面执行
+    if (!window.location.pathname.startsWith('/blog') || window.location.pathname.match(/\/blog\/.+/)) return;
+
+    const POSTS_PER_PAGE = 6;
+
+    let posts = [];
+    let categories = [];
+    let currentPage = 1;
+    let currentFilteredPosts = [];
+    let selectedCategory = new URLSearchParams(window.location.search).get('category') || '';
+    let searchKeyword = '';
+
+    const categoryFilters = document.getElementById('category-filters');
+    const postsGrid = document.getElementById('posts-grid');
+    const loadMoreContainer = document.getElementById('load-more-container');
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    const searchInput = document.getElementById('search-input');
+
+    if (!categoryFilters || !postsGrid) return;
+
+    // 生成文章卡片 HTML（Bezel 双层玻璃卡，与 PostCard 视觉一致）
+    function createPostHtml(post, i = 0) {
+      const date = new Date(post.publishedAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+      const cats = (post.categories || []).filter(c => c).slice(0, 2).map(c =>
+        `<span class="inline-block px-2.5 py-1 rounded-full text-xs font-medium bg-white/[0.05] text-fg-soft border border-white/10">${c.title}</span>`
+      ).join('');
+
+      return `<a href="/blog/${post.slug.current}" data-astro-prefetch="hover" class="group block blog-card-enter" style="--card-index: ${i};">
+        <div class="bezel h-full transition-[box-shadow,transform] duration-500 ease-out-expo hover:-translate-y-1.5 hover:shadow-glow-sm">
+          <div class="bezel-core overflow-hidden p-6 h-full">
+            ${post.coverImage ? `<div class="relative -mx-6 -mt-6 mb-5 overflow-hidden"><div class="aspect-video bg-white/[0.03] overflow-hidden"><img src="${post.coverImage}" alt="${post.title}" class="w-full h-full object-cover transition-transform duration-700 ease-out-expo group-hover:scale-[1.06]" loading="lazy"/></div><div class="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-void-panel/70 to-transparent pointer-events-none" aria-hidden="true"></div></div>` : ''}
+            ${cats ? `<div class="flex flex-wrap gap-2 mb-3">${cats}</div>` : ''}
+            <h3 class="text-lg font-semibold text-fg mb-2 transition-colors duration-300 group-hover:text-primary-400">${post.title}</h3>
+            <p class="text-fg-faint text-sm leading-relaxed mb-4 line-clamp-2">${post.excerpt || ''}</p>
+            <div class="flex items-center text-sm text-fg-ghost"><svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><time datetime="${post.publishedAt}" class="font-mono text-xs">${date}</time></div>
+          </div>
+        </div>
+      </a>`;
+    }
+
+    // 渲染分类按钮（玻璃胶囊）
+    function renderCategories() {
+      const allCats = [{ title: '全部', slug: '' }, ...categories.filter(c => c.slug).map(c => ({ title: c.title, slug: c.slug }))];
+      categoryFilters.innerHTML = allCats.map(cat => {
+        const isActive = cat.slug === selectedCategory;
+        return `<button data-category="${cat.slug}" class="px-4 py-2 rounded-full text-sm font-medium border transition-colors duration-300 ${isActive ? 'bg-primary-500/10 text-primary-400 border-primary-500/30' : 'bg-white/[0.04] text-fg-faint border-white/10 hover:bg-white/[0.08] hover:text-fg-soft hover:border-white/20'}">${cat.title}</button>`;
+      }).join('');
+    }
+
+    // 筛选文章（分类 + 搜索）
+    function filterPosts() {
+      currentPage = 1;
+
+      currentFilteredPosts = posts.filter(p => {
+        const matchCategory = !selectedCategory || p.categories?.some(c => (c.slug?.current || c.slug) === selectedCategory);
+        const matchSearch = !searchKeyword || p.title.toLowerCase().includes(searchKeyword.toLowerCase());
+        return matchCategory && matchSearch;
+      });
+
+      const toShow = currentFilteredPosts.slice(0, POSTS_PER_PAGE);
+      postsGrid.innerHTML = toShow.length ? toShow.map(createPostHtml).join('') : '<div class="col-span-full text-center py-12"><p class="text-fg-faint">没有找到匹配的文章</p></div>';
+      loadMoreContainer.style.display = toShow.length < currentFilteredPosts.length ? 'block' : 'none';
+    }
+
+    // 筛选分类
+    function filterByCategory(categorySlug) {
+      selectedCategory = categorySlug;
+      window.history.pushState({}, '', categorySlug ? `/blog?category=${categorySlug}` : '/blog');
+      filterPosts();
+      renderCategories();
+    }
+
+    // 加载更多
+    function loadMore() {
+      currentPage++;
+      const newPosts = currentFilteredPosts.slice((currentPage - 1) * POSTS_PER_PAGE, currentPage * POSTS_PER_PAGE);
+      postsGrid.insertAdjacentHTML('beforeend', newPosts.map(createPostHtml).join(''));
+      if (currentPage * POSTS_PER_PAGE >= currentFilteredPosts.length) loadMoreContainer.style.display = 'none';
+    }
+
+    // 绑定事件
+    categoryFilters.addEventListener('click', e => {
+      const btn = e.target.closest('button');
+      if (btn) filterByCategory(btn.dataset.category);
+    });
+    loadMoreBtn?.addEventListener('click', loadMore);
+
+    // 搜索功能（防抖）
+    let searchTimeout;
+    searchInput?.addEventListener('input', e => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        searchKeyword = e.target.value.trim();
+        filterPosts();
+      }, 300);
+    });
+
+    // 异步加载数据
+    async function loadData() {
+      const postsQuery = `*[_type == "post"] | order(publishedAt desc) {
+        _id, title, slug, excerpt, publishedAt,
+        "coverImage": coverImage.asset->url,
+        categories[]->{title, slug}
+      }`;
+      const categoriesQuery = `*[_type == "category" && (usedFor == "blog" || usedFor == "both")] | order(title asc) { _id, title, "slug": slug.current }`;
+
+      [posts, categories] = await Promise.all([fetchSanityBlog(postsQuery), fetchSanityBlog(categoriesQuery)]);
+      currentFilteredPosts = posts;
+
+      renderCategories();
+      filterPosts();
+    }
+
+    loadData();
+  });
+</script>

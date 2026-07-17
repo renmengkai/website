@@ -1,0 +1,266 @@
+---
+// Markdown 渲染组件 - 支持代码高亮
+import { marked } from 'marked';
+import { codeToHtml } from 'shiki';
+
+interface Props {
+  content: string | null;
+}
+
+const { content } = Astro.props;
+
+// 语言标签的显示名称映射
+const languageLabels: Record<string, string> = {
+  'javascript': 'JavaScript',
+  'typescript': 'TypeScript',
+  'python': 'Python',
+  'java': 'Java',
+  'csharp': 'C#',
+  'cpp': 'C++',
+  'html': 'HTML',
+  'css': 'CSS',
+  'json': 'JSON',
+  'bash': 'Bash',
+  'shell': 'Shell',
+  'sh': 'Shell',
+  'sql': 'SQL',
+  'go': 'Go',
+  'rust': 'Rust',
+  'php': 'PHP',
+  'ruby': 'Ruby',
+  'swift': 'Swift',
+  'kotlin': 'Kotlin',
+  'yaml': 'YAML',
+  'yml': 'YAML',
+  'markdown': 'Markdown',
+  'md': 'Markdown',
+  'docker': 'Docker',
+  'dockerfile': 'Dockerfile',
+  'nginx': 'Nginx',
+  'ini': 'INI',
+  'conf': 'Config',
+  'text': 'Plain Text',
+  'plaintext': 'Plain Text',
+  '': 'Plain Text'
+};
+
+// Shiki 语言映射
+const shikiLangMap: Record<string, string> = {
+  'javascript': 'javascript',
+  'js': 'javascript',
+  'typescript': 'typescript',
+  'ts': 'typescript',
+  'python': 'python',
+  'py': 'python',
+  'java': 'java',
+  'csharp': 'csharp',
+  'cs': 'csharp',
+  'cpp': 'cpp',
+  'c++': 'cpp',
+  'html': 'html',
+  'css': 'css',
+  'json': 'json',
+  'bash': 'bash',
+  'shell': 'bash',
+  'sh': 'bash',
+  'sql': 'sql',
+  'go': 'go',
+  'rust': 'rust',
+  'php': 'php',
+  'ruby': 'ruby',
+  'swift': 'swift',
+  'kotlin': 'kotlin',
+  'yaml': 'yaml',
+  'yml': 'yaml',
+  'markdown': 'markdown',
+  'md': 'markdown',
+  'docker': 'dockerfile',
+  'dockerfile': 'dockerfile',
+  'nginx': 'nginx',
+  'ini': 'ini',
+  'conf': 'ini',
+  'text': 'text',
+  'plaintext': 'text',
+  '': 'text'
+};
+
+// 存储代码块，稍后处理
+const codeBlocks: Array<{placeholder: string, language: string, code: string}> = [];
+let codeBlockIndex = 0;
+
+// 自定义 renderer 处理代码块
+const renderer = new marked.Renderer();
+
+// 保存原始代码块，用占位符替换
+renderer.code = function({ text, lang }: { text: string, lang?: string }) {
+  const placeholder = `<!--CODE_BLOCK_${codeBlockIndex}-->`;
+  codeBlocks.push({
+    placeholder,
+    language: lang || '',
+    code: text
+  });
+  codeBlockIndex++;
+  return placeholder;
+};
+
+// 配置 marked
+marked.setOptions({
+  renderer,
+  gfm: true,
+  breaks: true
+});
+
+// 第一步：解析 Markdown（代码块用占位符）
+let html = '';
+if (content) {
+  html = await marked.parse(content);
+  
+  // 第二步：处理代码块，添加高亮
+  for (const block of codeBlocks) {
+    const { placeholder, language, code } = block;
+    const lang = language.toLowerCase();
+    const displayLanguage = languageLabels[lang] || language.toUpperCase() || 'Code';
+    const shikiLang = shikiLangMap[lang] || 'text';
+    
+    let highlightedCode = '';
+    try {
+      const shikiHtml = await codeToHtml(code, {
+        lang: shikiLang,
+        theme: 'material-theme-ocean'
+      });
+      // 提取 <pre> 内部的内容
+      const match = shikiHtml.match(/<pre[^>]*>([\s\S]*?)<\/pre>/);
+      if (match) {
+        highlightedCode = match[1];
+      } else {
+        highlightedCode = shikiHtml;
+      }
+    } catch (error) {
+      console.error('Shiki highlighting failed:', error);
+      highlightedCode = `<code>${code
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')}</code>`;
+    }
+    
+    // 用于复制的纯文本
+    const escapedForCopy = code
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+    
+    // 判断是否为 Plain Text
+    const isPlainText = shikiLang === 'text';
+    const preClasses = `code-block-pre !mt-0 !mb-0 !rounded-none p-4 overflow-x-auto shiki-wrapper${isPlainText ? ' plaintext-code' : ''}`;
+    
+    const codeBlockHtml = `<div class="code-block-wrapper my-6 group">
+      <div class="code-block-container rounded-2xl overflow-hidden border border-white/10 transition-colors duration-300 hover:border-white/20">
+        <div class="code-block-header flex items-center justify-between bg-white/[0.04] px-4 py-2.5 border-b border-white/10">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-semibold font-mono text-fg-soft">${displayLanguage}</span>
+          </div>
+          <button class="copy-code-btn opacity-0 group-hover:opacity-100 transition-opacity duration-200 px-3 py-1 text-xs font-medium text-fg-faint hover:text-fg bg-white/[0.06] rounded-md border border-white/10 hover:border-white/20 focus:outline-none focus:ring-2 focus:ring-primary-500/60" data-code="${escapedForCopy.replace(/"/g, '&quot;')}" title="复制代码">
+            <span class="copy-text">复制</span>
+            <span class="copied-text hidden">已复制!</span>
+          </button>
+        </div>
+        <pre class="${preClasses}" style="background-color: #333333;">${highlightedCode}</pre>
+      </div>
+    </div>`;
+    
+    html = html.replace(placeholder, codeBlockHtml);
+  }
+} else {
+  html = '<div class="text-fg-faint">暂无内容</div>';
+}
+---
+
+<div class="markdown-content prose prose-lg max-w-none">
+  <Fragment set:html={html} />
+</div>
+
+<script>
+  import { initCopyButtons } from '../../../lib/copyCode';
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    initCopyButtons();
+  });
+</script>
+
+<style is:global>
+  /* Markdown 内容样式（深色排版） */
+  .markdown-content h1 {
+    @apply text-3xl font-bold mt-8 mb-4 text-fg;
+  }
+
+  .markdown-content h2 {
+    @apply text-2xl font-bold mt-8 mb-4 pb-2 border-b border-white/10 text-fg;
+  }
+
+  .markdown-content h3 {
+    @apply text-xl font-bold mt-6 mb-3 text-fg;
+  }
+
+  .markdown-content h4 {
+    @apply text-lg font-semibold mt-4 mb-2 text-fg;
+  }
+
+  .markdown-content p {
+    @apply mb-4 leading-relaxed text-fg-soft;
+  }
+
+  .markdown-content ul {
+    @apply list-disc pl-6 mb-4 text-fg-soft;
+  }
+
+  .markdown-content ol {
+    @apply list-decimal pl-6 mb-4 text-fg-soft;
+  }
+
+  .markdown-content li {
+    @apply mb-2;
+  }
+
+  .markdown-content li::marker {
+    @apply text-primary-500/70;
+  }
+
+  .markdown-content blockquote {
+    @apply border-l-2 border-primary-500/50 bg-white/[0.04] rounded-r-xl pl-5 pr-5 py-3 my-6 italic text-fg-soft;
+  }
+
+  .markdown-content blockquote p {
+    @apply mb-0;
+  }
+
+  .markdown-content a {
+    @apply text-primary-400 underline-offset-4 hover:text-primary-300 hover:underline transition-colors duration-300;
+  }
+
+  .markdown-content code:not(pre code) {
+    @apply bg-white/[0.06] border border-white/10 text-primary-300 px-1.5 py-0.5 rounded-md text-sm font-mono;
+  }
+
+  .markdown-content table {
+    @apply w-full border-collapse mb-4 text-fg-soft;
+  }
+
+  .markdown-content th,
+  .markdown-content td {
+    @apply border border-white/10 px-4 py-2;
+  }
+
+  .markdown-content th {
+    @apply bg-white/[0.04] font-semibold text-fg;
+  }
+
+  .markdown-content hr {
+    @apply my-8 border-white/[0.08];
+  }
+
+  .markdown-content img {
+    @apply max-w-full h-auto rounded-xl border border-white/10 my-4;
+  }
+</style>

@@ -1,0 +1,176 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import FaqAccordion from '../../../components/FaqAccordion.vue';
+
+// 创始人信息（/public/images/founder.jpg 为真实照片）
+const founder = {
+  name: '任孟锴',
+  title: '创始人 & CEO',
+  avatar: '/images/founder.jpg',
+  quote:
+    '我们不卖「AI 概念」，卖的是可验收的交付结果。每个项目结束，客户都能看到一份清单：哪些工作是 Agent 做的、哪些是人做的、各花了多少成本。透明，是合作的第一前提。',
+};
+
+// 团队实力
+const companies = [
+  { name: '美团', initial: '美', role: '后端/基础架构' },
+  { name: '京东', initial: '京', role: '供应链系统' },
+  { name: '小米', initial: '米', role: '客户端/IoT' },
+  { name: '华为', initial: '华', role: '云与终端' },
+];
+
+// 核心价值观
+const values = [
+  { title: 'AI 驱动', desc: '能自动化的绝不手工。工具链、流程、交付全面 Agent 化，把人的时间留给判断。', stat: '80%', statLabel: '工作由 AI 完成' },
+  { title: '合作共赢', desc: '与客户、渠道伙伴长期绑定利益，透明核算，按结果说话。', stat: '96%', statLabel: '项目按期完成率' },
+  { title: '降本增效', desc: '同样预算交付更多，或同样范围花得更少——两条路都给客户算清楚。', stat: '96%', statLabel: '客户满意度' },
+];
+
+// 技术栈
+const tech = [
+  { name: 'Web 开发', pct: 45, pctLabel: '45%', tags: ['TypeScript', 'React', 'Astro', 'Node.js'] },
+  { name: '跨端应用', pct: 30, pctLabel: '30%', tags: ['Flutter', 'uni-app', '微信小程序'] },
+  { name: '工具与 CLI', pct: 25, pctLabel: '25%', tags: ['Rust', 'Go', 'Node CLI'] },
+];
+
+// 业务方向
+const biz = [
+  { no: '01', title: 'AI Agent 开发', desc: '面向具体业务场景定制 Agent：客服、审查、数据处理、内容生产等，可私有化部署。' },
+  { no: '02', title: 'Agent Team 编排', desc: '为企业搭建「人 + Agent」混合工作流：任务图、检查点、核算体系，一套方法论落地。' },
+  { no: '03', title: '企业数字化咨询', desc: '从投入产出比出发，帮你判断哪些环节值得 AI 化、哪些不值得，再谈实施。' },
+];
+---
+
+<Layout title="关于 - RMK" description="AI 时代的创新团队：人 + Agent 混合编队，透明核算，可验收交付。">
+  <div class="animate-fade-in-up">
+
+    <!-- 页头 -->
+    <section class="container-page pt-16 lg:pt-20 pb-16 text-center">
+      <div class="flex items-center justify-center gap-2.5 font-mono text-[12.5px] tracking-[0.14em] text-brand mb-[18px]">
+        <span class="logo-wave flex-none w-[34px] h-2 bg-brand"></span>
+        ABOUT US
+      </div>
+      <h1 class="font-serif text-4xl sm:text-[48px] font-black text-ink m-0 mb-4 text-balance">AI 时代的创新团队</h1>
+      <p class="m-0 mx-auto text-base leading-[1.9] max-w-[620px]" style="text-wrap: pretty;">
+        我们相信未来的软件团队是「人 + Agent」的混合编队。人负责判断与责任，Agent 负责执行与规模——我们把这套方法先用在自己身上，再交付给客户。
+      </p>
+    </section>
+
+    <!-- 创始人卡片 -->
+    <section class="container-page pb-16 lg:pb-[88px]">
+      <div class="bg-white border border-line rounded-2xl p-8 sm:px-14 sm:py-12 flex gap-10 lg:gap-12 items-center flex-wrap">
+        <div class="flex-none flex flex-col items-center gap-3 mx-auto sm:mx-0">
+          <div class="w-[132px] h-[132px] rounded-full overflow-hidden border border-line bg-cream">
+            <img src={founder.avatar} alt={founder.name} class="w-full h-full object-cover object-top" loading="lazy" />
+          </div>
+          <div class="text-center">
+            <div class="text-[15px] font-bold text-ink">{founder.name}</div>
+            <div class="font-mono text-xs text-stone mt-0.5">{founder.title}</div>
+          </div>
+        </div>
+        <div class="flex-1 min-w-full sm:min-w-[320px]">
+          <svg width="44" height="34" viewBox="0 0 44 34" class="mb-3.5">
+            <path d="M2 20 C2 8, 10 2, 18 2 L18 8 C12 8, 9 12, 9 17 L18 17 L18 32 L2 32 Z M26 20 C26 8, 34 2, 42 2 L42 8 C36 8, 33 12, 33 17 L42 17 L42 32 L26 32 Z" fill="#EAD5D2"></path>
+          </svg>
+          <p class="m-0 font-serif text-[21px] leading-[1.9] text-ink" style="text-wrap: pretty;">{founder.quote}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 团队实力 -->
+    <section class="container-page pb-16 lg:pb-[88px]">
+      <h2 class="font-serif text-[30px] font-black text-ink m-0 mb-2 flex items-center gap-3.5">
+        <span class="logo-wave flex-none w-[34px] h-2 bg-brand"></span>团队实力
+      </h2>
+      <p class="m-0 mb-6 text-[14.5px] text-stone">核心成员来自一线互联网公司，平均 8 年工程经验。</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {companies.map((c) => (
+          <div class="bg-white border border-line rounded-xl p-7 flex flex-col items-center gap-2.5 text-center">
+            <div class="w-14 h-14 rounded-xl bg-cream border border-line flex items-center justify-center font-serif font-black text-[22px] text-ink">{c.initial}</div>
+            <div class="text-[15px] font-bold text-ink">{c.name}</div>
+            <div class="font-mono text-[11.5px] text-mist">{c.role}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- 核心价值观 -->
+    <section class="container-page pb-16 lg:pb-[88px]">
+      <h2 class="font-serif text-[30px] font-black text-ink m-0 mb-6 flex items-center gap-3.5">
+        <span class="logo-wave flex-none w-[34px] h-2 bg-brand"></span>核心价值观
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {values.map((v) => (
+          <div class="bg-white border border-line rounded-xl p-8">
+            <span class="logo-wave inline-block flex-none w-10 h-2.5 bg-brand"></span>
+            <h3 class="text-lg font-bold text-ink mt-4 mb-2">{v.title}</h3>
+            <p class="m-0 text-[13.5px] text-stone leading-[1.8]">{v.desc}</p>
+            <div class="mt-5 pt-4 border-t border-line-soft flex items-baseline gap-2">
+              <span class="font-mono text-[28px] font-medium text-brand">{v.stat}</span>
+              <span class="text-[12.5px] text-stone">{v.statLabel}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- 技术栈 -->
+    <section class="container-page pb-16 lg:pb-[88px]">
+      <h2 class="font-serif text-[30px] font-black text-ink m-0 mb-6 flex items-center gap-3.5">
+        <span class="logo-wave flex-none w-[34px] h-2 bg-brand"></span>技术栈
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {tech.map((t) => (
+          <div class="bg-white border border-line rounded-xl p-7 flex flex-col gap-3.5">
+            <div class="flex justify-between items-baseline">
+              <span class="text-[17px] font-bold text-ink">{t.name}</span>
+              <span class="font-mono text-[22px] text-brand">{t.pctLabel}</span>
+            </div>
+            <div class="h-1.5 bg-cream rounded-full overflow-hidden">
+              <div class="h-full bg-brand rounded-full" style={`width: ${t.pct}%`}></div>
+            </div>
+            <div class="flex gap-1.5 flex-wrap">
+              {t.tags.map((g) => (
+                <span class="font-mono text-[11.5px] text-clay bg-cream border border-line px-2.5 py-[3px] rounded-full">{g}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- 业务方向 -->
+    <section class="container-page pb-16 lg:pb-[88px]">
+      <h2 class="font-serif text-[30px] font-black text-ink m-0 mb-6 flex items-center gap-3.5">
+        <span class="logo-wave flex-none w-[34px] h-2 bg-brand"></span>业务方向
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {biz.map((b) => (
+          <div class="bg-white border border-line rounded-xl p-8 transition-all duration-200 hover:shadow-[0_8px_28px_rgba(34,30,27,0.08)] hover:-translate-y-0.5">
+            <span class="font-mono text-xs text-mist">{b.no}</span>
+            <h3 class="text-lg font-bold text-ink mt-2.5 mb-2">{b.title}</h3>
+            <p class="m-0 text-[13.5px] text-stone leading-[1.8]">{b.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- 常见问题 -->
+    <section class="max-w-[840px] mx-auto px-5 sm:px-8 pb-16 lg:pb-[88px]">
+      <h2 class="font-serif text-[30px] font-black text-ink m-0 mb-6 flex items-center gap-3.5">
+        <span class="logo-wave flex-none w-[34px] h-2 bg-brand"></span>常见问题
+      </h2>
+      <FaqAccordion client:visible />
+    </section>
+
+    <!-- CTA -->
+    <section class="container-page pb-20 lg:pb-24">
+      <div class="bg-ink rounded-2xl px-8 py-14 sm:px-14 sm:py-[72px] text-center relative overflow-hidden">
+        <span class="logo-wave flex-none w-[560px] h-[70px] bg-brand absolute left-1/2 -translate-x-1/2 -bottom-2 opacity-[0.18]"></span>
+        <h2 class="font-serif text-[28px] sm:text-4xl font-black text-paper m-0 mb-3 relative">招商合作，共赢 AI 时代</h2>
+        <p class="m-0 mx-auto mb-8 text-[15px] text-mist leading-[1.8] max-w-[520px] relative">面向行业渠道与解决方案伙伴开放合作。你带场景，我们带 Agent 工程能力。</p>
+        <a href="/contact" class="inline-block bg-brand text-white text-[15px] font-medium px-9 py-3.5 rounded-lg hover:bg-brand-dark transition-colors relative">联系我们</a>
+      </div>
+    </section>
+  </div>
+</Layout>

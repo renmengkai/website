@@ -1,0 +1,143 @@
+---
+import Layout from '../Layout.astro';
+import Hero from '../components/Hero.astro';
+import SectionTitle from '../components/ui/SectionTitle.astro';
+import PostCard from '../components/PostCard.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Button from '../components/ui/Button.astro';
+import DashboardTabs from '../components/DashboardTabs.vue';
+import { fetchSanity } from '../../../lib/sanity';
+
+// 从 Sanity 获取最新文章（3篇）
+const postsQuery = `*[_type == "post"] | order(publishedAt desc)[0...3] {
+  _id,
+  title,
+  slug,
+  excerpt,
+  publishedAt,
+  "coverImage": coverImage.asset->url,
+  categories[]->{title, slug}
+}`;
+
+// 从 Sanity 获取项目（优先精选，否则显示所有项目）
+const projectsQuery = `*[_type == "project"] | order(featured desc, order asc)[0...3] {
+  _id,
+  title,
+  slug,
+  description,
+  "thumbnail": thumbnail.asset->url,
+  technologies,
+  featured
+}`;
+
+// 并行获取数据
+const [posts, projects] = await Promise.all([
+  fetchSanity<any[]>(postsQuery),
+  fetchSanity<any[]>(projectsQuery)
+]);
+---
+
+<Layout title="RMK - 博客与作品集">
+  <!-- Hero Section -->
+  <Hero
+    title="AI Agent 驱动的开发团队"
+    titleLines={['AI Agent 驱动的', '开发团队']}
+    description="专注 AI Agent 工具与多智能体编排，80%工作由AI完成。助力企业降本增效，招商合作共赢AI时代。"
+  />
+
+  <!-- 数据统计展示 -->
+  <section class="py-16 lg:py-24 border-t hairline">
+    <div class="container-custom" data-reveal>
+      <DashboardTabs client:visible />
+    </div>
+  </section>
+
+  <!-- 最新日志 -->
+  <section class="section">
+    <div class="container-custom">
+      <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-0">
+        <SectionTitle
+          title="最新日志"
+          subtitle="Blog"
+          index="01"
+          class="mb-10 lg:mb-14"
+        >
+          记录技术探索与思考，分享学习心得与实践经验
+        </SectionTitle>
+        <div class="hidden lg:block pb-14 shrink-0" data-reveal>
+          <Button href="/blog" variant="secondary" showArrow>
+            查看全部日志
+          </Button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {posts.map((post, i) => (
+          <div data-reveal style={`--reveal-delay: ${i * 120}ms;`}>
+            <PostCard
+              title={post.title}
+              excerpt={post.excerpt}
+              slug={post.slug}
+              coverImage={post.coverImage}
+              publishedAt={post.publishedAt}
+              categories={post.categories}
+            />
+          </div>
+        ))}
+      </div>
+
+      <div class="text-center mt-12 lg:hidden">
+        <Button href="/blog" variant="secondary" showArrow>
+          查看全部日志
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 精选作品：非对称网格，首个项目占据双列 -->
+  <section class="section relative overflow-hidden border-t hairline">
+    <div class="orb orb-primary -top-64 -right-64 w-[44rem] h-[44rem] opacity-60" aria-hidden="true"></div>
+    <div class="container-custom">
+      <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-0">
+        <SectionTitle
+          title="精选作品"
+          subtitle="Projects"
+          index="02"
+          class="mb-10 lg:mb-14"
+        >
+          展示我参与或独立完成的项目，从创意到落地的完整历程
+        </SectionTitle>
+        <div class="hidden lg:block pb-14 shrink-0" data-reveal>
+          <Button href="/projects" variant="secondary" showArrow>
+            查看全部作品
+          </Button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {projects.map((project, i) => (
+          <div
+            class={i === 0 ? 'md:col-span-2' : ''}
+            data-reveal
+            style={`--reveal-delay: ${i * 120}ms;`}
+          >
+            <ProjectCard
+              title={project.title}
+              description={project.description}
+              slug={project.slug}
+              thumbnail={project.thumbnail}
+              technologies={project.technologies}
+              featured={project.featured}
+            />
+          </div>
+        ))}
+      </div>
+
+      <div class="text-center mt-12 lg:hidden">
+        <Button href="/projects" variant="secondary" showArrow>
+          查看全部作品
+        </Button>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,89 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import ProjectExplorer from '../../../components/ProjectExplorer.vue';
+import { fetchSanity } from '../../../lib/sanity';
+
+// 从 Sanity 获取全部项目（含分类，用于筛选胶囊）
+const projectsQuery = `*[_type == "project"] | order(order asc) {
+  _id,
+  title,
+  slug,
+  description,
+  "thumbnail": thumbnail.asset->url + "?auto=format&w=600&q=80",
+  categories[]->{title, "slug": slug.current},
+  technologies
+}`;
+
+const rawProjects = await fetchSanity<any[]>(projectsQuery);
+
+// 归一化后传给 Vue 岛屿：
+// - 分类取项目第一个 category 引用的 title（brand 品牌胶囊）
+// - 其余标签用 technologies（cream 胶囊）
+const projects = (rawProjects || []).map((p) => {
+  const category = p.categories?.[0]?.title ?? null;
+  const tags = [
+    ...(category ? [category] : []),
+    ...(p.technologies || []),
+  ].slice(0, 4);
+  return {
+    slug: p.slug?.current ?? p.slug,
+    title: p.title,
+    description: p.description || '',
+    thumbnail: p.thumbnail || null,
+    category,
+    tags,
+  };
+});
+
+// CTA 统计（设计稿静态营销数据）
+const ctaStats = [
+  { v: '40+', k: '已完成项目' },
+  { v: '96%', k: '客户满意度' },
+  { v: '8 年', k: '团队经验' },
+  { v: '24*7', k: 'AI 协作支持' },
+];
+---
+
+<Layout title="作品 - RMK" description="40+ 个交付项目里的代表作。每一个都写清楚我们做了什么、AI Agent 承担了多少。">
+  <div class="animate-fade-in-up">
+
+    <!-- 页头 -->
+    <section class="container-page pt-[72px] pb-10">
+      <div class="flex items-center gap-2.5 font-mono text-[12.5px] tracking-[0.14em] text-brand mb-4">
+        <span class="logo-wave flex-none w-[34px] h-2 bg-brand"></span>
+        PROJECTS
+      </div>
+      <h1 class="font-serif text-[44px] font-black text-ink m-0 mb-3">作品</h1>
+      <p class="m-0 text-[15.5px] leading-[1.8] max-w-[560px]">
+        40+ 个交付项目里的代表作。每一个都写清楚我们做了什么、AI Agent 承担了多少。
+      </p>
+    </section>
+
+    <!-- 搜索 / 筛选 / 项目网格（Vue 岛屿） -->
+    <section class="container-page pb-[72px]">
+      <ProjectExplorer client:visible projects={projects} />
+    </section>
+
+    <!-- 深色 CTA -->
+    <section class="container-page pb-24">
+      <div class="bg-ink rounded-2xl p-8 sm:p-14 relative overflow-hidden">
+        <span class="logo-wave flex-none w-[420px] h-[60px] bg-brand absolute -right-10 top-6 opacity-20"></span>
+        <div class="flex items-center justify-between gap-8 flex-wrap relative">
+          <div>
+            <h2 class="font-serif text-[30px] font-black text-paper m-0 mb-2.5">你的项目，也可以是下一个</h2>
+            <p class="m-0 text-[14.5px] text-mist leading-[1.8]">从需求评估到上线交付，全程透明可验收。</p>
+          </div>
+          <a href="/contact" class="bg-brand text-white text-[15px] font-medium px-[30px] py-[13px] rounded-lg flex-none hover:bg-brand-dark transition-colors">联系我们</a>
+        </div>
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3.5 mt-10 relative">
+          {ctaStats.map((s) => (
+            <div class="bg-[rgba(250,248,244,0.06)] border border-[#3A342E] rounded-xl px-[22px] py-5">
+              <div class="font-mono text-[26px] font-medium text-paper">{s.v}</div>
+              <div class="text-[12.5px] text-stone mt-1">{s.k}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>

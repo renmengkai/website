@@ -21,7 +21,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="theme-vima">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -48,15 +48,15 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <!-- 字体预连接 + 异步加载 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"></noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap"></noscript>
     
     <title>{title}</title>
     <ViewTransitions />
   </head>
-  <body class="min-h-screen flex flex-col bg-white">
+  <body class="min-h-screen flex flex-col bg-paper">
     <!-- 全局页面过渡骨架屏 - 点击链接后立即显示 -->
-    <div class="page-transition-skeleton fixed inset-0 z-50 bg-white" style="display: none;">
+    <div class="page-transition-skeleton fixed inset-0 z-50 bg-paper" style="display: none;">
       <div class="skeleton-animate">
         <!-- Header 骨架 -->
         <div class="h-16 border-b border-gray-100 flex items-center px-6">
@@ -133,6 +133,17 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       document.addEventListener('astro:before-preparation', () => {
         document.documentElement.classList.add('is-loading');
       });
+    </script>
+
+    <script is:inline>
+      // 首访无 design cookie 时按系统深浅色偏好选择设计（本布局为 vima/浅色）
+      (function () {
+        if (!/(?:^|; )design=/.test(document.cookie)) {
+          var t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'glass' : 'vima';
+          document.cookie = 'design=' + t + ';path=/;max-age=31536000;samesite=lax';
+          if (t !== 'vima') location.reload();
+        }
+      })();
     </script>
   </body>
 </html>

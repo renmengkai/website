@@ -1,0 +1,105 @@
+---
+import Layout from '../Layout.astro';
+import Button from '../components/ui/Button.astro';
+---
+
+<Layout title="页面未找到 - RMK" description="抱歉，您访问的页面不存在">
+  <section class="relative min-h-[100dvh] flex items-center justify-center overflow-hidden pt-28 pb-16">
+    <!-- 网格线背景 -->
+    <div class="absolute inset-0 bg-grid-dark pointer-events-none" aria-hidden="true"></div>
+
+    <!-- 环境光晕轨道球 -->
+    <div class="orb orb-primary animate-orb-drift -top-40 left-1/2 -translate-x-1/2 w-[52rem] h-[32rem]" aria-hidden="true"></div>
+    <div class="orb orb-teal -bottom-40 -left-40 w-[32rem] h-[32rem]" aria-hidden="true"></div>
+
+    <div class="container-custom relative">
+      <div class="max-w-3xl mx-auto text-center">
+        <!-- 眉题：错误状态点 -->
+        <p class="eyebrow mb-10" data-reveal>
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping-slow absolute inline-flex h-full w-full rounded-full bg-primary-500 opacity-60"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500 shadow-glow-sm"></span>
+          </span>
+          Error · 信号丢失
+        </p>
+
+        <!-- 404 巨型数字 -->
+        <div class="error-visual select-none" data-reveal-lines>
+          <span class="reveal-line">
+            <span
+              class="block font-display font-black text-[clamp(7rem,26vw,18rem)] leading-[0.9] tracking-tighter text-glow-gradient"
+              style="--line-index: 1;"
+            >404</span>
+          </span>
+        </div>
+
+        <!-- 标题区域 -->
+        <h1 class="text-3xl lg:text-4xl font-bold text-fg mt-8 mb-4" data-reveal style="--reveal-delay: 200ms;">
+          这个页面在深空走丢了
+        </h1>
+        <p class="text-lg text-fg-faint max-w-lg mx-auto leading-relaxed" data-reveal style="--reveal-delay: 320ms;">
+          你访问的坐标可能已被移动、删除，或者从未存在过。别慌，返回母舰即可。
+        </p>
+
+        <!-- 操作按钮：岛式胶囊 -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10 mb-14" data-reveal style="--reveal-delay: 440ms;">
+          <Button href="/" variant="primary" size="lg" showArrow magnetic>
+            返回首页
+          </Button>
+          <Button href="/blog" variant="secondary" size="lg" showArrow>
+            浏览日志
+          </Button>
+        </div>
+
+        <!-- 快捷链接：玻璃胶囊条 -->
+        <div
+          class="inline-flex flex-wrap items-center justify-center gap-5 px-6 py-3.5 rounded-full bg-white/[0.04] border border-white/10"
+          data-reveal
+          style="--reveal-delay: 560ms;"
+        >
+          <span class="font-mono text-xs text-fg-ghost uppercase tracking-[0.18em]">或前往</span>
+          <div class="flex items-center gap-4">
+            <a href="/projects" class="nav-underline text-sm font-medium text-fg-faint hover:text-fg transition-colors duration-300">
+              作品集
+            </a>
+            <span class="w-1 h-1 rounded-full bg-white/20" aria-hidden="true"></span>
+            <a href="/about" class="nav-underline text-sm font-medium text-fg-faint hover:text-fg transition-colors duration-300">
+              关于我
+            </a>
+          </div>
+        </div>
+
+        <!-- 底部提示 -->
+        <p class="mt-10 text-sm text-fg-ghost" data-reveal style="--reveal-delay: 680ms;">
+          遇到问题？
+          <a href="mailto:contact@mengkai.ren" class="text-primary-400 hover:text-primary-300 font-medium transition-colors duration-300">
+            联系我
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* 主视觉浮动动画（仅 transform） */
+  .error-visual {
+    animation: float 5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+    will-change: transform;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .error-visual {
+      animation: none;
+    }
+  }
+</style>

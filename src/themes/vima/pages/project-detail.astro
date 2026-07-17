@@ -1,0 +1,169 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import MarkdownContent from '../../../components/MarkdownContent.astro';
+import PortableText from '../../../components/PortableText.astro';
+
+// 项目数据由调度层（src/pages/projects/[slug].astro）统一取数并处理 404/redirect 后通过 props 传入
+const { project } = Astro.props;
+
+// 确保 technologies / gallery 是数组
+const safeTechnologies: string[] = Array.isArray(project.technologies) ? project.technologies : [];
+const gallery: string[] = Array.isArray(project.gallery) ? project.gallery.filter(Boolean) : [];
+const hasGallery = gallery.length > 0;
+---
+
+<Layout
+  title={`${project.title} - RMK`}
+  description={project.description}
+  image={project.thumbnail}
+>
+  <div class="animate-fade-in-up">
+    <article class="max-w-[960px] mx-auto px-5 sm:px-8 pt-16 pb-24">
+      <!-- 返回 -->
+      <a
+        href="/projects"
+        data-astro-prefetch="hover"
+        class="inline-flex items-center gap-1.5 text-[13.5px] text-stone hover:text-brand transition-colors"
+      >← 返回作品列表</a>
+
+      <!-- 标题区：左标题描述标签 / 右按钮组 -->
+      <div class="flex justify-between items-end gap-6 flex-wrap mt-7">
+        <div class="max-w-[620px]">
+          <h1 class="font-serif text-[32px] sm:text-[40px] font-black text-ink m-0 mb-3.5 leading-[1.35]">
+            {project.title}
+          </h1>
+          {project.description && (
+            <p class="m-0 text-[15.5px] leading-[1.9]" style="text-wrap: pretty;">
+              {project.description}
+            </p>
+          )}
+          {safeTechnologies.length > 0 && (
+            <div class="flex gap-1.5 flex-wrap mt-[18px]">
+              {safeTechnologies.map((tech: string) => (
+                <span class="font-mono text-xs text-clay bg-cream border border-line px-3 py-1 rounded-full">{tech}</span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {(project.liveUrl || project.githubUrl) && (
+          <div class="flex gap-3 flex-none flex-wrap">
+            {project.liveUrl && (
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener"
+                class="bg-brand text-white text-sm font-medium px-6 py-[11px] rounded-lg inline-flex items-center gap-[7px] hover:bg-brand-dark transition-colors"
+              >
+                <svg width="13" height="13" viewBox="0 0 13 13" aria-hidden="true">
+                  <path d="M5 2 H2 V11 H11 V8 M7.5 1.5 H11.5 V5.5 M11.5 1.5 L6 7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                在线预览
+              </a>
+            )}
+            {project.githubUrl && (
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener"
+                class="bg-white text-ink border border-line-strong text-sm font-medium px-6 py-2.5 rounded-lg inline-flex items-center gap-[7px] hover:border-ink transition-colors"
+              >
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
+                </svg>
+                查看源码
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+
+      <!-- 封面大图 16:9 -->
+      {project.thumbnail ? (
+        <div class={`aspect-video bg-ink rounded-2xl overflow-hidden mt-9 ${hasGallery ? 'mb-4' : 'mb-12'}`}>
+          <img src={project.thumbnail} alt={project.title} class="w-full h-full object-cover" loading="eager" />
+        </div>
+      ) : (
+        <div class={`aspect-video bg-ink rounded-2xl flex items-center justify-center mt-9 ${hasGallery ? 'mb-4' : 'mb-12'}`}>
+          <span class="logo-wave flex-none w-[100px] h-5 bg-ink-soft"></span>
+        </div>
+      )}
+
+      <!-- 图库 2 列 16:10（无图整块省略） -->
+      {hasGallery && (
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
+          {gallery.map((img: string) => (
+            <div class="aspect-[16/10] bg-cream border border-line rounded-xl overflow-hidden transition-transform duration-200 hover:scale-[1.01]">
+              <img src={img} alt={project.title} class="w-full h-full object-cover" loading="lazy" />
+            </div>
+          ))}
+        </div>
+      )}
+
+      <!-- 正文 -->
+      {project.body && (
+        <div class="project-body max-w-[760px] text-base leading-loose">
+          {typeof project.body === 'string' ? (
+            <MarkdownContent content={project.body} />
+          ) : (
+            <PortableText blocks={project.body} />
+          )}
+        </div>
+      )}
+    </article>
+  </div>
+</Layout>
+
+<style is:global>
+  /* 正文排版：覆盖 MarkdownContent / PortableText 渲染输出的默认样式（article 前缀提升优先级） */
+  article .project-body h1 {
+    @apply font-serif text-[28px] font-bold text-ink mt-11 mb-4 leading-[1.6];
+  }
+  article .project-body h2 {
+    @apply font-serif text-[26px] font-bold text-ink mt-11 mb-4 pb-0 border-b-0 leading-[1.6];
+  }
+  article .project-body h3 {
+    @apply font-serif text-[20px] font-bold text-ink mt-8 mb-3 leading-[1.6];
+  }
+  article .project-body h4 {
+    @apply font-serif text-[17px] font-bold text-ink mt-6 mb-2;
+  }
+  article .project-body h1:first-child,
+  article .project-body h2:first-child,
+  article .project-body h3:first-child {
+    @apply mt-0;
+  }
+  article .project-body p {
+    @apply mb-6 leading-loose text-clay;
+  }
+  article .project-body ul {
+    @apply list-disc pl-6 mb-6;
+  }
+  article .project-body ol {
+    @apply list-decimal pl-6 mb-6;
+  }
+  article .project-body li {
+    @apply mb-2 leading-[1.9];
+  }
+  article .project-body blockquote {
+    @apply my-7 py-1 pl-6 border-l-[3px] border-brand border-solid font-serif text-[17px] text-ink leading-[1.9] not-italic;
+  }
+  article .project-body blockquote p {
+    @apply m-0 text-ink font-serif text-[17px] leading-[1.9];
+  }
+  article .project-body a {
+    @apply text-brand no-underline hover:text-brand-dark hover:underline;
+  }
+  article .project-body strong {
+    @apply text-ink font-bold;
+  }
+  article .project-body code:not(pre code) {
+    @apply font-mono text-[0.9em] text-clay bg-cream border border-line rounded px-1.5 py-0.5;
+  }
+  article .project-body img {
+    @apply max-w-full h-auto rounded-xl my-6;
+  }
+  article .project-body hr {
+    @apply my-10 border-line;
+  }
+</style>

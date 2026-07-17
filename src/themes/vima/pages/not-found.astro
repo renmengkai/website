@@ -1,0 +1,23 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="页面未找到 - RMK" description="页面不存在或已被移动">
+  <div class="animate-fade-in-up">
+    <main class="min-h-[70vh] flex flex-col items-center justify-center gap-[22px] px-8 py-24 text-center">
+      <div class="relative flex items-center justify-center">
+        <span class="font-serif font-black text-[96px] sm:text-[150px] leading-none text-ink tracking-[0.04em]">4<span class="text-brand">0</span>4</span>
+        <span class="logo-wave flex-none w-[280px] h-7 sm:w-[440px] sm:h-[44px] bg-brand absolute -bottom-2 left-1/2 -translate-x-1/2"></span>
+      </div>
+      <h1 class="font-serif text-[26px] font-bold text-ink m-0 mt-[18px]">这条路线走丢了</h1>
+      <p class="m-0 text-[14.5px] text-stone leading-[1.9] max-w-[420px]">
+        页面不存在或已被移动。<br />
+        <span class="font-mono text-[13px]">$ agent route --recover<span class="text-brand animate-blink">▌</span></span>
+      </p>
+      <div class="flex gap-3.5 mt-2.5 flex-wrap justify-center">
+        <a href="/" class="bg-brand text-white text-[14.5px] font-medium px-7 py-3 rounded-lg hover:bg-brand-dark transition-colors">返回首页</a>
+        <a href="/blog" class="bg-white text-ink border border-line-strong text-[14.5px] font-medium px-7 py-[11px] rounded-lg hover:border-ink transition-colors">浏览文章</a>
+      </div>
+    </main>
+  </div>
+</Layout>

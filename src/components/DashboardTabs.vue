@@ -1,192 +1,102 @@
 <template>
-  <div class="bg-white rounded-3xl border border-gray-200 overflow-hidden">
-    <!-- 顶部导航栏 -->
-    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-      <div class="flex items-center gap-2">
-        <span class="font-semibold text-gray-900">{{ currentTabTitle }}</span>
-      </div>
-      <nav class="hidden md:flex items-center gap-6">
-        <button
-          v-for="(item, i) in dashboard.navItems"
-          :key="item"
-          @click="activeTab = i"
-          :class="[
-            'text-sm transition-colors duration-200 cursor-pointer',
-            activeTab === i ? 'text-gray-900 font-medium' : 'text-gray-400 hover:text-gray-600'
-          ]"
-        >
-          {{ item }}
-        </button>
-      </nav>
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-full bg-dark-100 flex items-center justify-center text-white text-xs font-medium">
-          RMK
-        </div>
-      </div>
+  <div class="bg-white border border-line rounded-2xl overflow-hidden">
+    <!-- Tab 栏 -->
+    <div class="flex gap-1 px-3 py-2.5 border-b border-line-soft bg-paper overflow-x-auto">
+      <button
+        v-for="(label, i) in tabLabels"
+        :key="label"
+        @click="activeTab = i"
+        :class="[
+          'font-sans text-sm px-5 py-[9px] rounded-lg cursor-pointer whitespace-nowrap transition-colors border-none',
+          activeTab === i
+            ? 'font-semibold text-ink bg-white shadow-[0_1px_4px_rgba(34,30,27,0.08),inset_0_0_0_1px_#E7E1D8]'
+            : 'font-normal text-stone bg-transparent hover:text-ink'
+        ]"
+      >
+        {{ label }}
+      </button>
     </div>
 
-    <div class="p-6">
+    <div class="p-6 sm:p-8 min-h-[320px]">
       <transition name="fade" mode="out-in">
         <!-- 概览 -->
-        <div v-if="activeTab === 0" key="overview">
-          <div class="flex flex-col lg:flex-row gap-8 mb-8">
-            <div class="flex-1">
-              <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-                  <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                </div>
+        <div v-if="activeTab === 0" key="overview" class="flex flex-wrap gap-8 lg:gap-12">
+          <div class="flex-[1.3] min-w-full sm:min-w-[340px] flex flex-col gap-[18px]">
+            <span class="text-[13px] font-medium text-stone">项目类型分布</span>
+            <div v-for="d in dist" :key="d.name" class="flex flex-col gap-[7px]">
+              <div class="flex justify-between text-[13.5px]">
+                <span class="text-ink font-medium">{{ d.name }}</span>
+                <span class="font-mono text-stone">{{ d.pct }}%</span>
               </div>
-              <h3 class="text-xl font-semibold text-gray-900 mb-1">项目类型分布</h3>
-              <p class="text-sm text-gray-500">{{ overview.description }}</p>
-            </div>
-            <div class="flex gap-8">
-              <div v-for="stat in dashboard.stats" :key="stat.label" class="text-center">
-                <div class="flex items-center justify-center gap-1 mb-1">
-                  <span class="text-2xl font-bold text-gray-900">{{ stat.value }}</span>
-                  <span class="text-primary-500 text-sm">{{ stat.trend }}</span>
-                </div>
-                <p class="text-sm text-gray-400">{{ stat.label }}</p>
+              <div class="h-2 bg-cream rounded-full overflow-hidden">
+                <div
+                  class="h-full rounded-full transition-all duration-700"
+                  :style="{ width: d.pct + '%', background: d.color }"
+                ></div>
               </div>
             </div>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div
-              v-for="type in overview.types"
-              :key="type.name"
-              class="rounded-2xl p-5 border border-gray-200 bg-white"
-            >
-              <div class="flex items-center justify-between mb-3">
-                <span class="text-sm font-semibold text-gray-900">{{ type.name }}</span>
-                <span class="text-xs text-gray-400">{{ type.description }}</span>
-              </div>
-              <div class="flex items-baseline gap-2 mb-3">
-                <span class="text-2xl font-bold text-gray-900">{{ type.count }}</span>
-                <span class="text-xs text-gray-400">个项目</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-gray-900 rounded-full transition-all duration-700" :style="{ width: type.percent + '%' }"></div>
-                </div>
-                <span class="text-xs font-medium text-gray-600">{{ type.percent }}%</span>
-              </div>
+          <div class="flex-1 min-w-full sm:min-w-[300px] grid grid-cols-2 gap-3 content-start">
+            <div v-for="s in stats" :key="s.k" class="bg-paper border border-line-soft rounded-xl px-5 py-[18px]">
+              <div class="font-mono text-[26px] font-medium text-ink">{{ s.v }}</div>
+              <div class="text-[12.5px] text-stone mt-1">{{ s.k }}</div>
             </div>
           </div>
         </div>
 
         <!-- 技术分类 -->
-        <div v-else-if="activeTab === 1" key="tech">
-          <div class="flex items-center gap-3 mb-2">
-            <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-              <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 4l-4 4 4 4" />
-              </svg>
+        <div v-else-if="activeTab === 1" key="tech" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div v-for="t in tech" :key="t.name" class="border border-line rounded-xl p-6 flex flex-col gap-3.5">
+            <div class="flex justify-between items-baseline">
+              <span class="text-base font-bold text-ink">{{ t.name }}</span>
+              <span class="font-mono text-[22px] text-brand">{{ t.pct }}%</span>
             </div>
-          </div>
-          <h3 class="text-xl font-semibold text-gray-900 mb-1">技术栈分布</h3>
-          <p class="text-sm text-gray-500 mb-6">{{ tech.description }}</p>
-          
-          <!-- 技术分类分组 -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div v-for="group in tech.groups" :key="group.name" class="rounded-2xl border border-gray-200 overflow-hidden">
-              <!-- 分组标题 -->
-              <div class="flex items-center justify-between px-5 py-4 bg-gray-50 border-b border-gray-200">
-                <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-lg bg-dark-100 flex items-center justify-center">
-                    <svg v-if="group.icon === 'web'" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
-                    <svg v-else-if="group.icon === 'mobile'" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                    <svg v-else-if="group.icon === 'cli'" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                  </div>
-                  <span class="text-sm font-semibold text-gray-900">{{ group.name }}</span>
-                </div>
-                <span class="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-600">{{ group.percent }}%</span>
-              </div>
-              <!-- 语言列表 -->
-              <div class="px-5 py-3 bg-white border-b border-gray-200">
-                <div class="flex flex-wrap gap-1">
-                  <span v-for="lang in group.languages" :key="lang" class="text-xs px-2 py-1 rounded bg-gray-100 text-gray-600">{{ lang }}</span>
-                </div>
-              </div>
-              <!-- 框架列表 -->
-              <div class="px-5 py-4 bg-white">
-                <div class="flex flex-wrap gap-2">
-                  <span v-for="fw in group.frameworks" :key="fw" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
-                    <svg class="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    {{ fw }}
-                  </span>
-                </div>
-              </div>
+            <div class="h-1.5 bg-cream rounded-full overflow-hidden">
+              <div class="h-full bg-brand rounded-full transition-all duration-700" :style="{ width: t.pct + '%' }"></div>
+            </div>
+            <div class="flex gap-1.5 flex-wrap">
+              <span
+                v-for="g in t.tags"
+                :key="g"
+                class="font-mono text-[11.5px] text-clay bg-cream border border-line px-2.5 py-[3px] rounded-full"
+              >{{ g }}</span>
             </div>
           </div>
         </div>
 
         <!-- 项目报告 -->
-        <div v-else-if="activeTab === 2" key="report">
-          <div class="flex items-center gap-3 mb-2">
-            <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-              <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+        <div v-else-if="activeTab === 2" key="report" class="flex flex-wrap gap-8 lg:gap-12">
+          <div class="flex-[1.3] min-w-full sm:min-w-[340px] flex flex-col">
+            <span class="text-[13px] font-medium text-stone mb-3.5">交付里程碑</span>
+            <div v-for="m in milestones" :key="m.title" class="flex gap-4 py-3 border-b border-line-soft">
+              <span class="font-mono text-xs text-mist w-[76px] flex-none pt-0.5">{{ m.date }}</span>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-ink">{{ m.title }}</div>
+                <div class="text-[12.5px] text-stone mt-0.5">{{ m.desc }}</div>
+              </div>
+              <span class="font-mono text-[11.5px] text-moss bg-moss-tint border border-moss-line px-2.5 py-0.5 rounded-full self-center flex-none">已交付</span>
             </div>
           </div>
-          <h3 class="text-xl font-semibold text-gray-900 mb-1">项目报告</h3>
-          <p class="text-sm text-gray-500 mb-6">{{ report.description }}</p>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div v-for="ms in report.milestones" :key="ms.label" class="group">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-medium text-gray-700">{{ ms.label }}</span>
-                <span class="text-sm text-gray-400">{{ ms.value }}/{{ ms.total }}</span>
-              </div>
-              <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  class="h-full bg-gray-900 rounded-full transition-all duration-700"
-                  :style="{ width: (parseInt(ms.value) / parseInt(ms.total) * 100) + '%' }"
-                ></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-            <div v-for="hl in report.highlights" :key="hl.title" class="bg-gray-50 rounded-2xl p-5 border border-gray-200">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs text-primary-500 font-medium px-2 py-0.5 bg-primary-500/10 rounded-full">{{ hl.tag }}</span>
-              </div>
-              <span class="text-2xl font-bold text-gray-900">{{ hl.value }}</span>
-              <p class="text-sm text-gray-500 mt-1">{{ hl.title }}</p>
+          <div class="flex-1 min-w-full sm:min-w-[280px] flex flex-col gap-3">
+            <span class="text-[13px] font-medium text-stone">亮点指标</span>
+            <div v-for="h in highlights" :key="h.k" class="bg-paper border border-line-soft rounded-xl px-5 py-4 flex justify-between items-baseline">
+              <span class="text-[13.5px] text-clay">{{ h.k }}</span>
+              <span class="font-mono text-xl text-brand">{{ h.v }}</span>
             </div>
           </div>
         </div>
 
         <!-- 业务动态 -->
-        <div v-else-if="activeTab === 3" key="updates">
-          <div class="flex items-center gap-3 mb-2">
-            <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-              <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
+        <div v-else-if="activeTab === 3" key="news" class="flex flex-col max-w-[720px]">
+          <div v-for="n in news" :key="n.title" class="flex gap-5">
+            <div class="flex flex-col items-center flex-none">
+              <span class="w-2.5 h-2.5 rounded-full bg-white border-[2.5px] border-brand mt-[5px]"></span>
+              <span class="w-[1.5px] flex-1 bg-line"></span>
             </div>
-          </div>
-          <h3 class="text-xl font-semibold text-gray-900 mb-1">业务动态</h3>
-          <p class="text-sm text-gray-500 mb-6">{{ updates.description }}</p>
-
-          <div class="space-y-4">
-            <div
-              v-for="(update, i) in updates.updates"
-              :key="i"
-              class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-200 hover:bg-white transition-all duration-200"
-            >
-              <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center border border-gray-200 shrink-0">
-                <span class="text-lg">{{ i + 1 }}</span>
-              </div>
-              <div class="flex-1 min-w-0">
-                <span class="text-sm font-medium text-gray-900">{{ update.title }}</span>
-              </div>
-              <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 shrink-0">
-                {{ update.tag }}
-              </span>
-              <span class="text-xs text-gray-400 shrink-0">{{ update.date }}</span>
+            <div class="pb-[26px]">
+              <span class="font-mono text-xs text-mist">{{ n.date }}</span>
+              <div class="text-[14.5px] font-medium text-ink mt-[3px]">{{ n.title }}</div>
+              <div v-if="n.desc" class="text-[13px] text-stone mt-[3px] leading-[1.7]">{{ n.desc }}</div>
             </div>
           </div>
         </div>
@@ -196,20 +106,57 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import config from '../data/projectTypes.json';
+import { ref } from 'vue';
 
-const dashboard = ref(config.dashboard);
-const overview = ref(config.dashboard.overview);
-const tech = ref(config.dashboard.techCategories);
-const report = ref(config.dashboard.projectReport);
-const updates = ref(config.dashboard.businessUpdates);
-
+const tabLabels = ['概览', '技术分类', '项目报告', '业务动态'];
 const activeTab = ref(0);
 
-const currentTabTitle = computed(() => {
-  return dashboard.value.navItems[activeTab.value];
-});
+// 概览 · 项目类型分布
+const dist = [
+  { name: '企业官网', pct: 35, color: '#A5282C' },
+  { name: '管理系统', pct: 25, color: '#221E1B' },
+  { name: '小程序', pct: 20, color: '#C9847F' },
+  { name: 'AI 应用', pct: 20, color: '#D9D3CA' },
+];
+
+// 概览 · 统计
+const stats = [
+  { v: '40+', k: '交付项目' },
+  { v: '96%', k: '按期完成率' },
+  { v: '96%', k: '客户满意度' },
+  { v: '28', k: '开源项目' },
+];
+
+// 技术分类
+const tech = [
+  { name: 'Web 开发', pct: 45, tags: ['TypeScript', 'React', 'Astro', 'Node.js'] },
+  { name: '跨端应用', pct: 30, tags: ['Flutter', 'uni-app', '微信小程序'] },
+  { name: '工具与 CLI', pct: 25, tags: ['Rust', 'Go', 'Node CLI'] },
+];
+
+// 项目报告 · 交付里程碑
+const milestones = [
+  { date: '2026-07', title: '某制造企业数字化中台一期交付', desc: '12 周交付，AI Agent 完成 82% 编码工作' },
+  { date: '2026-06', title: '连锁零售小程序矩阵上线', desc: '3 端同步发布，首月 GMV 超预期 40%' },
+  { date: '2026-05', title: '开源 CLI 工具 agentctl 发布 1.0', desc: 'GitHub 2.3k star，社区贡献者 31 人' },
+  { date: '2026-04', title: 'AI 客服 Agent 交付某教育机构', desc: '人工客服工作量下降 65%' },
+];
+
+// 项目报告 · 亮点指标
+const highlights = [
+  { k: '平均交付周期', v: '-38%' },
+  { k: '缺陷密度（对比行业）', v: '-52%' },
+  { k: '需求响应', v: '24h 内' },
+  { k: 'AI 协作在线', v: '24*7' },
+];
+
+// 业务动态
+const news = [
+  { date: '2026-07-10', title: '与河北两家制造企业达成数字化合作意向', desc: '围绕生产排程与质检环节引入 Agent 自动化' },
+  { date: '2026-06-28', title: '多智能体编排框架内部版本升级 v3', desc: '任务图调度延迟下降 40%，支持人工检查点' },
+  { date: '2026-06-15', title: '团队入选省级中小企业数字化服务商名录', desc: '' },
+  { date: '2026-05-30', title: '开放 2026 下半年合作伙伴招募', desc: '面向行业渠道与解决方案伙伴' },
+];
 </script>
 
 <style scoped>

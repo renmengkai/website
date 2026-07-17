@@ -1,0 +1,163 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import ContactForm from '../../../components/ContactForm.vue';
+
+// 公开联系方式：优先环境变量，缺失时回退设计稿占位
+const email = import.meta.env.PUBLIC_EMAIL || 'hi@vimatech.cn';
+const phoneNumber = import.meta.env.PUBLIC_PHONE_NUMBER || '131-0000-0000';
+const telHref = `tel:${phoneNumber.replace(/[\s-]/g, '')}`;
+
+const promises = ['需求评估与报价免费', '里程碑交付，进度全程透明', '源码与文档完整交付'];
+
+const workHours = [
+  { day: '周一至周五', hours: '9:00 – 18:00', off: false },
+  { day: '周六', hours: '10:00 – 16:00', off: false },
+  { day: '周日', hours: '休息', off: true },
+];
+
+const stats = [
+  { value: '40+', label: '交付项目' },
+  { value: '96%', label: '按期完成率' },
+  { value: '24h', label: '平均响应' },
+];
+---
+
+<Layout title="联系我们 - RMK" description="项目合作、技术咨询或渠道合作，说说你的想法，我们 24 小时内回复。">
+  <div class="animate-fade-in-up">
+
+    <!-- 页头 -->
+    <section class="container-page pt-16 lg:pt-20 pb-14 text-center">
+      <div class="flex items-center justify-center gap-2.5 font-mono text-[12.5px] tracking-[0.14em] text-brand mb-[18px]">
+        <span class="logo-wave flex-none w-[34px] h-2 bg-brand"></span>
+        CONTACT
+      </div>
+      <h1 class="font-serif text-4xl sm:text-[48px] font-black text-ink m-0 mb-3.5">开始对话</h1>
+      <p class="m-0 mx-auto mb-7 text-base leading-[1.9] max-w-[520px]">项目合作、技术咨询或渠道合作，说说你的想法，我们 24 小时内回复。</p>
+      <div class="flex justify-center gap-3 flex-wrap">
+        <a
+          href={`mailto:${email}`}
+          class="inline-flex items-center gap-2 bg-white border border-line-strong text-ink text-sm font-medium px-[22px] py-2.5 rounded-full hover:border-ink transition-colors"
+        >
+          <svg width="15" height="12" viewBox="0 0 15 12"><rect x="0.75" y="0.75" width="13.5" height="10.5" rx="2" fill="none" stroke="#A5282C" stroke-width="1.4"></rect><path d="M1.5 2.5 L7.5 7 L13.5 2.5" fill="none" stroke="#A5282C" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          {email}
+        </a>
+        <a
+          href={telHref}
+          class="inline-flex items-center gap-2 bg-white border border-line-strong text-ink text-sm font-medium px-[22px] py-2.5 rounded-full hover:border-ink transition-colors"
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 1.5 C2.2 1.5 1.5 2.2 1.6 3 C2 8 6 12 11 12.4 C11.8 12.5 12.5 11.8 12.5 11 L12.5 9.4 C12.5 8.9 12.2 8.5 11.7 8.4 L9.8 7.9 C9.4 7.8 9 7.9 8.7 8.2 L8.1 8.8 C6.8 8.1 5.9 7.2 5.2 5.9 L5.8 5.3 C6.1 5 6.2 4.6 6.1 4.2 L5.6 2.3 C5.5 1.8 5.1 1.5 4.6 1.5 Z" fill="none" stroke="#A5282C" stroke-width="1.3" stroke-linejoin="round"></path></svg>
+          {phoneNumber}
+        </a>
+      </div>
+    </section>
+
+    <!-- 表单 + 信息栏 -->
+    <section class="container-page pb-16 lg:pb-[88px] flex gap-8 items-start flex-wrap">
+      <!-- 左：表单卡 -->
+      <div class="flex-[1.4] min-w-full sm:min-w-[420px]">
+        <ContactForm client:load contactEmail={email} />
+      </div>
+
+      <!-- 右：信息栏 -->
+      <div class="flex-1 min-w-full sm:min-w-[320px] flex flex-col gap-4">
+        <!-- 服务承诺 -->
+        <div class="bg-white border border-line rounded-xl px-7 py-[26px]">
+          <h3 class="text-[15px] font-bold text-ink m-0 mb-3 flex items-center gap-2">
+            <span class="logo-wave flex-none w-[26px] h-[7px] bg-brand"></span>服务承诺
+          </h3>
+          <div class="text-sm font-medium text-brand mb-2.5">24 小时内回复</div>
+          <ul class="m-0 pl-[18px] text-[13.5px] leading-8 text-clay">
+            {promises.map((p) => <li>{p}</li>)}
+          </ul>
+        </div>
+
+        <!-- 联系方式 -->
+        <div class="bg-white border border-line rounded-xl px-7 py-[26px] flex flex-col gap-3">
+          <h3 class="text-[15px] font-bold text-ink m-0 flex items-center gap-2">
+            <span class="logo-wave flex-none w-[26px] h-[7px] bg-brand"></span>联系方式
+          </h3>
+          <div class="text-[13.5px] leading-[1.8]">
+            <span class="text-stone">邮箱</span><br />
+            <a href={`mailto:${email}`} class="font-mono text-[13px] text-brand hover:text-brand-dark transition-colors">{email}</a>
+          </div>
+          <div class="text-[13.5px] leading-[1.8]">
+            <span class="text-stone">电话</span><br />
+            <span class="font-mono text-[13px] text-ink">{phoneNumber}</span>
+          </div>
+          <div class="text-[13.5px] leading-[1.8]">
+            <span class="text-stone">地址</span><br />
+            <span class="text-ink">石家庄市长安区谈固大街</span>
+          </div>
+        </div>
+
+        <!-- 工作时间 -->
+        <div class="bg-white border border-line rounded-xl px-7 py-[26px]">
+          <h3 class="text-[15px] font-bold text-ink m-0 mb-3 flex items-center gap-2">
+            <span class="logo-wave flex-none w-[26px] h-[7px] bg-brand"></span>工作时间
+          </h3>
+          <div class="text-[13.5px] leading-[2.1] flex flex-col">
+            {workHours.map((w) => (
+              <span class="flex justify-between">
+                <span class="text-stone">{w.day}</span>
+                <span class={`font-mono ${w.off ? 'text-mist' : 'text-ink'}`}>{w.hours}</span>
+              </span>
+            ))}
+          </div>
+          <div class="mt-2.5 text-[12.5px] text-stone flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-moss"></span>AI 协作支持 24*7 在线
+          </div>
+        </div>
+
+        <!-- 关注我们 -->
+        <div class="bg-white border border-line rounded-xl px-7 py-[22px] flex justify-between items-center gap-3">
+          <div>
+            <h3 class="text-[15px] font-bold text-ink m-0 mb-1">关注我们</h3>
+            <span class="text-[12.5px] text-stone">28 个开源项目在 GitHub</span>
+          </div>
+          <a
+            href="https://github.com/renmengkai"
+            target="_blank"
+            rel="noopener"
+            aria-label="GitHub"
+            class="w-[42px] h-[42px] border border-line-strong rounded-[10px] flex items-center justify-center text-ink flex-none hover:border-ink hover:text-brand transition-colors"
+          >
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"></path></svg>
+          </a>
+        </div>
+
+        <!-- FAQ 链接卡 -->
+        <a
+          href="/about"
+          class="bg-brand-tint border border-brand-line rounded-xl px-7 py-5 flex justify-between items-center gap-3 hover:border-brand transition-colors"
+        >
+          <div>
+            <div class="text-sm font-bold text-brand">先看看常见问题？</div>
+            <span class="text-[12.5px] text-stone">报价、周期、保密等 8 个高频问题</span>
+          </div>
+          <span class="text-brand text-base">→</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- 底部 CTA -->
+    <section class="container-page pb-20 lg:pb-24">
+      <div class="bg-ink rounded-2xl p-8 sm:p-14 relative overflow-hidden">
+        <span class="logo-wave flex-none w-[420px] h-[60px] bg-brand absolute -right-10 bottom-4 opacity-20"></span>
+        <div class="flex items-center justify-between gap-8 flex-wrap relative">
+          <div>
+            <h2 class="font-serif text-[30px] font-black text-paper m-0 mb-2.5">不确定从哪开始？</h2>
+            <p class="m-0 text-[14.5px] text-mist leading-[1.8]">发一封邮件，说说你的业务——评估与建议是免费的。</p>
+          </div>
+          <div class="flex gap-8 flex-wrap">
+            {stats.map((s) => (
+              <div>
+                <div class="font-mono text-[26px] text-paper">{s.value}</div>
+                <div class="text-[12.5px] text-stone mt-0.5">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>
