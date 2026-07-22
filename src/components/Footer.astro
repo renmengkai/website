@@ -13,6 +13,12 @@ const footerLinks = [
   { href: '/projects', label: '作品' },
   { href: '/about', label: '关于' },
 ];
+
+// 备案信息
+const icpNumber = '沪ICP备2026033959号-1';
+// 公安联网备案：办理通过后填入备案号（如「沪公网安备 31010402000000号」）与对应的省份代码（code）
+const policeNumber = '';
+const policeCode = '';
 ---
 
 <footer class="border-t border-gray-100 bg-white">
@@ -42,10 +48,33 @@ const footerLinks = [
     
     <!-- 下部分 - 版权和社交链接 -->
     <div class="flex flex-col md:flex-row items-center justify-between gap-6">
-      <!-- 版权信息 -->
-      <p class="text-sm text-gray-400">
-        © {currentYear} RMK。保留所有权利。
-      </p>
+      <!-- 版权与备案信息 -->
+      <div class="flex flex-col gap-2">
+        <p class="text-sm text-gray-400">
+          © {currentYear} RMK。保留所有权利。
+        </p>
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-400">
+          <a
+            href="https://beian.miit.gov.cn/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-gray-600 transition-colors"
+          >
+            {icpNumber}
+          </a>
+          {policeNumber && (
+            <a
+              href={`https://beian.mps.gov.cn/#/query/webSearch?code=${policeCode}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-1 hover:text-gray-600 transition-colors"
+            >
+              <img src="/beian-gongan.png" alt="公安备案图标" class="h-3 w-3" />
+              {policeNumber}
+            </a>
+          )}
+        </div>
+      </div>
       
       <!-- 社交链接 -->
       <div class="flex items-center gap-4">
